@@ -1,6 +1,10 @@
 import os
 #os.environ['TCNN_CUDA_ARCHITECTURES'] = '86'
 
+#debugging
+import pudb
+#pudb.set_trace()
+
 # Package imports
 import torch
 import torch.optim as optim
@@ -24,6 +28,9 @@ from utils import coordinates, extract_mesh, colormap_image
 from tools.eval_ate import pose_evaluation
 from optimization.utils import at_to_transform_matrix, qt_to_transform_matrix, matrix_to_axis_angle, matrix_to_quaternion
 
+# for torch profiler
+from torch.profiler import profile, record_function, ProfilerActivity
+import torch.profiler
 
 class CoSLAM():
     def __init__(self, config):
@@ -217,7 +224,7 @@ class CoSLAM():
         print('Current frame mapping...')
         
         c2w = self.est_c2w_data[cur_frame_id].to(self.device)
-
+        
         self.model.train()
 
         # Training
@@ -294,14 +301,13 @@ class CoSLAM():
         
         # frame ids for all KFs, used for update poses after optimization
         frame_ids_all = torch.tensor(list(range(0, cur_frame_id, self.config['mapping']['keyframe_every'])))
-
         if len(self.keyframeDatabase.frame_ids) < 2:
             poses_fixed = torch.nn.parameter.Parameter(poses).to(self.device)
             current_pose = self.est_c2w_data[cur_frame_id][None,...]
             poses_all = torch.cat([poses_fixed, current_pose], dim=0)
         
         else:
-            poses_fixed = torch.nn.parameter.Parameter(poses[:1]).to(self.device)
+            poses_fixed = torch.nn.parameter.Parameter(poses[:1]).to(self.device)   # for BA, the pose of the first frame should stay fixed
             current_pose = self.est_c2w_data[cur_frame_id][None,...]
 
             if self.config['mapping']['optim_cur']:
@@ -321,7 +327,6 @@ class CoSLAM():
         
         current_rays = torch.cat([batch['direction'], batch['rgb'], batch['depth'][..., None]], dim=-1)
         current_rays = current_rays.reshape(-1, current_rays.shape[-1])
-
         
 
         for i in range(self.config['mapping']['iters']):
@@ -630,70 +635,90 @@ class CoSLAM():
                         mesh_savepath=mesh_savepath)      
         
     def run(self):
-        self.create_optimizer()
+        self.create_optimizer() 
         data_loader = DataLoader(self.dataset, num_workers=self.config['data']['num_workers'])
 
-        # Start Co-SLAM!
-        for i, batch in tqdm(enumerate(data_loader)):
-            # Visualisation
-            if self.config['mesh']['visualisation']:
-                rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)
-                raw_depth = batch["depth"]
-                mask = (raw_depth >= self.config["cam"]["depth_trunc"]).squeeze(0)
-                depth_colormap = colormap_image(batch["depth"])
-                depth_colormap[:, mask] = 255.
-                depth_colormap = depth_colormap.permute(1, 2, 0).cpu().numpy()
-                image = np.hstack((rgb, depth_colormap))
-                cv2.namedWindow('RGB-D'.format(i), cv2.WINDOW_AUTOSIZE)
-                cv2.imshow('RGB-D'.format(i), image)
-                key = cv2.waitKey(1)
+        # Set up PyTorch profiler
+        def trace_handler(prof):
+            print(f"Profiler trace saved to: ./profiling/coslam_profile/trace_{prof.step_num}.json")
+            prof.export_chrome_trace(f"./profiling/coslam_profile/trace_{prof.step_num}.json")
+            # Also export for TensorBoard
+            prof.export_stacks("./profiling/coslam_profile/profiler_stacks.txt", "self_cuda_time_total")
 
-            # First frame mapping
-            if i == 0:
-                self.first_frame_mapping(batch, self.config['mapping']['first_iters'])
-            
-            # Tracking + Mapping
-            else:
-                if self.config['tracking']['iter_point'] > 0:
-                    self.tracking_pc(batch, i)
-                self.tracking_render(batch, i)
-    
-                if i%self.config['mapping']['map_every']==0:
-                    self.current_frame_mapping(batch, i)
-                    self.global_BA(batch, i)
+        # Create output directory
+        os.makedirs('./profiling/coslam_profile', exist_ok=True)
 
-                    
-                # Add keyframe
-                if i % self.config['mapping']['keyframe_every'] == 0:
-                    self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
-                    print('add keyframe:',i)
-            
+        with profile(
+            activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+            schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
+            on_trace_ready=trace_handler,
+            record_shapes=True,
+            profile_memory=True,
+            with_stack=True
+        ) as prof:
 
-                if i % self.config['mesh']['vis']==0:
-                    self.save_mesh(i, voxel_size=self.config['mesh']['voxel_eval'])
-                    pose_relative = self.convert_relative_pose()
-                    pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
-                    pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+            # Start Co-SLAM!
+            for i, batch in tqdm(enumerate(data_loader)):
+                # Visualisation
+                if self.config['mesh']['visualisation']:
+                    rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)
+                    raw_depth = batch["depth"]
+                    mask = (raw_depth >= self.config["cam"]["depth_trunc"]).squeeze(0)
+                    depth_colormap = colormap_image(batch["depth"])
+                    depth_colormap[:, mask] = 255.
+                    depth_colormap = depth_colormap.permute(1, 2, 0).cpu().numpy()
+                    image = np.hstack((rgb, depth_colormap))
+                    cv2.namedWindow('RGB-D'.format(i), cv2.WINDOW_AUTOSIZE)
+                    cv2.imshow('RGB-D'.format(i), image)
+                    key = cv2.waitKey(1)
 
-                    if cfg['mesh']['visualisation']:
-                        cv2.namedWindow('Traj:'.format(i), cv2.WINDOW_AUTOSIZE)
-                        traj_image = cv2.imread(os.path.join(self.config['data']['output'], self.config['data']['exp_name'], "pose_r_{}.png".format(i)))
-                        # best_traj_image = cv2.imread(os.path.join(best_logdir_scene, "pose_r_{}.png".format(i)))
-                        # image_show = np.hstack((traj_image, best_traj_image))
-                        image_show = traj_image
-                        cv2.imshow('Traj:'.format(i), image_show)
-                        key = cv2.waitKey(1)
-
-        model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
+                # First frame mapping
+                if i == 0:
+                    self.first_frame_mapping(batch, self.config['mapping']['first_iters'])
+                
+                # Tracking + Mapping
+                else:
+                    if self.config['tracking']['iter_point'] > 0:
+                        self.tracking_pc(batch, i)
+                    self.tracking_render(batch, i)
         
-        self.save_ckpt(model_savepath)
-        self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
-        
-        pose_relative = self.convert_relative_pose()
-        pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
-        pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+                    if i%self.config['mapping']['map_every']==0:
+                        #pudb.set_trace()  #debugger
+                        self.current_frame_mapping(batch, i)
+                        self.global_BA(batch, i)
 
-        #TODO: Evaluation of reconstruction
+                        
+                    # Add keyframe
+                    if i % self.config['mapping']['keyframe_every'] == 0:
+                        self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
+                        print('add keyframe:',i)
+                
+
+                    if i % self.config['mesh']['vis']==0:
+                        self.save_mesh(i, voxel_size=self.config['mesh']['voxel_eval'])
+                        pose_relative = self.convert_relative_pose()
+                        pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
+                        pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+
+                        if cfg['mesh']['visualisation']:
+                            cv2.namedWindow('Traj:'.format(i), cv2.WINDOW_AUTOSIZE)
+                            traj_image = cv2.imread(os.path.join(self.config['data']['output'], self.config['data']['exp_name'], "pose_r_{}.png".format(i)))
+                            # best_traj_image = cv2.imread(os.path.join(best_logdir_scene, "pose_r_{}.png".format(i)))
+                            # image_show = np.hstack((traj_image, best_traj_image))
+                            image_show = traj_image
+                            cv2.imshow('Traj:'.format(i), image_show)
+                            key = cv2.waitKey(1)
+
+            model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
+            
+            self.save_ckpt(model_savepath)
+            self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
+            
+            pose_relative = self.convert_relative_pose()
+            pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
+            pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+
+            #TODO: Evaluation of reconstruction
 
 
 if __name__ == '__main__':
