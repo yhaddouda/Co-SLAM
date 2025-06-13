@@ -1,0 +1,14 @@
+SLAM PERFORMANCE MONITORING SUMMARY
+========================================
+
+Monitoring Duration: 150.0 seconds
+Total Samples: 282
+Samples with SLAM Processes: 282
+
+SLAM PROCESS STATISTICS:
+  CPU Usage - Average: 371.7%, Peak: 704.1%
+  Memory Usage - Average: 18962.9MB (30.6%), Peak: 19750.4MB (31.9%)
+  CPU Cores Used - Average: 11.3, Max: 12/12
+
+  GPU Utilization - Average: 38.2%, Peak: 91.0%
+  CUDA Cores: 5888
