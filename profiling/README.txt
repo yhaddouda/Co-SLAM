@@ -20,8 +20,8 @@
         The script will produce a .json and a .csv file with the date and hour, and .txt file with SUMMARY
         datasets and intervals and durations can be changed as suited
 
-    -> Step 2: python advanced_system_visualizer.py office2_experiment_20250616_173101.json --temporal
-        For a temporal representation of memory, cpus cores and GPU utilizaion (for other flags -h)
+    -> Step 2: python advanced_system_visualizer.py office2_experiment_20250616_173101.json --temporal 
+        For a temporal representation of memory, cpus cores and GPU utilizaion (for other flags -h, --gpu or --memory)
                python advanced_system_visualizer_frequency.py office2_experiment_20250616_173101.json 
         For a more frequency representation of the data
 

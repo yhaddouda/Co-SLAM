@@ -199,23 +199,39 @@ class SLAMPerformanceVisualizer:
             plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
         
         return fig
-    
+
     def create_gpu_analysis_plot(self, data, save_path=None):
-        slam_data = data[data['slam_process_count'] > 0].copy()
-        if len(slam_data) == 0:
-            slam_data = data
+        """Create GPU analysis plot with proper time series visualization"""
+        # DON'T filter by slam_process_count - this seems to be the issue!
+        # The temporal method filters, but maybe GPU data exists outside SLAM process detection
+        
+        # Let's try both approaches and see which has more data
+        slam_filtered = data[data['slam_process_count'] > 0].copy()
+        all_data = data.copy()
+        
+        # Check which dataset has more GPU data points
+        slam_gpu_points = len(slam_filtered[slam_filtered['gpu_utilization_percent'] > 0]) if len(slam_filtered) > 0 else 0
+        all_gpu_points = len(all_data[all_data['gpu_utilization_percent'] > 0])
+        
+        # Use the dataset with more GPU data points
+        if slam_gpu_points >= all_gpu_points * 0.8:  # Use SLAM filtered if it has at least 80% of data
+            gpu_data = slam_filtered
+            print(f"Using SLAM-filtered data: {slam_gpu_points} GPU data points")
+        else:
+            gpu_data = all_data
+            print(f"Using all data: {all_gpu_points} GPU data points (SLAM filtered had only {slam_gpu_points})")
         
         # Check if GPU data is available
-        has_gpu_data = ('gpu_utilization_percent' in slam_data.columns and 
-                       slam_data['gpu_utilization_percent'].max() > 0)
+        has_gpu_data = ('gpu_utilization_percent' in gpu_data.columns and 
+                    len(gpu_data['gpu_utilization_percent'].dropna()) > 0 and
+                    gpu_data['gpu_utilization_percent'].max() > 0)
         
         if not has_gpu_data:
-            # Create a placeholder plot indicating no GPU data
             fig, ax = plt.subplots(figsize=(self.figure_scale * self.base_figsize[0], 
-                                           self.figure_scale * 4))
+                                        self.figure_scale * 4))
             ax.text(0.5, 0.5, 'No GPU Data Available\n\nEither:\n• No GPU detected\n• GPU monitoring failed\n• No GPU usage during monitoring', 
-                   transform=ax.transAxes, ha='center', va='center', fontsize=12,
-                   bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.5))
+                transform=ax.transAxes, ha='center', va='center', fontsize=12,
+                bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.5))
             ax.set_xlim(0, 1)
             ax.set_ylim(0, 1)
             ax.axis('off')
@@ -225,14 +241,24 @@ class SLAMPerformanceVisualizer:
                 plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
             return fig
         
+        # Create subplots without sharex since ax3 will be a histogram, not time series
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(self.figure_scale * self.base_figsize[0], 
-                                                           self.figure_scale * 10), sharex=True)
+                                                        self.figure_scale * 12), sharex=False)
         
-        time_minutes = slam_data['relative_time_seconds'] / 60
+        # Manually share x-axis between time series plots (ax1 and ax2)
+        ax2.sharex(ax1)
         
-        # GPU utilization with 100% reference line
-        ax1.plot(time_minutes, slam_data['gpu_utilization_percent'], 
-                color=self.colors['gpu'], linewidth=2, label='GPU Utilization')
+        # Calculate time in minutes - use the same approach as temporal
+        time_minutes = gpu_data['relative_time_seconds'] / 60
+        
+        # Debug: Print time and data ranges
+        print(f"Time range: {time_minutes.min():.3f} to {time_minutes.max():.3f} minutes")
+        print(f"GPU utilization range: {gpu_data['gpu_utilization_percent'].min():.1f}% to {gpu_data['gpu_utilization_percent'].max():.1f}%")
+        print(f"Total data points: {len(gpu_data)}")
+        
+        # Plot 1: GPU utilization over time
+        ax1.plot(time_minutes, gpu_data['gpu_utilization_percent'], 
+                color=self.colors['gpu'], linewidth=1.5, label='GPU Utilization')
         ax1.axhline(y=100, color='red', linestyle='--', alpha=0.6, label='100% GPU Limit')
         ax1.set_ylabel('GPU Utilization (%)')
         ax1.set_title('GPU Utilization Over Time')
@@ -240,20 +266,29 @@ class SLAMPerformanceVisualizer:
         ax1.legend()
         ax1.grid(True, alpha=0.3)
         
-        # GPU memory usage
-        if 'gpu_memory_mb' in slam_data.columns:
-            ax2.plot(time_minutes, slam_data['gpu_memory_mb'], 
-                    color=self.colors['gpu'], linewidth=2, label='GPU Memory Usage')
+        # Add statistics
+        gpu_util_clean = gpu_data['gpu_utilization_percent'].dropna()
+        if len(gpu_util_clean) > 0:
+            avg_util = gpu_util_clean.mean()
+            max_util = gpu_util_clean.max()
+            min_util = gpu_util_clean.min()
+            ax1.text(0.02, 0.98, f'Avg: {avg_util:.1f}%\nMax: {max_util:.1f}%\nMin: {min_util:.1f}%', 
+                    transform=ax1.transAxes, verticalalignment='top',
+                    bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
+        
+        # Plot 2: GPU memory usage over time
+        if 'gpu_memory_mb' in gpu_data.columns:
+            ax2.plot(time_minutes, gpu_data['gpu_memory_mb'], 
+                    color=self.colors['gpu'], linewidth=1.5, label='GPU Memory Usage')
             
-            # Try to estimate max GPU memory (rough estimates for common GPUs)
+            # GPU memory estimation based on CUDA cores
             max_gpu_memory = 0
-            if 'cuda_cores' in slam_data.columns and slam_data['cuda_cores'].iloc[0] > 0:
-                cuda_cores = slam_data['cuda_cores'].iloc[0]
-                # Rough GPU memory mapping based on CUDA cores
+            if 'cuda_cores' in gpu_data.columns and gpu_data['cuda_cores'].iloc[0] > 0:
+                cuda_cores = gpu_data['cuda_cores'].iloc[0]
                 gpu_memory_map = {
                     16384: 24576,  # RTX 4090: 24GB
                     9728: 16384,   # RTX 4080: 16GB  
-                    5888: 12288,   # RTX 4070/3070: 12GB/8GB
+                    5888: 12288,   # RTX 4070/3070: 12GB/8GB (using 12GB estimate)
                     10496: 24576,  # RTX 3090: 24GB
                     8704: 10240,   # RTX 3080: 10GB
                     2944: 8192,    # RTX 2080: 8GB
@@ -262,82 +297,84 @@ class SLAMPerformanceVisualizer:
                     6912: 40960,   # A100: 40GB
                     14592: 80000   # H100: 80GB
                 }
-                max_gpu_memory = gpu_memory_map.get(cuda_cores, 0)
+                closest_cores = min(gpu_memory_map.keys(), key=lambda x: abs(x - cuda_cores))
+                max_gpu_memory = gpu_memory_map[closest_cores]
             
             if max_gpu_memory > 0:
                 ax2.axhline(y=max_gpu_memory, color='red', linestyle='--', alpha=0.6, 
-                           label=f'Estimated GPU Memory Limit ({max_gpu_memory/1024:.1f} GB)')
+                        label=f'Estimated GPU Memory Limit ({max_gpu_memory/1024:.1f} GB)')
                 ax2.set_ylim(0, max_gpu_memory * 1.1)
             
             ax2.set_ylabel('GPU Memory (MB)')
             ax2.set_title('GPU Memory Usage Over Time')
             ax2.legend()
             ax2.grid(True, alpha=0.3)
-        
-        # GPU temperature or additional metric (if available in future)
-        # For now, show CUDA cores info as bar chart
-        if 'cuda_cores' in slam_data.columns and slam_data['cuda_cores'].iloc[0] > 0:
-            cuda_cores = slam_data['cuda_cores'].iloc[0]
-            ax3.barh(['CUDA Cores'], [cuda_cores], color=self.colors['gpu'], alpha=0.7)
-            ax3.set_xlabel('Count')
-            ax3.set_title(f'GPU Hardware Information (CUDA Cores: {cuda_cores})')
-            ax3.grid(True, alpha=0.3)
+            
+            # Add memory statistics
+            gpu_mem_clean = gpu_data['gpu_memory_mb'].dropna()
+            if len(gpu_mem_clean) > 0:
+                avg_mem = gpu_mem_clean.mean()
+                max_mem = gpu_mem_clean.max()
+                ax2.text(0.02, 0.98, f'Avg: {avg_mem:.0f}MB\nMax: {max_mem:.0f}MB', 
+                        transform=ax2.transAxes, verticalalignment='top',
+                        bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
         else:
-            ax3.text(0.5, 0.5, 'GPU Hardware Information\nNot Available', 
+            ax2.text(0.5, 0.5, 'GPU Memory Data\nNot Available', 
+                    transform=ax2.transAxes, ha='center', va='center',
+                    bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.3))
+            ax2.set_ylabel('GPU Memory (MB)')
+            ax2.set_title('GPU Memory Usage Over Time')
+        
+        # Plot 3: GPU utilization HISTOGRAM (not time-based!)
+        gpu_util_values = gpu_data['gpu_utilization_percent'].dropna()
+        if len(gpu_util_values) > 5:
+            # Create histogram of GPU utilization values
+            n_bins = min(30, max(10, len(gpu_util_values)//10))
+            ax3.hist(gpu_util_values, bins=n_bins, alpha=0.7, color=self.colors['gpu'], 
+                    edgecolor='black', linewidth=0.5)
+            ax3.set_xlabel('GPU Utilization (%)')  # Correct x-axis label!
+            ax3.set_ylabel('Frequency')
+            
+            # Get CUDA cores info for title
+            cuda_cores = 0
+            if 'cuda_cores' in gpu_data.columns:
+                cuda_cores = gpu_data['cuda_cores'].iloc[0]
+            
+            ax3.set_title(f'GPU Utilization Distribution (CUDA Cores: {cuda_cores})')
+            ax3.grid(True, alpha=0.3)
+            
+            # Add comprehensive statistics
+            stats_text = f"""GPU Statistics:
+    • Samples: {len(gpu_util_values)}
+    • Average: {gpu_util_values.mean():.1f}%
+    • Std Dev: {gpu_util_values.std():.1f}%
+    • Median: {gpu_util_values.median():.1f}%
+    • CUDA Cores: {cuda_cores}"""
+            
+            ax3.text(0.98, 0.98, stats_text, transform=ax3.transAxes, 
+                    verticalalignment='top', horizontalalignment='right',
+                    fontfamily='monospace', fontsize=9,
+                    bbox=dict(boxstyle='round,pad=0.5', facecolor='lightblue', alpha=0.7))
+        else:
+            ax3.text(0.5, 0.5, f'Insufficient GPU Data for Histogram\n({len(gpu_util_values)} data points)', 
                     transform=ax3.transAxes, ha='center', va='center',
                     bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.3))
-            ax3.axis('off')
+            ax3.set_xlabel('GPU Utilization (%)')
+            ax3.set_ylabel('Frequency')
+            ax3.set_title('GPU Utilization Distribution')
         
+        # Only set time-based x-axis for the first two plots
+        ax1.set_xlabel('Time (minutes)')
         ax2.set_xlabel('Time (minutes)')
+        # ax3 gets 'GPU Utilization (%)' as x-label above
         
-        # Add CUDA cores info to title if available
-        if 'cuda_cores' in slam_data.columns and slam_data['cuda_cores'].iloc[0] > 0:
-            cuda_cores = slam_data['cuda_cores'].iloc[0]
+        # Overall title
+        if 'cuda_cores' in gpu_data.columns and gpu_data['cuda_cores'].iloc[0] > 0:
+            cuda_cores = gpu_data['cuda_cores'].iloc[0]
             fig.suptitle(f'GPU Performance Analysis (CUDA Cores: {cuda_cores})', 
                         fontsize=14, fontweight='bold')
         else:
             fig.suptitle('GPU Performance Analysis', fontsize=14, fontweight='bold')
-        
-        plt.tight_layout()
-        
-        if save_path:
-            plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
-        
-        return fig
-    
-    def create_per_core_heatmap(self, data, save_path=None):
-        slam_data = data[data['slam_process_count'] > 0].copy()
-        if len(slam_data) == 0:
-            slam_data = data
-        
-        # Check if per-core data exists
-        per_core_columns = [col for col in slam_data.columns if col.startswith('core_') and col.endswith('_cpu_percent')]
-        
-        if not per_core_columns:
-            print("No per-core CPU data available for heatmap")
-            return None
-        
-        # Extract per-core data - pandas DataFrame selection
-        per_core_data = slam_data[per_core_columns]
-        time_minutes = slam_data['relative_time_seconds'] / 60
-        
-        fig, ax = plt.subplots(figsize=(self.figure_scale * 12, self.figure_scale * 6))
-        
-        # matplotlib.pyplot.imshow() - display data as heatmap
-        im = ax.imshow(per_core_data.T, aspect='auto', cmap='viridis', 
-                      extent=[time_minutes.min(), time_minutes.max(), 0, len(per_core_columns)])
-        
-        ax.set_xlabel('Time (minutes)')
-        ax.set_ylabel('CPU Core')
-        ax.set_title('Per-Core CPU Utilization Heatmap')
-        
-        # matplotlib.pyplot.colorbar() - add color scale bar
-        cbar = plt.colorbar(im, ax=ax)
-        cbar.set_label('CPU Usage (%)')
-        
-        # Set y-ticks to show core numbers
-        ax.set_yticks(range(len(per_core_columns)))
-        ax.set_yticklabels([f'Core {i}' for i in range(len(per_core_columns))])
         
         plt.tight_layout()
         
@@ -428,6 +465,7 @@ class SLAMPerformanceVisualizer:
             plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
         
         return fig
+    
         slam_data = data[data['slam_process_count'] > 0].copy()
         if len(slam_data) == 0:
             slam_data = data
@@ -472,25 +510,25 @@ class SLAMPerformanceVisualizer:
         
         summary_text = f"""Performance Summary
 
-Duration: {duration_minutes:.1f} minutes
-Samples: {len(slam_data)}
+        Duration: {duration_minutes:.1f} minutes
+        Samples: {len(slam_data)}
 
-CPU Usage:
-  Average: {avg_cpu:.1f}%
-  Peak: {max_cpu:.1f}%
+        CPU Usage:
+        Average: {avg_cpu:.1f}%
+        Peak: {max_cpu:.1f}%
 
-Memory Usage:
-  Average: {avg_memory:.1f} MB
-  Peak: {max_memory:.1f} MB"""
+        Memory Usage:
+        Average: {avg_memory:.1f} MB
+        Peak: {max_memory:.1f} MB"""
         
         if 'slam_memory_percent' in slam_data.columns:
             avg_mem_pct = slam_data['slam_memory_percent'].mean()
             max_mem_pct = slam_data['slam_memory_percent'].max()
             summary_text += f"""
   
-Memory % of System:
-  Average: {avg_mem_pct:.1f}%
-  Peak: {max_mem_pct:.1f}%"""
+            Memory % of System:
+            Average: {avg_mem_pct:.1f}%
+            Peak: {max_mem_pct:.1f}%"""
         
         ax4.text(0.1, 0.9, summary_text, transform=ax4.transAxes,
                 verticalalignment='top', fontfamily='monospace', fontsize=9,
