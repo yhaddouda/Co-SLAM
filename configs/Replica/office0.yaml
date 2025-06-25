@@ -9,3 +9,13 @@ data:
   trainskip: 1
   output: output/Replica/office0
   exp_name: demo
+
+# Add profiling config here
+profiling:
+  enabled: true
+  output_dir: ./profiling/PytorchProfiler/office0
+  schedule:
+    wait: 1
+    warmup: 0
+    active: 10
+    repeat: 1

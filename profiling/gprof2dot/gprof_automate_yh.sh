@@ -9,7 +9,7 @@ PNG_OUTPUT="whole_pipeline.png"
 PROFILING_DIR=$(pwd)
 
 # Change to the parent directory where coslam.py is located
-cd ..
+cd ../../
 
 # Run the profiler from the correct directory
 echo "Running Co-slam with cProfile..."
