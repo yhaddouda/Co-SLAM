@@ -30,19 +30,23 @@ The changes are mathutils==3.3.0, typing_extensions==4.8.0, #git+https://github.
 
 ## tiny-cuda-nn Installation 
 
+```bash
 $ git clone --recursive https://github.com/nvlabs/tiny-cuda-nn
 $ cd tiny-cuda-nn
 tiny-cuda-nn$ cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
 tiny-cuda-nn$ cmake --build build --config RelWithDebInfo -j
 then go to bindings/torch and do : 
 $ python setup.py install
+```
 
 ## Pytorch3d
+```bash
 pip install "git+https://github.com/facebookresearch/pytorch3d.git"
-
+```
 
 
 # Build marching cubes extension
+```bash
 cd external/NumpyMarchingCubes
 python setup.py install
 ```
