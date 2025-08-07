@@ -1,9 +1,6 @@
 import os
 #os.environ['TCNN_CUDA_ARCHITECTURES'] = '86'
 
-#debugging
-import pudb
-#pudb.set_trace()
 
 # Package imports
 import torch
@@ -32,6 +29,9 @@ from optimization.utils import at_to_transform_matrix, qt_to_transform_matrix, m
 import torch.profiler
 from torch.profiler import profile, record_function, ProfilerActivity
 import os
+
+#nvtx 
+import nvtx
 
 # Config function for the pytorch profiler
 def create_profiler_config(
@@ -70,7 +70,7 @@ class CoSLAM():
         self.model = JointEncoding(config, self.bounding_box).to(self.device)
 
         # Profiling configuration
-        self.enable_profiling = config.get('profiling', {}).get('enabled', False)
+        self.enable_profiling = False #config.get('profiling', {}).get('enabled', False)
         self.profiler_config = create_profiler_config(
             output_dir=config.get('profiling', {}).get('output_dir', './profiling/PytorchProfiler/office0')
         )
@@ -91,7 +91,7 @@ class CoSLAM():
         self.profiler = profile(
             **self.profiler_config,
             schedule=schedule,
-            on_trace_ready=torch.profiler.tensorboard_trace_handler('./profiling/PytorchProfiler/office0/tensorboard/first_100_iters')
+            on_trace_ready=torch.profiler.tensorboard_trace_handler('./profiling/PytorchProfiler/office0/tensorboard/FFM_TR_BA')
         )
         self.profiler.start()
         print("🔍 PyTorch Profiler started for Co-SLAM")
@@ -222,7 +222,7 @@ class CoSLAM():
                                                                                   margin=self.config['training']['smooth_margin'])
         
         return loss             
-
+    
     def first_frame_mapping(self, batch, n_iters=100):
         '''
         First frame mapping
@@ -236,38 +236,58 @@ class CoSLAM():
             loss: float
         
         '''
-        print('First frame mapping...')
-        c2w = batch['c2w'][0].to(self.device)
-        self.est_c2w_data[0] = c2w
-        self.est_c2w_data_rel[0] = c2w
+        self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        with record_function("FF_mapping"):
+            print('First frame mapping...')
+            with torch.cuda.nvtx.range("cpu_to_gpu_c2w"):
+                c2w = batch['c2w'][0].to(self.device)
 
-        self.model.train()
+            self.est_c2w_data[0] = c2w
+            self.est_c2w_data_rel[0] = c2w
 
-        # Training
-        for i in range(n_iters):
-            self.map_optimizer.zero_grad()
-            indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
+            with torch.cuda.nvtx.range("model_train?"):
+                self.model.train()
+
+            # Training
+            for i in range(n_iters):
+
+                with torch.cuda.nvtx.range("initialize_map_optimizer"):
+                    self.map_optimizer.zero_grad()
+
+                with torch.cuda.nvtx.range("select_samples"):    
+                    indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
+                
+                with torch.cuda.nvtx.range("ray_sampling&coords_transform"):
+                    indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
+                    rays_d_cam = batch['direction'].squeeze(0)[indice_h, indice_w, :].to(self.device)
+                    target_s = batch['rgb'].squeeze(0)[indice_h, indice_w, :].to(self.device)
+                    target_d = batch['depth'].squeeze(0)[indice_h, indice_w].to(self.device).unsqueeze(-1)
+
+                    rays_o = c2w[None, :3, -1].repeat(self.config['mapping']['sample'], 1)
+                    rays_d = torch.sum(rays_d_cam[..., None, :] * c2w[:3, :3], -1)
+
+                # Forward
+                with torch.cuda.nvtx.range("forward"):
+                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+
+                with torch.cuda.nvtx.range("Loss_calculation"):
+                    loss = self.get_loss_from_ret(ret)
+
+                with torch.cuda.nvtx.range("backward"):
+                    loss.backward()
+
+                with torch.cuda.nvtx.range("map_optim"):
+                    self.map_optimizer.step()
+
+            with torch.cuda.nvtx.range("add_keyframe"):
+                # First frame will always be a keyframe
+                self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
+                if self.config['mapping']['first_mesh']:
+                    self.save_mesh(0)
             
-            indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
-            rays_d_cam = batch['direction'].squeeze(0)[indice_h, indice_w, :].to(self.device)
-            target_s = batch['rgb'].squeeze(0)[indice_h, indice_w, :].to(self.device)
-            target_d = batch['depth'].squeeze(0)[indice_h, indice_w].to(self.device).unsqueeze(-1)
+            print('First frame mapping done')
 
-            rays_o = c2w[None, :3, -1].repeat(self.config['mapping']['sample'], 1)
-            rays_d = torch.sum(rays_d_cam[..., None, :] * c2w[:3, :3], -1)
-
-            # Forward
-            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
-            loss = self.get_loss_from_ret(ret)
-            loss.backward()
-            self.map_optimizer.step()
-        
-        # First frame will always be a keyframe
-        self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
-        if self.config['mapping']['first_mesh']:
-            self.save_mesh(0)
-        
-        print('First frame mapping done')
+        self.step_profiler()
         return ret, loss
 
     def current_frame_mapping(self, batch, cur_frame_id):
@@ -348,6 +368,7 @@ class CoSLAM():
         
         return cur_rot, cur_trans, pose_optimizer
     
+    
     def global_BA(self, batch, cur_frame_id):
         '''
         Global bundle adjustment that includes all the keyframes and the current frame
@@ -358,106 +379,120 @@ class CoSLAM():
             batch['direction']: view direction [1, H, W, 3]
             cur_frame_id: current frame id
         '''
-        pose_optimizer = None
+        self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        with record_function("Bundle_Adjustment"):
 
-        # all the KF poses: 0, 5, 10, ...
-        poses = torch.stack([self.est_c2w_data[i] for i in range(0, cur_frame_id, self.config['mapping']['keyframe_every'])])
+            pose_optimizer = None
         
-        # frame ids for all KFs, used for update poses after optimization
-        frame_ids_all = torch.tensor(list(range(0, cur_frame_id, self.config['mapping']['keyframe_every'])))
-        if len(self.keyframeDatabase.frame_ids) < 2:
-            poses_fixed = torch.nn.parameter.Parameter(poses).to(self.device)
-            current_pose = self.est_c2w_data[cur_frame_id][None,...]
-            poses_all = torch.cat([poses_fixed, current_pose], dim=0)
-        
-        else:
-            poses_fixed = torch.nn.parameter.Parameter(poses[:1]).to(self.device)   # for BA, the pose of the first frame should stay fixed
-            current_pose = self.est_c2w_data[cur_frame_id][None,...]
-
-            if self.config['mapping']['optim_cur']:
-                cur_rot, cur_trans, pose_optimizer, = self.get_pose_param_optim(torch.cat([poses[1:], current_pose]))
-                pose_optim = self.matrix_from_tensor(cur_rot, cur_trans).to(self.device)
-                poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
-
-            else:
-                cur_rot, cur_trans, pose_optimizer, = self.get_pose_param_optim(poses[1:])
-                pose_optim = self.matrix_from_tensor(cur_rot, cur_trans).to(self.device)
-                poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
-        
-        # Set up optimizer
-        self.map_optimizer.zero_grad()
-        if pose_optimizer is not None:
-            pose_optimizer.zero_grad()
-        
-        current_rays = torch.cat([batch['direction'], batch['rgb'], batch['depth'][..., None]], dim=-1)
-        current_rays = current_rays.reshape(-1, current_rays.shape[-1])
-        
-
-        for i in range(self.config['mapping']['iters']):
-
-            # Sample rays with real frame ids
-            # rays [bs, 7]
-            # frame_ids [bs]
-            rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
-
-            #TODO: Checkpoint...
-            idx_cur = random.sample(range(0, self.dataset.H * self.dataset.W),max(self.config['mapping']['sample'] // len(self.keyframeDatabase.frame_ids), self.config['mapping']['min_pixels_cur']))
-            current_rays_batch = current_rays[idx_cur, :]
-
-            rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
-            ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
-
-
-            rays_d_cam = rays[..., :3].to(self.device)
-            target_s = rays[..., 3:6].to(self.device)
-            target_d = rays[..., 6:7].to(self.device)
-
-            # [N, Bs, 1, 3] * [N, 1, 3, 3] = (N, Bs, 3)
-            rays_d = torch.sum(rays_d_cam[..., None, None, :] * poses_all[ids_all, None, :3, :3], -1)
-            rays_o = poses_all[ids_all, None, :3, -1].repeat(1, rays_d.shape[1], 1).reshape(-1, 3)
-            rays_d = rays_d.reshape(-1, 3)
-
-
-            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
-
-            loss = self.get_loss_from_ret(ret, smooth=True)
+            # all the KF poses: 0, 5, 10, ...
+            with torch.cuda.nvtx.range("stack_KF_poses"):
+                poses = torch.stack([self.est_c2w_data[i] for i in range(0, cur_frame_id, self.config['mapping']['keyframe_every'])])
             
-            loss.backward(retain_graph=True)
-            
-            if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
-               
-                if (i + 1) > cfg["mapping"]["map_wait_step"]:
-                    self.map_optimizer.step()
-                else:
-                    print('Wait update')
-                self.map_optimizer.zero_grad()
-
-            if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
-                pose_optimizer.step()
-                # get SE3 poses to do forward pass
-                pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
-                pose_optim = pose_optim.to(self.device)
-                # So current pose is always unchanged
-                if self.config['mapping']['optim_cur']:
-                    poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
+            # frame ids for all KFs, used for update poses after optimization
+            with torch.cuda.nvtx.range("which_poses_to_opt"):
+                frame_ids_all = torch.tensor(list(range(0, cur_frame_id, self.config['mapping']['keyframe_every'])))
+                if len(self.keyframeDatabase.frame_ids) < 2:
+                    poses_fixed = torch.nn.parameter.Parameter(poses).to(self.device)
+                    current_pose = self.est_c2w_data[cur_frame_id][None,...]
+                    poses_all = torch.cat([poses_fixed, current_pose], dim=0)
                 
                 else:
+                    poses_fixed = torch.nn.parameter.Parameter(poses[:1]).to(self.device)   # for BA, the pose of the first frame should stay fixed
                     current_pose = self.est_c2w_data[cur_frame_id][None,...]
-                    # SE3 poses
 
-                    poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
+                    if self.config['mapping']['optim_cur']:
+                        cur_rot, cur_trans, pose_optimizer, = self.get_pose_param_optim(torch.cat([poses[1:], current_pose]))
+                        pose_optim = self.matrix_from_tensor(cur_rot, cur_trans).to(self.device)
+                        poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
+
+                    else:
+                        cur_rot, cur_trans, pose_optimizer, = self.get_pose_param_optim(poses[1:])
+                        pose_optim = self.matrix_from_tensor(cur_rot, cur_trans).to(self.device)
+                        poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
+            
+            # Set up optimizer
+            with torch.cuda.nvtx.range("setup_optimizer"):
+                self.map_optimizer.zero_grad()
+                if pose_optimizer is not None:
+                    pose_optimizer.zero_grad()
+
+            with torch.cuda.nvtx.range("cat&reshape"):
+                current_rays = torch.cat([batch['direction'], batch['rgb'], batch['depth'][..., None]], dim=-1)
+                current_rays = current_rays.reshape(-1, current_rays.shape[-1])
+            
+
+            for i in range(self.config['mapping']['iters']):
+
+                # Sample rays with real frame ids
+                # rays [bs, 7]
+                # frame_ids [bs]
+                with torch.cuda.nvtx.range("sample_global_rays"):
+                    rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
+
+                with torch.cuda.nvtx.range("sampling&cat"):
+                    #TODO: Checkpoint...
+                    idx_cur = random.sample(range(0, self.dataset.H * self.dataset.W),max(self.config['mapping']['sample'] // len(self.keyframeDatabase.frame_ids), self.config['mapping']['min_pixels_cur']))
+                    current_rays_batch = current_rays[idx_cur, :]
+
+                    rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
+                    ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
+
+                with torch.cuda.nvtx.range("cpu_to_gpu_gt"):
+                    rays_d_cam = rays[..., :3].to(self.device)
+                    target_s = rays[..., 3:6].to(self.device)
+                    target_d = rays[..., 6:7].to(self.device)
+
+                # [N, Bs, 1, 3] * [N, 1, 3, 3] = (N, Bs, 3)
+                with torch.cuda.nvtx.range("resize_tensors"):
+                    rays_d = torch.sum(rays_d_cam[..., None, None, :] * poses_all[ids_all, None, :3, :3], -1)
+                    rays_o = poses_all[ids_all, None, :3, -1].repeat(1, rays_d.shape[1], 1).reshape(-1, 3)
+                    rays_d = rays_d.reshape(-1, 3)
+
+                with torch.cuda.nvtx.range("Forward"):
+                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+
+                with torch.cuda.nvtx.range("Loss_calculation"):
+                    loss = self.get_loss_from_ret(ret, smooth=True)
+
+                with torch.cuda.nvtx.range("Backward"):
+                    loss.backward(retain_graph=True)
+
+                with torch.cuda.nvtx.range("Optimize_map_pose"):
+                    if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
+                    
+                        if (i + 1) > cfg["mapping"]["map_wait_step"]:
+                            self.map_optimizer.step()
+                        else:
+                            print('Wait update')
+                        self.map_optimizer.zero_grad()
+
+                    if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
+                        pose_optimizer.step()
+                        # get SE3 poses to do forward pass
+                        pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
+                        pose_optim = pose_optim.to(self.device)
+                        # So current pose is always unchanged
+                        if self.config['mapping']['optim_cur']:
+                            poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
+                        
+                        else:
+                            current_pose = self.est_c2w_data[cur_frame_id][None,...]
+                            # SE3 poses
+
+                            poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
 
 
-                # zero_grad here
-                pose_optimizer.zero_grad()
-        
-        if pose_optimizer is not None and len(frame_ids_all) > 1:
-            for i in range(len(frame_ids_all[1:])):
-                self.est_c2w_data[int(frame_ids_all[i+1].item())] = self.matrix_from_tensor(cur_rot[i:i+1], cur_trans[i:i+1]).detach().clone()[0]
-        
-            if self.config['mapping']['optim_cur']:
-                print('Update current pose')
-                self.est_c2w_data[cur_frame_id] = self.matrix_from_tensor(cur_rot[-1:], cur_trans[-1:]).detach().clone()[0]
+                        # zero_grad here
+                        pose_optimizer.zero_grad()
+            with torch.cuda.nvtx.range("update_pose"):
+                if pose_optimizer is not None and len(frame_ids_all) > 1:
+                    for i in range(len(frame_ids_all[1:])):
+                        self.est_c2w_data[int(frame_ids_all[i+1].item())] = self.matrix_from_tensor(cur_rot[i:i+1], cur_trans[i:i+1]).detach().clone()[0]
+                
+                    if self.config['mapping']['optim_cur']:
+                        print('Update current pose')
+                        self.est_c2w_data[cur_frame_id] = self.matrix_from_tensor(cur_rot[-1:], cur_trans[-1:]).detach().clone()[0]
+        self.step_profiler()
  
     def predict_current_pose(self, frame_id, constant_speed=True):
         '''
@@ -572,82 +607,99 @@ class CoSLAM():
             batch['direction']: Ray direction [B, H, W, 3]
             frame_id: Current frame id (int)
         '''
+        self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        with record_function("tracking_render"):
+            with torch.cuda.nvtx.range("cpu_to_gpu_pose"):
+                c2w_gt = batch['c2w'][0].to(self.device)
 
-        c2w_gt = batch['c2w'][0].to(self.device)
-
-        # Initialize current pose
-        if self.config['tracking']['iter_point'] > 0:
-            cur_c2w = self.est_c2w_data[frame_id]
-        else:
-            cur_c2w = self.predict_current_pose(frame_id, self.config['tracking']['const_speed'])
-
-        indice = None
-        best_sdf_loss = None
-        thresh=0
-
-        iW = self.config['tracking']['ignore_edge_W']
-        iH = self.config['tracking']['ignore_edge_H']
-
-        cur_rot, cur_trans, pose_optimizer = self.get_pose_param_optim(cur_c2w[None,...], mapping=False)
-
-        # Start tracking
-        for i in range(self.config['tracking']['iter']):
-            pose_optimizer.zero_grad()
-            c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
-
-            # Note here we fix the sampled points for optimisation
-            if indice is None:
-                indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
-            
-                # Slicing
-                indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
-                rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
-            target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
-            target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
-
-            rays_o = c2w_est[...,:3, -1].repeat(self.config['tracking']['sample'], 1)
-            rays_d = torch.sum(rays_d_cam[..., None, :] * c2w_est[:, :3, :3], -1)
-
-            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
-            loss = self.get_loss_from_ret(ret)
-            
-            if best_sdf_loss is None:
-                best_sdf_loss = loss.cpu().item()
-                best_c2w_est = c2w_est.detach()
-
-            with torch.no_grad():
-                c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
-
-                if loss.cpu().item() < best_sdf_loss:
-                    best_sdf_loss = loss.cpu().item()
-                    best_c2w_est = c2w_est.detach()
-                    thresh = 0
+            # Initialize current pose
+            with torch.cuda.nvtx.range("initialize_pose"):
+                if self.config['tracking']['iter_point'] > 0:
+                    cur_c2w = self.est_c2w_data[frame_id]
                 else:
-                    thresh +=1
+                    cur_c2w = self.predict_current_pose(frame_id, self.config['tracking']['const_speed'])
+
+            indice = None
+            best_sdf_loss = None
+            thresh=0
+
+            iW = self.config['tracking']['ignore_edge_W']
+            iH = self.config['tracking']['ignore_edge_H']
+
+            cur_rot, cur_trans, pose_optimizer = self.get_pose_param_optim(cur_c2w[None,...], mapping=False)
+
+            # Start tracking
+            for i in range(self.config['tracking']['iter']):
+                with torch.cuda.nvtx.range("initialize_pose_optimizer"):
+                    pose_optimizer.zero_grad()
+                with torch.cuda.nvtx.range("pos_matrix_from_tensor"):    
+                    c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
+
+                # Note here we fix the sampled points for optimisation
+                with torch.cuda.nvtx.range("select_samples"):
+                    if indice is None:
+                        indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
+                    
+                        # Slicing
+                        indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
+                        rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                with torch.cuda.nvtx.range("Tensor_ops_s&d"):
+                    target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                    target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
+
+                    rays_o = c2w_est[...,:3, -1].repeat(self.config['tracking']['sample'], 1)
+                    rays_d = torch.sum(rays_d_cam[..., None, :] * c2w_est[:, :3, :3], -1)
+
+                with torch.cuda.nvtx.range("forward"):
+                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                
+                with torch.cuda.nvtx.range("loss_calculation"):
+                    loss = self.get_loss_from_ret(ret)
+                
+                with torch.cuda.nvtx.range("sdf_loss"):
+                    if best_sdf_loss is None:
+                        best_sdf_loss = loss.cpu().item()
+                        best_c2w_est = c2w_est.detach()
+
+                with torch.cuda.nvtx.range("c2w_from_matrix"):
+                    with torch.no_grad():
+                        c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
+
+                        if loss.cpu().item() < best_sdf_loss:
+                            best_sdf_loss = loss.cpu().item()
+                            best_c2w_est = c2w_est.detach()
+                            thresh = 0
+                        else:
+                            thresh +=1
+                    
+                    if thresh >self.config['tracking']['wait_iters']:
+                        break
+
+                with torch.cuda.nvtx.range("backward"):
+                    loss.backward()
+
+                with torch.cuda.nvtx.range("pose_optimizer"):
+                    pose_optimizer.step()
             
-            if thresh >self.config['tracking']['wait_iters']:
-                break
+            if self.config['tracking']['best']:
+                # Use the pose with smallest loss
+                self.est_c2w_data[frame_id] = best_c2w_est.detach().clone()[0]
+            else:
+                # Use the pose after the last iteration
+                self.est_c2w_data[frame_id] = c2w_est.detach().clone()[0]
 
-            loss.backward()
-            pose_optimizer.step()
-        
-        if self.config['tracking']['best']:
-            # Use the pose with smallest loss
-            self.est_c2w_data[frame_id] = best_c2w_est.detach().clone()[0]
-        else:
-            # Use the pose after the last iteration
-            self.est_c2w_data[frame_id] = c2w_est.detach().clone()[0]
+            # Save relative pose of non-keyframes
+            with torch.cuda.nvtx.range("save_pose_frame"):
+                if frame_id % self.config['mapping']['keyframe_every'] != 0:
+                    kf_id = frame_id // self.config['mapping']['keyframe_every']
+                    kf_frame_id = kf_id * self.config['mapping']['keyframe_every']
+                    c2w_key = self.est_c2w_data[kf_frame_id]
+                    delta = self.est_c2w_data[frame_id] @ c2w_key.float().inverse()
+                    self.est_c2w_data_rel[frame_id] = delta
+            
+            print('Best loss: {}, Last loss{}'.format(F.l1_loss(best_c2w_est.to(self.device)[0,:3], c2w_gt[:3]).cpu().item(), F.l1_loss(c2w_est[0,:3], c2w_gt[:3]).cpu().item()))
+        self.step_profiler()
 
-       # Save relative pose of non-keyframes
-        if frame_id % self.config['mapping']['keyframe_every'] != 0:
-            kf_id = frame_id // self.config['mapping']['keyframe_every']
-            kf_frame_id = kf_id * self.config['mapping']['keyframe_every']
-            c2w_key = self.est_c2w_data[kf_frame_id]
-            delta = self.est_c2w_data[frame_id] @ c2w_key.float().inverse()
-            self.est_c2w_data_rel[frame_id] = delta
-        
-        print('Best loss: {}, Last loss{}'.format(F.l1_loss(best_c2w_est.to(self.device)[0,:3], c2w_gt[:3]).cpu().item(), F.l1_loss(c2w_est[0,:3], c2w_gt[:3]).cpu().item()))
-    
     def convert_relative_pose(self):
         poses = {}
         for i in range(len(self.est_c2w_data)):
@@ -697,84 +749,81 @@ class CoSLAM():
                         marching_cube_bound=self.marching_cube_bound, 
                         voxel_size=voxel_size, 
                         mesh_savepath=mesh_savepath)      
-      
+        
+    @nvtx.annotate()    
     def run(self):
-        # Start profiling if enabled
-        self.start_profiling(wait=1, warmup=0, active=100, repeat=1)
 
         self.create_optimizer() 
         data_loader = DataLoader(self.dataset, num_workers=self.config['data']['num_workers'])
 
         # Start Co-SLAM!
         for i, batch in tqdm(enumerate(data_loader)):
-            with record_function("slam_main_loop"):
-                # Visualisation
-                if self.config['mesh']['visualisation']:
-                    rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)
-                    raw_depth = batch["depth"]
-                    mask = (raw_depth >= self.config["cam"]["depth_trunc"]).squeeze(0)
-                    depth_colormap = colormap_image(batch["depth"])
-                    depth_colormap[:, mask] = 255.
-                    depth_colormap = depth_colormap.permute(1, 2, 0).cpu().numpy()
-                    image = np.hstack((rgb, depth_colormap))
-                    cv2.namedWindow('RGB-D'.format(i), cv2.WINDOW_AUTOSIZE)
-                    cv2.imshow('RGB-D'.format(i), image)
-                    key = cv2.waitKey(1)
+            if i > 20 :
+                break
+            # Visualisation
+            if self.config['mesh']['visualisation']:
+                rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)
+                raw_depth = batch["depth"]
+                mask = (raw_depth >= self.config["cam"]["depth_trunc"]).squeeze(0)
+                depth_colormap = colormap_image(batch["depth"])
+                depth_colormap[:, mask] = 255.
+                depth_colormap = depth_colormap.permute(1, 2, 0).cpu().numpy()
+                image = np.hstack((rgb, depth_colormap))
+                cv2.namedWindow('RGB-D'.format(i), cv2.WINDOW_AUTOSIZE)
+                cv2.imshow('RGB-D'.format(i), image)
+                key = cv2.waitKey(1)
 
-                # First frame mapping
-                if i == 0:
+            # First frame mapping
+            if i == 0:
+                with torch.cuda.nvtx.range("First_frame_mapping"):
                     self.first_frame_mapping(batch, self.config['mapping']['first_iters'])
-                
-                # Tracking + Mapping
-                else:
-                    if self.config['tracking']['iter_point'] > 0:
-                        self.tracking_pc(batch, i)
+            
+            # Tracking + Mapping
+            else:
+                if self.config['tracking']['iter_point'] > 0:
+                    self.tracking_pc(batch, i)
+                with torch.cuda.nvtx.range("Tracking"):
                     self.tracking_render(batch, i)
-        
-                    if i%self.config['mapping']['map_every']==0:
-                        #pudb.set_trace()  #debugger
-                        self.current_frame_mapping(batch, i)
+    
+                if i%self.config['mapping']['map_every']==0:
+                    self.current_frame_mapping(batch, i)
+                    with torch.cuda.nvtx.range("Bundle_Adjustment"):
                         self.global_BA(batch, i)
 
-                        
-                    # Add keyframe
-                    if i % self.config['mapping']['keyframe_every'] == 0:
+                    
+                # Add keyframe
+                if i % self.config['mapping']['keyframe_every'] == 0:
+                    with torch.cuda.nvtx.range("add_Keyframe"):
                         self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
-                        print('add keyframe:',i)
-                
-
-                    if i % self.config['mesh']['vis']==0:
-                        self.save_mesh(i, voxel_size=self.config['mesh']['voxel_eval'])
-                        pose_relative = self.convert_relative_pose()
-                        pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
-                        pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
-
-                        if cfg['mesh']['visualisation']:
-                            cv2.namedWindow('Traj:'.format(i), cv2.WINDOW_AUTOSIZE)
-                            traj_image = cv2.imread(os.path.join(self.config['data']['output'], self.config['data']['exp_name'], "pose_r_{}.png".format(i)))
-                            # best_traj_image = cv2.imread(os.path.join(best_logdir_scene, "pose_r_{}.png".format(i)))
-                            # image_show = np.hstack((traj_image, best_traj_image))
-                            image_show = traj_image
-                            cv2.imshow('Traj:'.format(i), image_show)
-                            key = cv2.waitKey(1)
-
-            # Step profiler after each main loop iteration
-            self.step_profiler()
-
-        # Final operations
-        with record_function("final_mesh_extraction"):
-            model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
+                    print('add keyframe:',i)
             
-            self.save_ckpt(model_savepath)
-            self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
-            
-            pose_relative = self.convert_relative_pose()
-            pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
-            pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
 
-            #TODO: Evaluation of reconstruction
-        # Stop profiling
-        self.stop_profiling()
+                if i % self.config['mesh']['vis']==0:
+                    self.save_mesh(i, voxel_size=self.config['mesh']['voxel_eval'])
+                    pose_relative = self.convert_relative_pose()
+                    pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
+                    pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+
+                    if cfg['mesh']['visualisation']:
+                        cv2.namedWindow('Traj:'.format(i), cv2.WINDOW_AUTOSIZE)
+                        traj_image = cv2.imread(os.path.join(self.config['data']['output'], self.config['data']['exp_name'], "pose_r_{}.png".format(i)))
+                        # best_traj_image = cv2.imread(os.path.join(best_logdir_scene, "pose_r_{}.png".format(i)))
+                        # image_show = np.hstack((traj_image, best_traj_image))
+                        image_show = traj_image
+                        cv2.imshow('Traj:'.format(i), image_show)
+                        key = cv2.waitKey(1)
+
+
+        model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
+        
+        self.save_ckpt(model_savepath)
+        self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
+        
+        pose_relative = self.convert_relative_pose()
+        pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
+        pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+
+        #TODO: Evaluation of reconstruction
 
 
 if __name__ == '__main__':
