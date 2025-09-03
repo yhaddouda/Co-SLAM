@@ -1,0 +1,1 @@
+./configs/Replica/office0.yaml: time=1869s, peak_RAM=10001 MB

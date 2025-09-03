@@ -1,0 +1,12 @@
+Run started: Fri Aug 29 11:34:39 AM CEST 2025
+./configs/Replica/office0.yaml: time=1520s, peak_RAM=10114 MB
+
+    ./configs/Replica/office1.yaml
+    ./configs/Replica/office2.yaml
+    ./configs/Replica/office3.yaml
+    ./configs/Replica/office4.yaml
+    ./configs/Replica/room0.yaml
+    ./configs/Replica/room1.yaml
+    ./configs/Replica/room2.yaml    
+    : time=4s, peak_RAM=7941 MB
+Run finished: Fri Aug 29 12:00:03 PM CEST 2025

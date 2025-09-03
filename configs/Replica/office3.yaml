@@ -6,7 +6,7 @@ mapping:
   
 
 data:
-  datadir: data/Replica/office3
+  datadir: ../data/Replica/office3
   trainskip: 1
   output: output/Replica/office3
-  exp_name: demo
+  exp_name: "17"

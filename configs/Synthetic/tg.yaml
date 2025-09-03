@@ -5,10 +5,10 @@ mapping:
   
 
 data:
-  datadir: data/neural_rgbd_data/thin_geometry
+  datadir: ../data/neural_rgbd_data/thin_geometry
   trainskip: 1
   output: output/Synthetic/tg
-  exp_name: demo
+  exp_name: 19_base
 
 cam:
   near: 0

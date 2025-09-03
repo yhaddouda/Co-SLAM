@@ -5,7 +5,7 @@ mapping:
   
 
 data:
-  datadir: data/neural_rgbd_data/morning_apartment
+  datadir: ../data/neural_rgbd_data/morning_apartment
   trainskip: 1
   output: output/Synthetic/ma
-  exp_name: demo
+  exp_name: 19_base

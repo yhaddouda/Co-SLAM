@@ -41,7 +41,7 @@ def get_encoder(encoding, input_dim=3,
                 "base_resolution": base_resolution,
                 "per_level_scale": per_level_scale
             },
-            dtype=torch.float
+            dtype=torch.half    # the hash grid is set to be in fp16
         )
         out_dim = embed.n_output_dims
 
@@ -66,7 +66,7 @@ def get_encoder(encoding, input_dim=3,
                 "otype": "OneBlob", #Component type.
 	            "n_bins": n_bins
                 },
-                dtype=torch.float
+                dtype=torch.half
             )
         out_dim = embed.n_output_dims
     

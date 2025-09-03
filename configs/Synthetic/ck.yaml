@@ -5,10 +5,10 @@ mapping:
   
 
 data:
-  datadir: data/neural_rgbd_data/complete_kitchen
+  datadir: ../data/neural_rgbd_data/complete_kitchen
   trainskip: 1
   output: output/Synthetic/ck
-  exp_name: demo
+  exp_name: 19_base
 
 cam:
   near: 0

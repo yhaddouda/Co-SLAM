@@ -42,7 +42,7 @@ tracking:
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size: 16
+  hash_size:  13
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True

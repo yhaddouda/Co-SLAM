@@ -1,5 +1,5 @@
-mkdir -p data/TUM
-cd data/TUM
+mkdir -p home/yh279050/data/TUM
+cd home/yh279050/data/TUM
 wget https://vision.in.tum.de/rgbd/dataset/freiburg1/rgbd_dataset_freiburg1_desk.tgz
 tar -xvzf rgbd_dataset_freiburg1_desk.tgz
 wget https://vision.in.tum.de/rgbd/dataset/freiburg2/rgbd_dataset_freiburg2_xyz.tgz

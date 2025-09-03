@@ -66,6 +66,11 @@ class SDFNet(nn.Module):
         self.model = self.get_model(tcnn_network=config['decoder']['tcnn_network'])
     
     def forward(self, x, return_geo=True):
+        # match input dtype to the first layer’s weights, from fp16 to fp32
+        target_dtype = self.model[0].weight.dtype
+        if x.dtype != target_dtype:
+            x = x.to(target_dtype)
+
         out = self.model(x)
 
         if return_geo:  # return feature
