@@ -1,0 +1,8 @@
+stage,seconds
+generate,0.004182
+normalize,0.001691
+quantize,0.000944
+morton,0.002396
+sort,0.006911
+reorder,0.001504
+total,0.017628

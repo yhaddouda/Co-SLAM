@@ -46,6 +46,8 @@ grid:
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True
+  morton_sort: True   # enable/disable
+  morton_R: 128  
 
 pos:
   enc: 'OneBlob'
@@ -100,4 +102,6 @@ mesh:
   voxel_eval: 0.05
   voxel_final: 0.02
   visualisation: False
+
+
   

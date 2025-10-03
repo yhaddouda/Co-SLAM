@@ -1,10 +1,6 @@
 import os
 #os.environ['TCNN_CUDA_ARCHITECTURES'] = '86'
 
-#debugging
-import pudb
-#pudb.set_trace()
-
 # Package imports
 import torch
 import torch.optim as optim
