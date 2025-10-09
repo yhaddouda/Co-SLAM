@@ -1,0 +1,10 @@
+
+For flags and arguments, check the main function of each script.
+This folder contains scripts to run experiments and plot results for Morton ordering of tensors.
+******** plot_time.py and plot_ate_rmse.py
+--> python programs to plot the results of time and metrics for different table sizes, example usage :
+python scripts/morton/plot_ate_rmse.py experiment_data/morton/ate_rmse_morton_vs_off_R128.txt plots/morton_plots/metrics/ate_rmse_morton_vs_off_R128.png
+ 
+******** Knn.py
+--> tests the efficiency of morton ordering of a tensor, through consecutive distance, knn continuity and scattered index plots, example usage :
+python scripts/morton/plot_ate_rmse.py experiment_data/morton/ate_rmse_morton_vs_off_R128.txt plots/morton_plots/metrics/ate_rmse_morton_vs_off_R128.png

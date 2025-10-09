@@ -164,4 +164,5 @@ cython_debug/
 #.idea/
 
 output/
-Experiments
+experiment_data/
+plots/

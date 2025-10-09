@@ -1,0 +1,2 @@
+auto_run_replica_morton.py runs experiments on the office0 scene of Replica dataset. It varies the hash table size and the R value for morton ordering.
+For more details check main functions for arguments.

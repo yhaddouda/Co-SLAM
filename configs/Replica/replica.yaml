@@ -47,7 +47,7 @@ grid:
   voxel_sdf: 0.02
   oneGrid: True
   morton_sort: True   # enable/disable
-  morton_R: 128  
+  morton_R: 512
 
 pos:
   enc: 'OneBlob'
