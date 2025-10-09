@@ -1,3 +1,0 @@
-Run started: Mon Aug 25 11:02:24 AM CEST 2025
-./configs/Replica/office0.yaml: time=1757s, peak_RAM=10203 MB
-Run finished: Mon Aug 25 11:31:45 AM CEST 2025

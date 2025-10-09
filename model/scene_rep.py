@@ -7,6 +7,52 @@ from .encodings import get_encoder
 from .decoder import ColorSDFNet, ColorSDFNet_v2
 from .utils import sample_pdf, batchify, get_sdf_loss, mse2psnr, compute_loss
 
+def _morton_const(x: torch.Tensor, v: int) -> torch.Tensor:
+    # create an int64 constant on the same device/dtype as x
+    return torch.tensor(v, dtype=torch.int64, device=x.device)
+
+def _split_by_3_u64(x: torch.Tensor) -> torch.Tensor:
+    """
+    Spread lower 21 bits of x so there are two zero bits between each original bit.
+    x: int64 tensor (non-negative), any shape, device = CUDA or CPU.
+    Returns: int64 tensor, same shape.
+    """
+    x = x.to(torch.int64) & _morton_const(x, 0x1FFFFF)
+    x = (x | (x << 32)) & _morton_const(x, 0x1f00000000ffff)
+    x = (x | (x << 16)) & _morton_const(x, 0x1f0000ff0000ff)
+    x = (x | (x <<  8)) & _morton_const(x, 0x100f00f00f00f00f)
+    x = (x | (x <<  4)) & _morton_const(x, 0x10c30c30c30c30c3)
+    x = (x | (x <<  2)) & _morton_const(x, 0x1249249249249249)
+    return x
+
+def morton3d_u64(ix: torch.Tensor, iy: torch.Tensor, iz: torch.Tensor) -> torch.Tensor:
+    """
+    3D Morton (Z-order) code from integer voxel indices.
+    ix, iy, iz: int64 tensors (same shape), values in [0, 2^21-1].
+    Returns: int64 tensor of Morton keys.
+    """
+    return (_split_by_3_u64(ix)
+            | (_split_by_3_u64(iy) << 1)
+            | (_split_by_3_u64(iz) << 2))
+
+@torch.no_grad()
+def morton_permutation_from_points01(pts01: torch.Tensor, R: int = 128) -> torch.Tensor:
+    """
+    Build a Morton-based permutation for normalized points in [0,1]^3.
+    pts01: [N,3] float32/float16 on CUDA (preferred).
+    R:    quantization resolution per axis (<= 2^21 recommended).
+    Returns:
+      perm: [N] int64 permutation indices so that pts_sorted = pts01[perm].
+    """
+    assert pts01.shape[-1] == 3
+    R_t = torch.tensor(R, device=pts01.device, dtype=pts01.dtype)
+    ixyz = torch.clamp(torch.floor(pts01 * R_t), 0, R - 1).to(torch.int64)  # [N,3]
+    ix, iy, iz = ixyz.unbind(dim=-1)
+    keys = morton3d_u64(ix, iy, iz)                                         # [N] int64
+    perm = torch.argsort(keys, stable=True)                                  # GPU sort
+    return perm
+
+
 class JointEncoding(nn.Module):
     def __init__(self, config, bound_box):
         super(JointEncoding, self).__init__()
@@ -166,16 +212,41 @@ class JointEncoding(nn.Module):
         Returns:
             outputs: [N_rays, N_samples, 4]
         """
-        inputs_flat = torch.reshape(inputs, [-1, inputs.shape[-1]])
-        
-        # Normalize the input to [0, 1] (TCNN convention)
-        if self.config['grid']['tcnn_encoding']:
-            inputs_flat = (inputs_flat - self.bounding_box[:, 0]) / (self.bounding_box[:, 1] - self.bounding_box[:, 0])
+        inputs_flat = torch.reshape(inputs, [-1, inputs.shape[-1]])  # [N,3]
 
-        outputs_flat = batchify(self.query_color_sdf, None)(inputs_flat)
+        use_tcnn = self.config['grid']['tcnn_encoding']
+        do_morton = bool(self.config['grid'].get('morton_sort', True))  # enable/disable via config
+        R = int(self.config['grid'].get('morton_R', 128))               # quantization per axis
+
+        if use_tcnn:
+            # Normalize to [0,1]^3 (Instant-NGP / TCNN convention). This is already
+            # what your original code does; we keep the same map. :contentReference[oaicite:0]{index=0}
+            bb0 = self.bounding_box[:, 0]  # [3]
+            bb1 = self.bounding_box[:, 1]  # [3]
+            inputs01 = (inputs_flat - bb0) / (bb1 - bb0)
+
+            if do_morton:
+                # ---- Morton sort on CUDA (GPU) ----
+                # Build permutation that clusters spatial neighbors. Then call the
+                # decoder on the permuted array and scatter back to original order.
+                perm = morton_permutation_from_points01(inputs01, R=R)  # [N] int64, CUDA
+                inputs01_sorted = inputs01[perm]                        # [N,3]
+
+                outputs_sorted = batchify(self.query_color_sdf, None)(inputs01_sorted)  # [N,4] :contentReference[oaicite:1]{index=1}
+
+                # Unpermute back to original order (scatter is a cheap inverse):
+                outputs_flat = torch.empty_like(outputs_sorted)
+                outputs_flat[perm] = outputs_sorted
+            else:
+                # Original behavior: just run on normalized inputs
+                outputs_flat = batchify(self.query_color_sdf, None)(inputs01)           # [N,4] :contentReference[oaicite:2]{index=2}
+        else:
+            # Non-TCNN path: keep original behavior (world coords, no sorting).
+            outputs_flat = batchify(self.query_color_sdf, None)(inputs_flat)            # [N,4] :contentReference[oaicite:3]{index=3}
+
         outputs = torch.reshape(outputs_flat, list(inputs.shape[:-1]) + [outputs_flat.shape[-1]])
-
         return outputs
+
     
     def render_surface_color(self, rays_o, normal):
         '''

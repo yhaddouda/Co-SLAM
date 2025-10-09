@@ -1,9 +1,0 @@
-Run started: Sat Aug 23 09:37:07 PM CEST 2025
-./configs/Synthetic/br.yaml: time=885s, peak_RAM=9249 MB
-./configs/Synthetic/ck.yaml: time=976s, peak_RAM=10700 MB
-./configs/Synthetic/gr.yaml: time=1125s, peak_RAM=9582 MB
-./configs/Synthetic/gwr.yaml: time=1126s, peak_RAM=9583 MB
-./configs/Synthetic/ma.yaml: time=680s, peak_RAM=9263 MB
-./configs/Synthetic/tg.yaml: time=296s, peak_RAM=8969 MB
-./configs/Synthetic/wr.yaml: time=1288s, peak_RAM=9822 MB
-Run finished: Sat Aug 23 11:23:23 PM CEST 2025

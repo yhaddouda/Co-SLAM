@@ -167,3 +167,5 @@ external/NumpyMarchingCubes/marching_cubes/src/_mcubes.cpp
 external/NumpyMarchingCubes/marching_cubes/src/marching_cubes.cpp
 output/
 tiny-cuda-nn/
+experiment_data/
+plots/

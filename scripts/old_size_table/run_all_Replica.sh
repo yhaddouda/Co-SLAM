@@ -2,18 +2,9 @@
 
 configs=(
     "./configs/Replica/office0.yaml"
-    """
-    "./configs/Replica/office1.yaml"
-    "./configs/Replica/office2.yaml"
-    "./configs/Replica/office3.yaml"
-    "./configs/Replica/office4.yaml"
-    "./configs/Replica/room0.yaml"
-    "./configs/Replica/room1.yaml"
-    "./configs/Replica/room2.yaml"    
-    """
 )
 
-logfile="log_Replica_13_half.txt"
+logfile="morton_R128_T13.txt"
 echo "Run started: $(date)" > $logfile
 
 for cfg in "${configs[@]}"; do

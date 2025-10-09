@@ -1,5 +1,0 @@
-Run started: Sat Aug 23 07:10:53 PM CEST 2025
-./configs/Tum/fr1_desk.yaml: time=706s, peak_RAM=9190 MB
-./configs/Tum/fr2_xyz.yaml: time=4262s, peak_RAM=9596 MB
-./configs/Tum/fr3_office.yaml: time=3145s, peak_RAM=11175 MB
-Run finished: Sat Aug 23 09:26:07 PM CEST 2025

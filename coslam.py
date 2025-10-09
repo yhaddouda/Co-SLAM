@@ -24,6 +24,57 @@ from utils import coordinates, extract_mesh, colormap_image
 from tools.eval_ate import pose_evaluation
 from optimization.utils import at_to_transform_matrix, qt_to_transform_matrix, matrix_to_axis_angle, matrix_to_quaternion
 
+import math
+
+def _grid_jitter_toplefts_fast(H, W, ph, pw, sh, sw, seed=None):
+    """
+    Vectorized generator of non-overlapping top-left coordinates with bounded jitter.
+    Assumes sh>=ph and sw>=pw (non-overlap). Returns an array [N,2] of (top,left),
+    in a random order (rows are permuted once).
+    """
+    assert sh >= ph and sw >= pw, "Non-overlap required (sh>=ph and sw>=pw)."
+    rng = np.random.default_rng(seed)
+
+    vmax = H - ph
+    umax = W - pw
+    if vmax < 0 or umax < 0:
+        return np.empty((0,2), dtype=np.int32)  # no capacity
+
+    v0 = np.arange(0, vmax + 1, sh, dtype=np.int32)   # shape [Nv]
+    u0 = np.arange(0, umax + 1, sw, dtype=np.int32)   # shape [Nu]
+
+    # per-cell jitter bounds (vectorized)
+    dv_max_v = np.minimum(sh - ph, vmax - v0)         # [Nv]
+    du_max_u = np.minimum(sw - pw, umax - u0)         # [Nu]
+    dv_max = dv_max_v[:, None]                        # [Nv,1]
+    du_max = du_max_u[None, :]                        # [1,Nu]
+
+    # sample jitter per cell
+    dv = rng.integers(0, dv_max + 1, size=(v0.size, u0.size), dtype=np.int32) if np.any(dv_max) else np.zeros((v0.size,u0.size), dtype=np.int32)
+    du = rng.integers(0, du_max + 1, size=(v0.size, u0.size), dtype=np.int32) if np.any(du_max) else np.zeros((v0.size,u0.size), dtype=np.int32)
+
+    tops  = (v0[:, None] + dv).astype(np.int32)       # [Nv,Nu]
+    lefts = (u0[None, :] + du).astype(np.int32)       # [Nv,Nu]
+
+    # flatten to [N,2] and permute rows once for random patch order
+    coords = np.stack([tops.ravel(), lefts.ravel()], axis=1)  # [N,2]
+    if coords.shape[0] > 1:
+        perm = rng.permutation(coords.shape[0])
+        coords = coords[perm]
+    return coords
+
+def _patch_indices_colmajor_grouped_fast(H, top, left, ph, pw):
+    """
+    Vectorized indices for a ph×pw patch at (top,left) in COL-MAJOR order.
+    For col-major flatten idx = w*H + h:
+      bases = (left .. left+pw-1) * H  -> shape [pw]
+      rows  = (top .. top+ph-1)        -> shape [ph]
+      indices = bases[:,None] + rows[None,:] -> shape [pw,ph], then ravel('C')
+    """
+    bases = (np.arange(left, left + pw, dtype=np.int64) * H).reshape(-1, 1)  # [pw,1]
+    rows  = np.arange(top,  top  + ph, dtype=np.int64).reshape(1, -1)        # [1,ph]
+    return (bases + rows).ravel(order='C')  # length = ph*pw, columns-first
+
 
 class CoSLAM():
     def __init__(self, config):
@@ -123,13 +174,77 @@ class CoSLAM():
         self.est_c2w_data_rel = dict['pose_rel']
 
     def select_samples(self, H, W, samples):
-        '''
-        randomly select samples from the image
-        '''
-        #indice = torch.randint(H*W, (samples,))
-        indice = random.sample(range(H * W), int(samples))
-        indice = torch.tensor(indice)
-        return indice
+        """
+        Return [samples] COL-MAJOR indices in [0, H*W) for the given H×W window.
+
+        - Default (mode!='patch'): original RANDOM behavior (python random.sample).
+        - mode=='patch': non-overlapping patch/stripe sampling (stripes = ph=1 or pw=1),
+        with randomized patch order (once) and preserved intra-patch order.
+        Preconditions: sh>=ph and sw>=pw (hard requirement).
+        """
+        cfg  = self.config.get('sampling_tracking', {})
+        mode = cfg.get('mode', 'random')
+
+        # --- keep original random sampling exactly as-is ---
+        if mode != 'patch':
+            idx = random.sample(range(H * W), int(samples))
+            return torch.tensor(idx)  # int64 inferred
+
+        # --- fast PATCH mode ---
+        ph = max(1, int(cfg.get('ph', 16)))
+        pw = max(1, int(cfg.get('pw', 16)))
+        sh = int(cfg.get('sh', ph))  # default tiling
+        sw = int(cfg.get('sw', pw))
+        seed = cfg.get('seed', None)
+
+        # clamp to window
+        ph = min(ph, H); pw = min(pw, W)
+        if ph <= 0 or pw <= 0:
+            raise ValueError(f"[select_samples] Invalid patch size ph={ph}, pw={pw}")
+        if sh < ph or sw < pw:
+            raise ValueError(f"[select_samples] Non-overlap required: sh={sh}>=ph={ph} and sw={sw}>=pw={pw}")
+
+        # total capacity check (upper bound)
+        Nv = 1 + (H - ph) // sh if H >= ph else 0
+        Nu = 1 + (W - pw) // sw if W >= pw else 0
+        capacity = Nv * Nu * (ph * pw)
+        if capacity < samples:
+            raise RuntimeError(
+                f"[select_samples] Not enough non-overlapping patch capacity "
+                f"({capacity} < {samples}). Increase coverage (reduce sh/sw or increase ph/pw)."
+            )
+
+        # generate randomized patch order
+        coords = _grid_jitter_toplefts_fast(H, W, ph, pw, sh, sw, seed)
+        if coords.shape[0] == 0:
+            raise RuntimeError("[select_samples] No valid patch positions for given H,W,ph,pw")
+
+        # preallocate output and fill in one patch at a time (no Python per-element work)
+        out = np.empty(samples, dtype=np.int64)
+        pos = 0
+        per_patch = ph * pw
+        # how many patches we need at most
+        max_patches = math.ceil(samples / per_patch)
+
+        for (top, left) in coords[:max_patches]:
+            patch = _patch_indices_colmajor_grouped_fast(H, int(top), int(left), ph, pw)  # length = per_patch
+            need = samples - pos
+            if need <= 0:
+                break
+            take = patch if need >= per_patch else patch[:need]
+            n = take.size
+            out[pos:pos+n] = take
+            pos += n
+            if pos >= samples:
+                break
+
+        # safety (should be full due to capacity check)
+        if pos < samples:
+            raise RuntimeError("[select_samples] Internal underfill; please report.")
+
+        return torch.from_numpy(out)
+
+
 
     def get_loss_from_ret(self, ret, rgb=True, sdf=True, depth=True, fs=True, smooth=False):
         '''
@@ -175,6 +290,10 @@ class CoSLAM():
         # Training
         for i in range(n_iters):
             self.map_optimizer.zero_grad()
+
+            """ 
+            To do patch sampling, you should edit the config file of the dataset, and provide patch dimensions
+            """
             indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
             
             indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
@@ -578,7 +697,7 @@ class CoSLAM():
             self.est_c2w_data_rel[frame_id] = delta
         
         print('Best loss: {}, Last loss{}'.format(F.l1_loss(best_c2w_est.to(self.device)[0,:3], c2w_gt[:3]).cpu().item(), F.l1_loss(c2w_est[0,:3], c2w_gt[:3]).cpu().item()))
-    
+
     def convert_relative_pose(self):
         poses = {}
         for i in range(len(self.est_c2w_data)):
