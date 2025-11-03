@@ -8,7 +8,7 @@ data:
   datadir: ../data/Replica/office0
   trainskip: 1
   output: output/Replica/office0_2
-  exp_name: "morton_R128_13"
+  exp_name: "morton_cuda_T13"
 
 # Add profiling config here
 profiling:

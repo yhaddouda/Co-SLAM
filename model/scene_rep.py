@@ -10,50 +10,18 @@ from .utils import sample_pdf, batchify, get_sdf_loss, mse2psnr, compute_loss
 #nvtx 
 import nvtx
 
-def _morton_const(x: torch.Tensor, v: int) -> torch.Tensor:
-    # create an int64 constant on the same device/dtype as x
-    return torch.tensor(v, dtype=torch.int64, device=x.device)
+# Morton code imports
+from .fast_morton import morton3d_keys_cuda
 
-def _split_by_3_u64(x: torch.Tensor) -> torch.Tensor:
-    """
-    Spread lower 21 bits of x so there are two zero bits between each original bit.
-    x: int64 tensor (non-negative), any shape, device = CUDA or CPU.
-    Returns: int64 tensor, same shape.
-    """
-    x = x.to(torch.int64) & _morton_const(x, 0x1FFFFF)
-    x = (x | (x << 32)) & _morton_const(x, 0x1f00000000ffff)
-    x = (x | (x << 16)) & _morton_const(x, 0x1f0000ff0000ff)
-    x = (x | (x <<  8)) & _morton_const(x, 0x100f00f00f00f00f)
-    x = (x | (x <<  4)) & _morton_const(x, 0x10c30c30c30c30c3)
-    x = (x | (x <<  2)) & _morton_const(x, 0x1249249249249249)
-    return x
-
-def morton3d_u64(ix: torch.Tensor, iy: torch.Tensor, iz: torch.Tensor) -> torch.Tensor:
-    """
-    3D Morton (Z-order) code from integer voxel indices.
-    ix, iy, iz: int64 tensors (same shape), values in [0, 2^21-1].
-    Returns: int64 tensor of Morton keys.
-    """
-    return (_split_by_3_u64(ix)
-            | (_split_by_3_u64(iy) << 1)
-            | (_split_by_3_u64(iz) << 2))
 
 @torch.no_grad()
 def morton_permutation_from_points01(pts01: torch.Tensor, R: int = 128) -> torch.Tensor:
-    """
-    Build a Morton-based permutation for normalized points in [0,1]^3.
-    pts01: [N,3] float32/float16 on CUDA (preferred).
-    R:    quantization resolution per axis (<= 2^21 recommended).
-    Returns:
-      perm: [N] int64 permutation indices so that pts_sorted = pts01[perm].
-    """
-    assert pts01.shape[-1] == 3
-    R_t = torch.tensor(R, device=pts01.device, dtype=pts01.dtype)
-    ixyz = torch.clamp(torch.floor(pts01 * R_t), 0, R - 1).to(torch.int64)  # [N,3]
-    ix, iy, iz = ixyz.unbind(dim=-1)
-    keys = morton3d_u64(ix, iy, iz)                                         # [N] int64
-    perm = torch.argsort(keys, stable=True)                                  # GPU sort
-    return perm
+    # pts01: [N,3], float32, CUDA
+    with torch.cuda.nvtx.range("morton_keys"):
+        keys = morton3d_keys_cuda(pts01, R)          # int32 keys on GPU
+    with torch.cuda.nvtx.range("argsort"):
+        perm = torch.argsort(keys, stable=False)     # fast radix on int32
+    return perm.to(torch.long)
 
 
 class JointEncoding(nn.Module):
@@ -179,28 +147,28 @@ class JointEncoding(nn.Module):
         with torch.cuda.nvtx.range("reshape_tensor"):
             inputs_flat = torch.reshape(query_points, [-1, query_points.shape[-1]])
 
-        with torch.cuda.nvtx.range("TCNN_hashgrid_encoding"):
+        with torch.cuda.nvtx.range("Hashgrid_encoding"):
             embedded = self.embed_fn(inputs_flat)
 
         if embed:
             return torch.reshape(embedded, list(query_points.shape[:-1]) + [embedded.shape[-1]])
         
         # grid interpolation
-        with torch.cuda.nvtx.range("TCNN_oneblob_encoding"):
+        with torch.cuda.nvtx.range("Oneblob_encoding"):
             embedded_pos = self.embedpos_fn(inputs_flat)
 
         # sdf mlp
-        with torch.cuda.nvtx.range("sdf_mlp"):
+        with torch.cuda.nvtx.range("MLP"):
             out = self.sdf_net(torch.cat([embedded, embedded_pos], dim=-1))
 
-        sdf, geo_feat = out[..., :1], out[..., 1:]
+        with torch.cuda.nvtx.range("tensor_split"):
+            sdf, geo_feat = out[..., :1], out[..., 1:]
 
         with torch.cuda.nvtx.range("reshape_tensor"):
             sdf = torch.reshape(sdf, list(query_points.shape[:-1]))
         if not return_geo:
             return sdf
-        with torch.cuda.nvtx.range("reshape_tensor"):
-            geo_feat = torch.reshape(geo_feat, list(query_points.shape[:-1]) + [geo_feat.shape[-1]])
+        geo_feat = torch.reshape(geo_feat, list(query_points.shape[:-1]) + [geo_feat.shape[-1]])
 
         return sdf, geo_feat
     
@@ -231,9 +199,10 @@ class JointEncoding(nn.Module):
                 embed_color = self.embed_fn_color(inputs_flat)
             return self.decoder(embed, embe_pos, embed_color)
         
-        # decoder is called at return very interesting
-        return self.decoder(embed, embe_pos)
-    
+        with torch.cuda.nvtx.range("Decoder"):
+            out = self.decoder(embed, embe_pos)
+        return out
+
     def run_network(self, inputs):
         """
         Run the network on a batch of inputs.
