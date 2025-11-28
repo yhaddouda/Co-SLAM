@@ -7,12 +7,12 @@ mapping:
 data:
   datadir: ../data/Replica/office0
   trainskip: 1
-  output: output/Replica/office0_2
-  exp_name: "morton_cuda_T13"
+  output: output/Replica/office0
+  exp_name: "ncu"
 
 # Add profiling config here
 profiling:
-  enabled: true
+  enabled: False
   output_dir: ./profiling/PytorchProfiler/office0
   schedule:
     wait: 1

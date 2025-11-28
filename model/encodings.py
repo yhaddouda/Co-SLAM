@@ -3,7 +3,7 @@ import numpy as np
 import tinycudann as tcnn
 
 
-def get_encoder(encoding, input_dim=3,
+def get_encoder(encoding, hash = "Morton", input_dim=3, # the hash flag is here is not important, the edits should be done in the config file
                 degree=4, n_bins=16, n_frequencies=12,
                 n_levels=16, level_dim=2, 
                 base_resolution=16, log2_hashmap_size=19, 
@@ -30,10 +30,12 @@ def get_encoder(encoding, input_dim=3,
     # Sparse grid encoding
     elif 'hash' in encoding.lower() or 'tiled' in encoding.lower():
         print('Hash size', log2_hashmap_size)
+        print('Hash function', hash)
         per_level_scale = np.exp2(np.log2(desired_resolution  / base_resolution) / (n_levels - 1))
         embed = tcnn.Encoding(
             n_input_dims=input_dim,
             encoding_config={
+                "hash" : hash,
                 "otype": 'HashGrid',
                 "n_levels": n_levels,
                 "n_features_per_level": level_dim,

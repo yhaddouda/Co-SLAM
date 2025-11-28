@@ -4,3 +4,6 @@ sudo nsys profile   --trace cuda,osrt,nvtx,cudnn,cublas   --gpu-metrics-devices 
 
 # After generating the .nsys-rep file with the previous command, you can generate statistics for a nvtx range (function) with this command :
 nsys stats --report nvtx_sum --format csv --output Orin_Morton_R128_T13.csv Orin_Morton_R128_T13.nsys-rep
+
+# For the cuda morton 
+For the moment I don't use sudo and --gpu-metrics-devices all 

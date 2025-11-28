@@ -57,17 +57,17 @@ class JointEncoding(nn.Module):
         '''
         # Coordinate encoding
         with torch.cuda.nvtx.range("coord_encoder"):
-            self.embedpos_fn, self.input_ch_pos = get_encoder(config['pos']['enc'], n_bins=self.config['pos']['n_bins'])
+            self.embedpos_fn, self.input_ch_pos = get_encoder(config['pos']['enc'], n_bins=self.config['pos']['n_bins'], hash=config['grid']['hash'])
 
         # Sparse parametric encoding (SDF)
         with torch.cuda.nvtx.range("parametric_encoder_sdf"):
-            self.embed_fn, self.input_ch = get_encoder(config['grid']['enc'], log2_hashmap_size=config['grid']['hash_size'], desired_resolution=self.resolution_sdf)
+            self.embed_fn, self.input_ch = get_encoder(config['grid']['enc'], log2_hashmap_size=config['grid']['hash_size'], desired_resolution=self.resolution_sdf, hash=config['grid']['hash'])
 
         # Sparse parametric encoding (Color)
         if not self.config['grid']['oneGrid']:
             print('Color resolution:', self.resolution_color)
             with torch.cuda.nvtx.range("parametric_encoder_color"):
-                self.embed_fn_color, self.input_ch_color = get_encoder(config['grid']['enc'], log2_hashmap_size=config['grid']['hash_size'], desired_resolution=self.resolution_color)
+                self.embed_fn_color, self.input_ch_color = get_encoder(config['grid']['enc'], log2_hashmap_size=config['grid']['hash_size'], desired_resolution=self.resolution_color, hash=config['grid']['hash'])
 
     def get_decoder(self, config):
         '''
@@ -231,7 +231,7 @@ class JointEncoding(nn.Module):
                 # Build permutation that clusters spatial neighbors. Then call the
                 # decoder on the permuted array and scatter back to original order.
                 with torch.cuda.nvtx.range("morton_permutation"):
-                    perm = morton_permutation_from_points01(inputs01, R=R)  # [N] int64, CUDA
+                    perm = morton_permutation_from_points01(inputs01, R=R)  # [N] int32, CUDA
                 inputs01_sorted = inputs01[perm]                        # [N,3]
                 with torch.cuda.nvtx.range("query_color_sdf"):
                     outputs_sorted = batchify(self.query_color_sdf, None)(inputs01_sorted)  # [N,4] :contentReference[oaicite:1]{index=1}

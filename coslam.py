@@ -878,7 +878,7 @@ class CoSLAM():
 
         # Start Co-SLAM!
         for i, batch in tqdm(enumerate(data_loader)):
-            if i > 20 :
+            if i>100 :
                 break
             # Visualisation
             if self.config['mesh']['visualisation']:
