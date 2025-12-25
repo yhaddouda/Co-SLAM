@@ -40,7 +40,7 @@ tracking:
   best: True
 
 sampling_tracking:
-  mode: patch
+  mode: random
   ph: 1
   pw: 16
   sh: 1  
@@ -57,8 +57,8 @@ grid:
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True
-  hash: Morton  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
-  morton_sort: True  # enable/disable
+  hash: Morton # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton", "CoherentPrime"
+  morton_sort: True # enable/disable
   morton_R: 128        # 64..256 good defaults
 
 pos:

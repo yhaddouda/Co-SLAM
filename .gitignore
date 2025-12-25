@@ -170,4 +170,4 @@ tiny-cuda-nn/
 experiment_data/
 plots/
 profiling/
-.torch_extensions/
+.torch_extensions_ada/
