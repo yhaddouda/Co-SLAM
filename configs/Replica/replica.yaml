@@ -40,7 +40,7 @@ tracking:
   best: True
 
 sampling_tracking:
-  mode: patch
+  mode: random
   ph: 1
   pw: 16
   sh: 1  
@@ -53,12 +53,12 @@ sampling_tracking:
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size:  20
+  hash_size:  16
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True
-  hash: Morton  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
-  morton_sort: True  # enable/disable
+  hash: CoherentPrime  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
+  morton_sort: False # enable/disable
   morton_R: 128        # 64..256 good defaults
 
 pos:
