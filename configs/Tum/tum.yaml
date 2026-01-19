@@ -42,10 +42,13 @@ tracking:
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size: 16
+  hash_size: 19
   voxel_color: 0.04
   voxel_sdf: 0.02
   oneGrid: True
+  hash: Morton  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
+  morton_sort: True # enable/disable
+  morton_R: 128  
 
 pos:
   enc: 'OneBlob'
