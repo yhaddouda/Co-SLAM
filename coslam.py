@@ -35,6 +35,9 @@ import nvtx
 
 import math
 
+#CUDA extension for Morton code
+from model.morton_2D import morton2d_keys_cuda
+
 # Helpers for patch sampling
 def _grid_jitter_toplefts_fast(H, W, ph, pw, sh, sw, seed=None):
     """
@@ -129,7 +132,53 @@ class CoSLAM():
         )
         self.profiler = None
         self.profiling_step = 0
+        print("Morton2D is :", self.config['grid'].get('morton2D', False))
+    
+    def sort_rays_by_morton(self, indices=None, rays_d=None, frame_ids=None, H=None, W=None):
+        """
+        Sorts rays based on 2D Morton codes to improve cache locality.
+        Conditioned by config['grid']['morton2D'].
+        """
+        # 1. Ablation Switch
+        if not self.config['grid'].get('morton2D', False):
+            return None 
 
+        with torch.cuda.nvtx.range("morton_sort_overhead"):
+            R = 128 
+            
+            # --- CASE A: Single Frame (using flattened indices) ---
+            if indices is not None:
+                # Recover 2D coordinates from flattened indices
+                # u = idx % W, v = idx // W
+                y = (indices // W).float() / H
+                x = (indices % W).float() / W
+                uv = torch.stack([x, y], dim=-1).to(self.device) # [N, 2]
+                
+                # Generate keys (frame_id is None, so it's just pure spatial sort)
+                keys = morton2d_keys_cuda(uv, None, R)
+                
+            # --- CASE B: Multi-Frame / Bundle Adjustment ---
+            elif rays_d is not None:
+                # We use ray directions as a proxy for screen coordinates.
+                # Project or simpler: normalize direction X/Y to [0,1].
+                # (We just need relative order, not exact pixels)
+                uv = rays_d[:, :2] * 0.5 + 0.5 
+                uv = torch.clamp(uv, 0.0, 1.0)
+                
+                # frame_ids MUST be Int64 for the C++ kernel
+                fids = frame_ids.to(torch.int64) if frame_ids is not None else None
+                
+                # Generate packed keys: [Frame_ID | Morton_Code]
+                keys = morton2d_keys_cuda(uv, fids, R)
+            
+            else:
+                return None
+
+            # 2. Sort the keys to get permutation
+            perm = torch.argsort(keys)
+            
+        return perm
+    
     def start_profiling(self, wait=1, warmup=0, active=10, repeat=1):
         """Start profiling with optimized schedule for SLAM"""
         if not self.enable_profiling:
@@ -376,6 +425,18 @@ class CoSLAM():
                     To do patch sampling, you should edit the config file of the dataset, and provide patch dimensions
                      """
                     indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
+                    # --- START FIX ---
+                    # 1. Move to GPU for sorting
+                    indice = indice.to(self.device)
+                    
+                    # 2. Sort
+                    perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
+                    if perm is not None:
+                        indice = indice[perm]
+                    
+                    # 3. CRITICAL: Move back to CPU to index the CPU batch tensors
+                    indice = indice.cpu()
+                    # --- END FIX ---
                 
                 with torch.cuda.nvtx.range("ray_sampling&coords_transform"):
                     indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
@@ -435,6 +496,13 @@ class CoSLAM():
         for i in range(self.config['mapping']['cur_frame_iters']):
             self.cur_map_optimizer.zero_grad()
             indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
+            # --- START FIX ---
+            indice = indice.to(self.device)
+            perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
+            if perm is not None:
+                indice = indice[perm]
+            indice = indice.cpu() # <--- Move back to CPU
+            # --- END FIX ---
             
             indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
             rays_d_cam = batch['direction'].squeeze(0)[indice_h, indice_w, :].to(self.device)
@@ -556,6 +624,18 @@ class CoSLAM():
 
                     rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
                     ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
+                    # --- NEW: Sort Multi-Frame Rays ---
+                    perm = self.sort_rays_by_morton(
+                        rays_d=rays[..., :3].to(self.device), 
+                        frame_ids=ids_all.to(self.device)
+                    )
+                    
+                    if perm is not None:
+                        # Fix: move perm to cpu() because 'rays' is likely on CPU
+                        perm = perm.cpu() 
+                        rays = rays[perm]
+                        ids_all = ids_all[perm]
+                    # ----------------------------------
 
                 with torch.cuda.nvtx.range("cpu_to_gpu_gt"):
                     rays_d_cam = rays[..., :3].to(self.device)
@@ -759,6 +839,13 @@ class CoSLAM():
                 with torch.cuda.nvtx.range("select_samples"):
                     if indice is None:
                         indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
+                        # --- START FIX ---
+                        indice = indice.to(self.device)
+                        perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
+                        if perm is not None:
+                            indice = indice[perm]
+                        indice = indice.cpu() # <--- Move back to CPU
+                        # --- END FIX ---
                     
                         # Slicing
                         indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
@@ -878,6 +965,8 @@ class CoSLAM():
 
         # Start Co-SLAM!
         for i, batch in tqdm(enumerate(data_loader)):
+            if i>20:
+                break
             # Visualisation
             if self.config['mesh']['visualisation']:
                 rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)

@@ -53,13 +53,14 @@ sampling_tracking:
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size:  16
+  hash_size:  19
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True
-  hash: CoherentPrime  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
-  morton_sort: False # enable/disable
+  hash: Morton  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
+  morton_sort: True # enable/disable
   morton_R: 128        # 64..256 good defaults
+  morton2D : False  # more efficient than morton 3D, cannot be activated simaultaneously
 
 pos:
   enc: 'OneBlob'

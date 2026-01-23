@@ -307,9 +307,44 @@ class JointEncoding(nn.Module):
 
         # Run rendering pipeline
         with torch.cuda.nvtx.range("compute_points"):
-            pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None] # [N_rays, N_samples, 3]
+            # Check the flag
+            do_morton = self.config['grid'].get('morton2D', False)
+
+            if do_morton:
+                # --- OPTIMIZED PATH: Transposed Layout [Samples, Rays, 3] ---
+                # 1. Transpose z_vals from [Rays, Samples] to [Samples, Rays]
+                z_vals_T = z_vals.permute(1, 0).contiguous()
+                
+                # 2. Broadcast: 
+                # rays_o/d: [Rays, 3] -> [1, Rays, 3]
+                # z_vals_T: [Samples, Rays] -> [Samples, Rays, 1]
+                # Result pts: [Samples, Rays, 3]
+                pts = rays_o[None, ...] + rays_d[None, ...] * z_vals_T[..., None]
+                
+                # 3. Flatten. In memory, this is now:
+                # Sample0_Ray0, Sample0_Ray1, Sample0_Ray2...
+                # Since we sorted Rays 0,1,2 to be neighbors, this is a linear memory read!
+                pts_flat = pts.reshape(-1, 3)
+                
+            else:
+                # --- ORIGINAL PATH: Standard Layout [Rays, Samples, 3] ---
+                pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None] 
+                pts_flat = pts.reshape(-1, 3)
+                
         with torch.cuda.nvtx.range("run_network"):
-            raw = self.run_network(pts)
+            # Pass the flattened points (layout agnostic)
+            raw_flat = self.run_network(pts_flat)
+            
+            # Reshape back based on which layout we used
+            if do_morton:
+                # Output was [S*R, 4] -> reshape [S, R, 4]
+                raw = raw_flat.reshape(z_vals.shape[1], z_vals.shape[0], 4)
+                # Permute back to [R, S, 4] for volume rendering accumulation
+                raw = raw.permute(1, 0, 2).contiguous()
+            else:
+                # Output was [R*S, 4] -> reshape [R, S, 4]
+                raw = raw_flat.reshape(z_vals.shape[0], z_vals.shape[1], 4)
+
         with torch.cuda.nvtx.range("volume_rendering"):
             rgb_map, disp_map, acc_map, weights, depth_map, depth_var = self.raw2outputs(raw, z_vals, self.config['training']['white_bkgd'])
 
