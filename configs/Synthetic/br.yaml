@@ -5,7 +5,7 @@ mapping:
   
 
 data:
-  datadir: ../data/neural_rgbd_data/breakfast_room
+  datadir: ../datasets/data/neural_rgbd_data/breakfast_room
   trainskip: 1
   output: output/Synthetic/br
   exp_name: 19_base

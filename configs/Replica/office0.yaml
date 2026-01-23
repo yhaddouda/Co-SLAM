@@ -8,14 +8,4 @@ data:
   datadir: ../datasets/data/Replica/office0
   trainskip: 1
   output: output/Replica/office0
-  exp_name: "ncu"
-
-# Add profiling config here
-profiling:
-  enabled: False
-  output_dir: ./profiling/PytorchProfiler/office0
-  schedule:
-    wait: 1
-    warmup: 0
-    active: 10
-    repeat: 1
+  exp_name: "table_size_val"

@@ -5,7 +5,7 @@ mapping:
   
 
 data:
-  datadir: ../data/neural_rgbd_data/thin_geometry
+  datadir: ../datasets/data/neural_rgbd_data/thin_geometry
   trainskip: 1
   output: output/Synthetic/tg
   exp_name: 19_base

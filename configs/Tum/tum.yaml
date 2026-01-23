@@ -39,6 +39,16 @@ tracking:
   const_speed: True
   best: False
 
+sampling_tracking:
+  mode: random
+  ph: 1
+  pw: 16
+  sh: 1  
+  sw: 16
+  # cap_per_patch: 128        # uncomment to limit per-patch contribution (keeps groups)
+  # shuffle_patches: false    # keep groups ordered across patches
+  # seed: 0
+  
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
@@ -46,6 +56,9 @@ grid:
   voxel_color: 0.04
   voxel_sdf: 0.02
   oneGrid: True
+  hash: CoherentPrime # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton", "CoherentPrime"
+  morton_sort: False # enable/disable
+  morton_R: 128        # 64..256 good defaults
 
 pos:
   enc: 'OneBlob'

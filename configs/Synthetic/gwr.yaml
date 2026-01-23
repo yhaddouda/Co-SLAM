@@ -5,7 +5,7 @@ mapping:
   
 
 data:
-  datadir: ../data/neural_rgbd_data/grey_white_room
+  datadir: ../datasets/data/neural_rgbd_data/grey_white_room
   trainskip: 1
   output: output/Synthetic/gwr
   exp_name: 19_base
