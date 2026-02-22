@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 from torch.utils.cpp_extension import load
 
-# Make sure we only build for Orin (Ampere, SM 8.7). Must be set before `load`.
-os.environ.setdefault("TORCH_CUDA_ARCH_LIST", "8.7")
+# Make sure we only build for RTX3090(Ada, SM 8.9). Must be set before `load`.
+os.environ.setdefault("TORCH_CUDA_ARCH_LIST", "8.9")
 
 _src = str(Path(__file__).with_name("morton_cuda.cu"))
 

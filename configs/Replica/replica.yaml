@@ -58,7 +58,7 @@ grid:
   voxel_sdf: 0.02
   oneGrid: True
   hash: CoherentPrime # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton", "CoherentPrime"
-  morton_sort: False # enable/disable
+  morton_sort: True # enable/disable
   morton_R: 128        # 64..256 good defaults
 
 pos:

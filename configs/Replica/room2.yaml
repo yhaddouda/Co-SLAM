@@ -8,4 +8,4 @@ data:
   datadir: ../datasets/data/Replica/room2
   trainskip: 1
   output: output/Replica/room2
-  exp_name: "table_size_val"
+  exp_name: "quality"

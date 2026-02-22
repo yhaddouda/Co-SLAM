@@ -8,4 +8,4 @@ data:
   datadir: ../datasets/data/Replica/office2
   trainskip: 1
   output: output/Replica/office2
-  exp_name: "table_size_val"
+  exp_name: "quality"
