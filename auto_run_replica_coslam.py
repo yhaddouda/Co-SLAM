@@ -18,7 +18,7 @@ SETUP_DEFINITIONS = {
 }
 
 # Scenes specific to TUM (used if auto-scan fails or for default reference)
-DEFAULT_TUM_SCENES = ["fr1_desk", "fr2_xyz", "fr3_office"]
+DEFAULT_Replica_SCENES = ["office0", "office1", "office2", "office3", "office4", "room0", "room1", "room2"]
 
 def read_yaml(path: Path) -> dict:
     with open(path, "r", encoding="utf-8") as f:
@@ -98,11 +98,11 @@ def main():
     # Default changed to look in configs/Tum
     parser.add_argument("--scenes", nargs="+", default=None,
                         help="Explicit list of scene names (e.g. fr1_desk).")
-    parser.add_argument("--configs-root", default="configs/Tum", type=Path,
+    parser.add_argument("--configs-root", default="configs/Replica", type=Path,
                         help="Folder containing base scene YAML files.")
     
     # --- Execution & Logging ---
-    parser.add_argument("--log-file", default="output/tum_execution_times.csv", type=Path,
+    parser.add_argument("--log-file", default="output/Replica_execution_times.csv", type=Path,
                         help="Path to the global CSV log file.")
     parser.add_argument("--python-exec", default=sys.executable,
                         help="Python executable to use.")
@@ -138,7 +138,7 @@ def main():
         # If folder scan yields nothing, fallback to the hardcoded known TUM list
         if not scenes:
             print(f"WARNING: No YAML files found in {args.configs_root}. Using default TUM list.")
-            scenes = DEFAULT_TUM_SCENES
+            scenes = DEFAULT_Replica_SCENES
 
     print(f"Total Runs Scheduled: {len(scenes) * len(args.setups) * len(args.sizes)}")
     print(f"  > Scenes: {scenes}")
