@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CONDA_PREFIX="/home/yh279050/miniforge3/envs/coslam"
-PROJECT_ROOT="/home/yh279050/work/Co-SLAM"
+CONDA_PREFIX="/home/nvidia/miniforge3/envs/coslam"
+PROJECT_ROOT="/home/nvidia/work/Co-SLAM"
 
 # Make sure we run from the project root
 cd "$PROJECT_ROOT"
