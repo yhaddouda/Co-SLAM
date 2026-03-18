@@ -1,0 +1,19 @@
+inherit_from: configs/Replica/office0.yaml
+
+data:
+  exp_name: "pass1_multilayer"
+
+mapping:
+  first_mesh: False
+
+mesh:
+  vis: 1000000000
+  visualisation: False
+
+timing:
+  mode: scene_rep   # options: none, scene_rep, coslam
+  warmup_frames: 5
+  max_frames: 40
+  disable_eval: True
+  scene_output_csv: ./Monitoring/multilayer/office0/scene_rep_timing.csv
+  coslam_output_csv: ./Monitoring/multilayer/office0/coslam_layer_timing_D.csv

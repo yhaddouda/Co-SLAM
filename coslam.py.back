@@ -19,7 +19,6 @@ from tqdm import tqdm
 # Local imports
 import config
 from model.scene_rep import JointEncoding
-from model.layer_timing import DeferredCudaTimer
 from model.keyframe import KeyFrameDatabase
 from datasets.dataset import get_dataset
 from utils import coordinates, extract_mesh, colormap_image
@@ -140,16 +139,6 @@ class CoSLAM():
         self.get_pose_representation()
         self.keyframeDatabase = self.create_kf_database(config)
         self.model = JointEncoding(config, self.bounding_box).to(self.device)
-
-        timing_cfg = config.get('timing', {})
-        mode = timing_cfg.get('mode', 'none')
-        self.max_timing_frames = timing_cfg.get('max_frames', None)
-        self.disable_timing_eval = bool(timing_cfg.get('disable_eval', True))
-        self.coslam_timing = DeferredCudaTimer(
-            enabled=(mode == 'coslam'),
-            output_csv=timing_cfg.get('coslam_output_csv', './profiling/pass1/office0/coslam_layer_timing.csv'),
-            warmup_frames=timing_cfg.get('warmup_frames', 0),
-        )
 
         # Profiling configuration
         self.enable_profiling = False #config.get('profiling', {}).get('enabled', False)
@@ -429,8 +418,6 @@ class CoSLAM():
         
         '''
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
-        self.model.set_timing_context(0, 'First_frame_mapping')
-        self.coslam_timing.set_context(0, 'First_frame_mapping')
         with record_function("FF_mapping"):
             print('First frame mapping...')
             with nvtx_range("cpu_to_gpu_c2w_FFM"):
@@ -476,21 +463,17 @@ class CoSLAM():
                     rays_d = torch.sum(rays_d_cam[..., None, :] * c2w[:3, :3], -1)
 
                 # Forward
-                with self.coslam_timing.stage('forward_FFM'):
-                    with nvtx_range("forward_FFM"):
-                        ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                with nvtx_range("forward_FFM"):
+                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
 
-                with self.coslam_timing.stage('Loss_calculation_FFM'):
-                    with nvtx_range("Loss_calculation_FFM"):
-                        loss = self.get_loss_from_ret(ret)
+                with nvtx_range("Loss_calculation_FFM"):
+                    loss = self.get_loss_from_ret(ret)
 
-                with self.coslam_timing.stage('backward_FFM'):
-                    with nvtx_range("backward_FFM"):
-                        loss.backward()
+                with nvtx_range("backward_FFM"):
+                    loss.backward()
 
-                with self.coslam_timing.stage('map_optim_FFM'):
-                    with nvtx_range("map_optim_FFM"):
-                        self.map_optimizer.step()
+                with nvtx_range("map_optim_FFM"):
+                    self.map_optimizer.step()
 
             with nvtx_range("add_keyframe_FFM"):
                 # First frame will always be a keyframe
@@ -500,10 +483,6 @@ class CoSLAM():
             
             print('First frame mapping done')
 
-        self.model.flush_scene_timing()
-        self.coslam_timing.flush()
-        self.model.flush_scene_timing()
-        self.coslam_timing.flush()
         self.step_profiler()
         return ret, loss
 
@@ -523,8 +502,6 @@ class CoSLAM():
         if self.config['mapping']['cur_frame_iters'] <= 0:
             return
         print('Current frame mapping...')
-        self.model.set_timing_context(cur_frame_id, 'Current_frame_mapping')
-        self.coslam_timing.set_context(cur_frame_id, 'Current_frame_mapping')
         
         c2w = self.est_c2w_data[cur_frame_id].to(self.device)
 
@@ -551,17 +528,11 @@ class CoSLAM():
             rays_d = torch.sum(rays_d_cam[..., None, :] * c2w[:3, :3], -1)
 
             # Forward
-            with self.coslam_timing.stage('Forward_CFM'):
-                ret = self.model.forward(rays_o, rays_d, target_s, target_d)
-            with self.coslam_timing.stage('Loss_calculation_CFM'):
-                loss = self.get_loss_from_ret(ret)
-            with self.coslam_timing.stage('Backward_CFM'):
-                loss.backward()
-            with self.coslam_timing.stage('Optimize_map_CFM'):
-                self.cur_map_optimizer.step()
+            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+            loss = self.get_loss_from_ret(ret)
+            loss.backward()
+            self.cur_map_optimizer.step()
         
-        self.model.flush_scene_timing()
-        self.coslam_timing.flush()
         
         return ret, loss
 
@@ -612,8 +583,6 @@ class CoSLAM():
             cur_frame_id: current frame id
         '''
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
-        self.model.set_timing_context(cur_frame_id, 'Bundle_Adjustment')
-        self.coslam_timing.set_context(cur_frame_id, 'Bundle_Adjustment')
         with record_function("Bundle_Adjustment"):
 
             pose_optimizer = None
@@ -694,42 +663,42 @@ class CoSLAM():
                         rays_o = poses_all[ids_all, None, :3, -1].repeat(1, rays_d.shape[1], 1).reshape(-1, 3)
                         rays_d = rays_d.reshape(-1, 3)
 
-                    with self.coslam_timing.stage('Forward_BA'):
-                        with nvtx_range("Forward_BA"):
-                            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                    with nvtx_range("Forward_BA"):
+                        ret = self.model.forward(rays_o, rays_d, target_s, target_d)
 
-                    with self.coslam_timing.stage('Loss_calculation_BA'):
-                        with nvtx_range("Loss_calculation_BA"):
-                            loss = self.get_loss_from_ret(ret, smooth=True)
+                    with nvtx_range("Loss_calculation_BA"):
+                        loss = self.get_loss_from_ret(ret, smooth=True)
 
-                    with self.coslam_timing.stage('Backward_BA'):
-                        with nvtx_range("Backward_BA"):
-                            loss.backward(retain_graph=True)
+                    with nvtx_range("Backward_BA"):
+                        loss.backward(retain_graph=True)
 
-                    with self.coslam_timing.stage('Optimize_map_pose_BA'):
-                        with nvtx_range("Optimize_map_pose_BA"):
-                            if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
-                                if (i + 1) > cfg["mapping"]["map_wait_step"]:
-                                    self.map_optimizer.step()
-                                else:
-                                    print('Wait update')
-                                self.map_optimizer.zero_grad()
+                    with nvtx_range("Optimize_map_pose_BA"):
+                        if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
+                        
+                            if (i + 1) > cfg["mapping"]["map_wait_step"]:
+                                self.map_optimizer.step()
+                            else:
+                                print('Wait update')
+                            self.map_optimizer.zero_grad()
 
-                            if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
-                                pose_optimizer.step()
-                                # get SE3 poses to do forward pass
-                                pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
-                                pose_optim = pose_optim.to(self.device)
-                                # So current pose is always unchanged
-                                if self.config['mapping']['optim_cur']:
-                                    poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
-                                else:
-                                    current_pose = self.est_c2w_data[cur_frame_id][None,...]
-                                    # SE3 poses
-                                    poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
+                        if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
+                            pose_optimizer.step()
+                            # get SE3 poses to do forward pass
+                            pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
+                            pose_optim = pose_optim.to(self.device)
+                            # So current pose is always unchanged
+                            if self.config['mapping']['optim_cur']:
+                                poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
+                            
+                            else:
+                                current_pose = self.est_c2w_data[cur_frame_id][None,...]
+                                # SE3 poses
 
-                                # zero_grad here
-                                pose_optimizer.zero_grad()
+                                poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
+
+
+                            # zero_grad here
+                            pose_optimizer.zero_grad()
                     # CRITICAL: Sync here so NCU captures the full duration of kernels 
                     # launched within this NVTX range.
                     torch.cuda.synchronize()
@@ -742,8 +711,6 @@ class CoSLAM():
                     if self.config['mapping']['optim_cur']:
                         print('Update current pose')
                         self.est_c2w_data[cur_frame_id] = self.matrix_from_tensor(cur_rot[-1:], cur_trans[-1:]).detach().clone()[0]
-        self.model.flush_scene_timing()
-        self.coslam_timing.flush()
         self.step_profiler()
  
     def predict_current_pose(self, frame_id, constant_speed=True):
@@ -860,8 +827,6 @@ class CoSLAM():
             frame_id: Current frame id (int)
         '''
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
-        self.model.set_timing_context(frame_id, 'Tracking')
-        self.coslam_timing.set_context(frame_id, 'Tracking')
         with record_function("tracking_render"):
             with nvtx_range("cpu_to_gpu_pose_tr"):
                 c2w_gt = batch['c2w'][0].to(self.device)
@@ -912,13 +877,11 @@ class CoSLAM():
                         rays_o = c2w_est[...,:3, -1].repeat(self.config['tracking']['sample'], 1)
                         rays_d = torch.sum(rays_d_cam[..., None, :] * c2w_est[:, :3, :3], -1)
 
-                    with self.coslam_timing.stage('forward_tr'):
-                        with nvtx_range("forward_tr"):
-                            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                    with nvtx_range("forward_tr"):
+                        ret = self.model.forward(rays_o, rays_d, target_s, target_d)
                     
-                    with self.coslam_timing.stage('loss_calculation_tr'):
-                        with nvtx_range("loss_calculation_tr"):
-                            loss = self.get_loss_from_ret(ret)
+                    with nvtx_range("loss_calculation_tr"):
+                        loss = self.get_loss_from_ret(ret)
                     
                     with nvtx_range("sdf_loss_tr"):
                         if best_sdf_loss is None:
@@ -939,13 +902,11 @@ class CoSLAM():
                         if thresh >self.config['tracking']['wait_iters']:
                             break
 
-                    with self.coslam_timing.stage('backward_tr'):
-                        with nvtx_range("backward_tr"):
-                            loss.backward()
+                    with nvtx_range("backward_tr"):
+                        loss.backward()
 
-                    with self.coslam_timing.stage('pose_optimizer_tr'):
-                        with nvtx_range("pose_optimizer_tr"):
-                            pose_optimizer.step()
+                    with nvtx_range("pose_optimizer_tr"):
+                        pose_optimizer.step()
             
             if self.config['tracking']['best']:
                 # Use the pose with smallest loss
@@ -964,8 +925,6 @@ class CoSLAM():
                     self.est_c2w_data_rel[frame_id] = delta
             
             print('Best loss: {}, Last loss{}'.format(F.l1_loss(best_c2w_est.to(self.device)[0,:3], c2w_gt[:3]).cpu().item(), F.l1_loss(c2w_est[0,:3], c2w_gt[:3]).cpu().item()))
-        self.model.flush_scene_timing()
-        self.coslam_timing.flush()
         self.step_profiler()
 
     def convert_relative_pose(self):
@@ -1026,8 +985,6 @@ class CoSLAM():
 
         # Start Co-SLAM!
         for i, batch in tqdm(enumerate(data_loader)):
-            if self.max_timing_frames is not None and i >= int(self.max_timing_frames):
-                break
             # Visualisation
             if self.config['mesh']['visualisation']:
                 rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)
@@ -1066,7 +1023,7 @@ class CoSLAM():
                     print('add keyframe:',i)
             
 
-                if (not self.disable_timing_eval) and i % self.config['mesh']['vis']==0:
+                if i % self.config['mesh']['vis']==0:
                     self.save_mesh(i, voxel_size=self.config['mesh']['voxel_eval'])
                     pose_relative = self.convert_relative_pose()
                     pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
@@ -1082,17 +1039,14 @@ class CoSLAM():
                         key = cv2.waitKey(1)
 
 
-        self.model.flush_scene_timing()
-        self.coslam_timing.flush()
         model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
         
         self.save_ckpt(model_savepath)
-        if not self.disable_timing_eval:
-            self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
-            
-            pose_relative = self.convert_relative_pose()
-            pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
-            pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+        self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
+        
+        pose_relative = self.convert_relative_pose()
+        pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
+        pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
 
         #TODO: Evaluation of reconstruction
 
