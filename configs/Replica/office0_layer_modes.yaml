@@ -1,7 +1,7 @@
 inherit_from: configs/Replica/office0.yaml
 
 data:
-  exp_name: "pass1_multilayer"
+  exp_name: "multilayer"
 
 mapping:
   first_mesh: False
@@ -15,5 +15,5 @@ timing:
   warmup_frames: 5
   max_frames: 40
   disable_eval: True
-  scene_output_csv: ./Monitoring/multilayer/office0/scene_rep_timing.csv
-  coslam_output_csv: ./Monitoring/multilayer/office0/coslam_layer_timing_D.csv
+  scene_output_csv: ./Monitoring/multilayer/office0/scene_rep_timing_A.csv
+  coslam_output_csv: ./Monitoring/multilayer/office0/coslam_layer_timing_A.csv

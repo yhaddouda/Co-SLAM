@@ -307,54 +307,55 @@ class JointEncoding(nn.Module):
         n_rays = rays_o.shape[0]
 
         # Sample depth
-        with torch.cuda.nvtx.range("depth_sampling"):
-            if target_d is not None:
-                z_samples = torch.linspace(-self.config['training']['range_d'], self.config['training']['range_d'], steps=self.config['training']['n_range_d']).to(target_d) 
-                z_samples = z_samples[None, :].repeat(n_rays, 1) + target_d
-                z_samples[target_d.squeeze()<=0] = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], steps=self.config['training']['n_range_d']).to(target_d) 
+        with self.layer_timing.stage('depth_sampling'):
+            with torch.cuda.nvtx.range("depth_sampling"):
+                if target_d is not None:
+                    z_samples = torch.linspace(-self.config['training']['range_d'], self.config['training']['range_d'], steps=self.config['training']['n_range_d']).to(target_d) 
+                    z_samples = z_samples[None, :].repeat(n_rays, 1) + target_d
+                    z_samples[target_d.squeeze()<=0] = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], steps=self.config['training']['n_range_d']).to(target_d) 
 
-                if self.config['training']['n_samples_d'] > 0:
-                    z_vals = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], self.config['training']['n_samples_d'])[None, :].repeat(n_rays, 1).to(rays_o)
-                    z_vals, _ = torch.sort(torch.cat([z_vals, z_samples], -1), -1)
+                    if self.config['training']['n_samples_d'] > 0:
+                        z_vals = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], self.config['training']['n_samples_d'])[None, :].repeat(n_rays, 1).to(rays_o)
+                        z_vals, _ = torch.sort(torch.cat([z_vals, z_samples], -1), -1)
+                    else:
+                        z_vals = z_samples
                 else:
-                    z_vals = z_samples
-            else:
-                z_vals = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], self.config['training']['n_samples']).to(rays_o)
-                z_vals = z_vals[None, :].repeat(n_rays, 1) # [n_rays, n_samples]
+                    z_vals = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], self.config['training']['n_samples']).to(rays_o)
+                    z_vals = z_vals[None, :].repeat(n_rays, 1) # [n_rays, n_samples]
 
-        # Perturb sampling depths
-        with torch.cuda.nvtx.range("perturb_depths"):
-            if self.config['training']['perturb'] > 0.:
-                mids = .5 * (z_vals[...,1:] + z_vals[...,:-1])
-                upper = torch.cat([mids, z_vals[...,-1:]], -1)
-                lower = torch.cat([z_vals[...,:1], mids], -1)
-                z_vals = lower + (upper - lower) * torch.rand(z_vals.shape).to(rays_o)
+            # Perturb sampling depths
+                if self.config['training']['perturb'] > 0.:
+                    mids = .5 * (z_vals[...,1:] + z_vals[...,:-1])
+                    upper = torch.cat([mids, z_vals[...,-1:]], -1)
+                    lower = torch.cat([z_vals[...,:1], mids], -1)
+                    z_vals = lower + (upper - lower) * torch.rand(z_vals.shape).to(rays_o)
 
         # Run rendering pipeline
-        with torch.cuda.nvtx.range("compute_points"):
-            # Check the flag
-            do_morton = self.config['grid'].get('morton2D', False)
+        with self.layer_timing.stage('compute_points'):
+            with torch.cuda.nvtx.range("compute_points"):
+                # Check the flag
+                do_morton = self.config['grid'].get('morton2D', False)
 
-            if do_morton:
-                # --- OPTIMIZED PATH: Transposed Layout [Samples, Rays, 3] ---
-                # 1. Transpose z_vals from [Rays, Samples] to [Samples, Rays]
-                z_vals_T = z_vals.permute(1, 0).contiguous()
-                
-                # 2. Broadcast: 
-                # rays_o/d: [Rays, 3] -> [1, Rays, 3]
-                # z_vals_T: [Samples, Rays] -> [Samples, Rays, 1]
-                # Result pts: [Samples, Rays, 3]
-                pts = rays_o[None, ...] + rays_d[None, ...] * z_vals_T[..., None]
-                
-                # 3. Flatten. In memory, this is now:
-                # Sample0_Ray0, Sample0_Ray1, Sample0_Ray2...
-                # Since we sorted Rays 0,1,2 to be neighbors, this is a linear memory read!
-                pts_flat = pts.reshape(-1, 3)
-                
-            else:
-                # --- ORIGINAL PATH: Standard Layout [Rays, Samples, 3] ---
-                pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None] 
-                pts_flat = pts.reshape(-1, 3)
+                if do_morton:
+                    # --- OPTIMIZED PATH: Transposed Layout [Samples, Rays, 3] ---
+                    # 1. Transpose z_vals from [Rays, Samples] to [Samples, Rays]
+                    z_vals_T = z_vals.permute(1, 0).contiguous()
+                    
+                    # 2. Broadcast: 
+                    # rays_o/d: [Rays, 3] -> [1, Rays, 3]
+                    # z_vals_T: [Samples, Rays] -> [Samples, Rays, 1]
+                    # Result pts: [Samples, Rays, 3]
+                    pts = rays_o[None, ...] + rays_d[None, ...] * z_vals_T[..., None]
+                    
+                    # 3. Flatten. In memory, this is now:
+                    # Sample0_Ray0, Sample0_Ray1, Sample0_Ray2...
+                    # Since we sorted Rays 0,1,2 to be neighbors, this is a linear memory read!
+                    pts_flat = pts.reshape(-1, 3)
+                    
+                else:
+                    # --- ORIGINAL PATH: Standard Layout [Rays, Samples, 3] ---
+                    pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None] 
+                    pts_flat = pts.reshape(-1, 3)
                 
         with self.layer_timing.stage('run_network'):
             with torch.cuda.nvtx.range("run_network"):
