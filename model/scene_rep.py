@@ -1,4 +1,9 @@
 # package imports
+import atexit
+import csv
+import json
+from pathlib import Path
+
 import torch
 import torch.nn as nn
 
@@ -25,6 +30,85 @@ def morton_permutation_from_points01(pts01: torch.Tensor, R: int = 128) -> torch
     return perm.to(torch.long)
 
 
+class UniformSamplingStatsWriter:
+    def __init__(self, enabled=False, output_csv='./profiling/uniform_samples_until_depth_stats.csv', flush_every_batches=16):
+        self.enabled = bool(enabled)
+        self.output_csv = Path(output_csv)
+        self.flush_every_batches = max(1, int(flush_every_batches))
+        self.current_frame_id = -1
+        self.current_outer_stage = ''
+        self.next_batch_id = 0
+        self.pending = []
+        self.header_written = False
+
+        if not self.enabled:
+            return
+
+        self.output_csv.parent.mkdir(parents=True, exist_ok=True)
+        self.header_written = self.output_csv.exists() and self.output_csv.stat().st_size > 0
+        atexit.register(self.flush)
+
+    def set_context(self, frame_id: int, outer_stage: str):
+        if not self.enabled:
+            return
+        self.current_frame_id = int(frame_id)
+        self.current_outer_stage = str(outer_stage)
+
+    def record_batch(
+        self,
+        ray_counts_before_depth: torch.Tensor,
+        valid_depth: torch.Tensor,
+        selected_uniform_samples: int,
+        requested_uniform_samples: int,
+    ):
+        if not self.enabled:
+            return
+
+        counts_cpu = ray_counts_before_depth.detach().to(dtype=torch.int32, device='cpu').tolist()
+        valid_cpu = valid_depth.detach().to(dtype=torch.bool, device='cpu').tolist()
+        per_ray_counts = [
+            int(count) if is_valid else None
+            for count, is_valid in zip(counts_cpu, valid_cpu)
+        ]
+
+        self.pending.append([
+            self.current_frame_id,
+            self.current_outer_stage,
+            self.next_batch_id,
+            int(selected_uniform_samples),
+            int(requested_uniform_samples),
+            int(sum(valid_cpu)),
+            len(valid_cpu),
+            json.dumps(per_ray_counts, separators=(',', ':')),
+        ])
+        self.next_batch_id += 1
+
+        if len(self.pending) >= self.flush_every_batches:
+            self.flush()
+
+    def flush(self):
+        if not self.enabled or not self.pending:
+            return
+
+        write_header = not self.output_csv.exists() or not self.header_written
+        with open(self.output_csv, 'a', newline='') as f:
+            writer = csv.writer(f)
+            if write_header:
+                writer.writerow([
+                    'frame_id',
+                    'outer_stage',
+                    'batch_id',
+                    'selected_uniform_samples',
+                    'requested_uniform_samples',
+                    'valid_ray_count',
+                    'total_ray_count',
+                    'ray_samples_before_depth',
+                ])
+                self.header_written = True
+            writer.writerows(self.pending)
+        self.pending.clear()
+
+
 class JointEncoding(nn.Module):
     def __init__(self, config, bound_box):
         super(JointEncoding, self).__init__()
@@ -40,13 +124,35 @@ class JointEncoding(nn.Module):
             output_csv=timing_cfg.get('scene_output_csv', './profiling/pass1/office0/scene_rep_timing.csv'),
             warmup_frames=timing_cfg.get('warmup_frames', 0),
         )
+        training_cfg = config.get('training', {})
+        default_sampling_stats_csv = (
+            Path(config['data']['output'])
+            / config['data']['exp_name']
+            / 'uniform_samples_until_depth_stats.csv'
+        )
+        self.uniform_sampling_stats = UniformSamplingStatsWriter(
+            enabled=training_cfg.get('collect_uniform_samples_until_depth_stats', False),
+            output_csv=training_cfg.get(
+                'uniform_samples_until_depth_stats_csv',
+                default_sampling_stats_csv,
+            ),
+        )
+        if self.uniform_sampling_stats.enabled:
+            print(f"[sampling-stats] Collecting cropped-sampling stats in {self.uniform_sampling_stats.output_csv}")
+            if not training_cfg.get('uniform_samples_until_depth', False):
+                print(
+                    "[sampling-stats] uniform_samples_until_depth is disabled, "
+                    "so no cropped-sampling stats will be recorded."
+                )
         
 
     def set_timing_context(self, frame_id: int, outer_stage: str):
         self.layer_timing.set_context(frame_id, outer_stage)
+        self.uniform_sampling_stats.set_context(frame_id, outer_stage)
 
     def flush_scene_timing(self):
         self.layer_timing.flush()
+        self.uniform_sampling_stats.flush()
 
     def get_resolution(self):
         '''
@@ -315,8 +421,49 @@ class JointEncoding(nn.Module):
                     z_samples[target_d.squeeze()<=0] = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], steps=self.config['training']['n_range_d']).to(target_d) 
 
                     if self.config['training']['n_samples_d'] > 0:
-                        z_vals = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], self.config['training']['n_samples_d'])[None, :].repeat(n_rays, 1).to(rays_o)
-                        z_vals, _ = torch.sort(torch.cat([z_vals, z_samples], -1), -1)
+                        # Optional mode: keep depth-centered samples, and reduce the number of
+                        # uniform samples so they stop at depth (instead of always near->far).
+                        # Falls back to classic near->far uniform sampling when disabled.
+                        if self.config['training'].get('uniform_samples_until_depth', False):
+                            near = self.config['cam']['near']
+                            far = self.config['cam']['far']
+
+                            depth_end = target_d.squeeze(-1).clamp(min=near, max=far)
+                            valid_depth = (target_d.squeeze(-1) > 0)
+                            n_samples_d = self.config['training']['n_samples_d']
+
+                            # Compute an adaptive count from valid depths using the original near->far bins.
+                            # This makes z_vals length shrink when scene depth is closer than far.
+                            base_uniform = torch.linspace(near, far, n_samples_d).to(rays_o)
+                            counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1)
+                            counts = torch.where(valid_depth, counts, torch.zeros_like(counts))
+                            if valid_depth.any():
+                                n_uniform = max(1, int(counts[valid_depth].max().item()))
+                            else:
+                                n_uniform = n_samples_d
+
+                            self.uniform_sampling_stats.record_batch(
+                                ray_counts_before_depth=counts,
+                                valid_depth=valid_depth,
+                                selected_uniform_samples=n_uniform,
+                                requested_uniform_samples=n_samples_d,
+                            )
+
+                            if self.config['training'].get('debug_uniform_samples_until_depth', False):
+                                print(f"[sampling] uniform_until_depth=True n_uniform={n_uniform} n_range_d={self.config['training']['n_range_d']}")
+
+                            t_vals = torch.linspace(0., 1., steps=n_uniform).to(rays_o)
+                            z_uniform_depth = near * (1. - t_vals)[None, :] + depth_end[:, None] * t_vals[None, :]
+                            z_uniform_full = torch.linspace(near, far, n_uniform)[None, :].repeat(n_rays, 1).to(rays_o)
+                            z_uniform = torch.where(valid_depth[:, None], z_uniform_depth, z_uniform_full)
+                        else:
+                            z_uniform = torch.linspace(
+                                self.config['cam']['near'],
+                                self.config['cam']['far'],
+                                self.config['training']['n_samples_d']
+                            )[None, :].repeat(n_rays, 1).to(rays_o)
+
+                        z_vals, _ = torch.sort(torch.cat([z_uniform, z_samples], -1), -1)
                     else:
                         z_vals = z_samples
                 else:

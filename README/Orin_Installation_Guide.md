@@ -1,4 +1,6 @@
-# Co-SLAM Installation Guide: Orin with Jetpack 6.2 and cuda 12.6
+# Orin Installation Guide For Co-SLAM
+
+Co-SLAM Installation Guide: Orin with Jetpack 6.2 and cuda 12.6
 Co-slam autors recommend a setup with a conda env with python=3.7 because it is compatible with the libriraies they need. Because on Orin python 3.7 is very problematic to use (due to unexisting wheels for this version), I have tested a new setup with python 3.10 for Orin, that can also be used on other platforms. The changes concern the versions of the requirements mainly.
 For Orin, I have jetpack 6.2 and cuda 12.6, but the wheels for torch and torchvision I use are for jetpack 6.0 and cuda 12.4 or 12.2, since jetpack supports backward compatibility
 

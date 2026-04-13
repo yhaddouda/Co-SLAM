@@ -107,6 +107,10 @@ training:
   trunc: 0.1
   rot_rep: 'axis_angle'
   rgb_missing: 0.05
+  uniform_samples_until_depth: True
+  debug_uniform_samples_until_depth: False
+  collect_uniform_samples_until_depth_stats: True
+  uniform_samples_until_depth_stats_csv: ./output_csv_office1  # defaults to <data.output>/<data.exp_name>/uniform_samples_until_depth_stats.csv
 
 mesh:
   resolution: 512

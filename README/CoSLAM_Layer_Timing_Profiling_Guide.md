@@ -1,4 +1,4 @@
-# Layer Timing README
+# Co-SLAM Layer Timing Profiling Guide
 
 This patch adds **selectable profiling layers** for Co-SLAM so you can measure either:
 
@@ -46,4 +46,3 @@ timing:
   mode: scene_rep
 ```
 Change `scene_rep` to `coslam` or `none` as needed.
-
