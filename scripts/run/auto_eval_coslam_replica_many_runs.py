@@ -11,6 +11,12 @@ from pathlib import Path
 # --- Constants ---
 DEFAULT_SCENES = ["office0"]  # Add more scenes here or pass via command line
 DEFAULT_SIZES = list(range(13, 25)) # 13 to 24
+DEFAULT_SAMPLING = ["baseline"]
+SAMPLING_DEFINITIONS = {
+    "baseline": False,
+    "original": False,
+    "cropped": True,
+}
 
 def read_yaml(path: Path) -> dict:
     with open(path, "r", encoding="utf-8") as f:
@@ -19,6 +25,9 @@ def read_yaml(path: Path) -> dict:
 def write_yaml(path: Path, data: dict) -> None:
     with open(path, "w", encoding="utf-8") as f:
         yaml.safe_dump(data, f, sort_keys=False)
+
+def ensure_dir(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
 
 def parse_metrics(output_str: str) -> dict:
     """Parses standard output from eval_recon_headless.py."""
@@ -39,7 +48,16 @@ def parse_metrics(output_str: str) -> dict:
             
     return metrics
 
-def run_sequence(args, scene, hash_size):
+def normalize_sampling_name(sampling: str) -> str:
+    return "cropped" if sampling == "cropped" else "baseline"
+
+def build_exp_name(sampling_name: str, hash_size: int, run_idx: int | None = None) -> str:
+    base_name = f"{sampling_name}_T{hash_size}"
+    if run_idx is None:
+        return base_name
+    return f"{base_name}_Run{run_idx}"
+
+def run_sequence(args, scene, sampling, hash_size, run_idx=None):
     # 1. Prepare Configuration
     base_cfg = args.configs_root / f"{scene}.yaml"
     if not base_cfg.exists():
@@ -47,27 +65,36 @@ def run_sequence(args, scene, hash_size):
         return None
 
     cfg = read_yaml(base_cfg)
+    sampling_name = normalize_sampling_name(sampling)
     
-    # --- SIMPLIFIED: Explicitly naming experiment ---
-    exp_name = f"T{hash_size}"
+    # Include sampling mode, and optionally run index, so repeated runs do not overwrite each other.
+    exp_name = build_exp_name(sampling_name, hash_size, run_idx)
     
     # Ensure keys exist
     cfg.setdefault("grid", {})
     cfg.setdefault("data", {})
+    cfg.setdefault("training", {})
     
     # Set Flags
     cfg["grid"]["hash_size"] = hash_size
     cfg["data"]["exp_name"] = exp_name
+    cfg["training"]["uniform_samples_until_depth"] = SAMPLING_DEFINITIONS[sampling]
+    if run_idx is not None:
+        base_output = cfg["data"].get("output", f"output/Replica/{scene}")
+        cfg["data"]["output"] = str(Path(base_output) / f"run_{run_idx}")
     
     # Save Temp Config
     tmp_config_path = Path("temp_configs") / f"{scene}_{exp_name}.yaml"
-    tmp_config_path.parent.mkdir(exist_ok=True)
+    ensure_dir(tmp_config_path.parent)
     write_yaml(tmp_config_path, cfg)
     
     # 2. Run CoSLAM
-    print(f"  [1/3] Running CoSLAM (Scene={scene}, Hash={hash_size})...")
+    if run_idx is None:
+        print(f"  [1/3] Running CoSLAM (Scene={scene}, Sampling={sampling_name}, Hash={hash_size})...")
+    else:
+        print(f"  [1/3] Running CoSLAM (Run={run_idx}, Scene={scene}, Sampling={sampling_name}, Hash={hash_size})...")
     log_path = Path("output") / "logs" / f"{scene}_{exp_name}.log"
-    log_path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_dir(log_path.parent)
     
     try:
         with open(log_path, "w") as f:
@@ -80,8 +107,8 @@ def run_sequence(args, scene, hash_size):
         return None
 
     # 3. Locate Mesh (Deterministic Path)
-    # Path logic: output/Replica/{scene}/{exp_name}/mesh_track*.ply
-    output_dir = Path("output") / "Replica" / scene / exp_name
+    # Path logic: <cfg[data][output]>/<exp_name>/mesh_track*.ply
+    output_dir = Path(cfg["data"]["output"]) / exp_name
     meshes = sorted(output_dir.glob("mesh_track*.ply"), key=os.path.getmtime)
     
     if not meshes:
@@ -136,30 +163,67 @@ def run_sequence(args, scene, hash_size):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--scenes", nargs="+", default=DEFAULT_SCENES, help="List of scenes")
+    parser.add_argument(
+        "--sampling",
+        nargs="+",
+        default=DEFAULT_SAMPLING,
+        choices=sorted(SAMPLING_DEFINITIONS),
+        help="Sampling mode(s): baseline/original disables uniform_samples_until_depth; cropped enables it.",
+    )
+    parser.add_argument(
+        "--runs",
+        type=int,
+        default=1,
+        help="Number of times to repeat the entire experiment grid for averaging.",
+    )
     parser.add_argument("--sizes", nargs="+", type=int, default=DEFAULT_SIZES, help="Hash sizes")
     parser.add_argument("--configs-root", type=Path, default="configs/Replica")
     parser.add_argument("--dataset-root", type=Path, default="../datasets/vv_data/Replica")
-    parser.add_argument("--output-csv", type=Path, default="output/replica_results.csv")
+    parser.add_argument("--output-csv", type=Path, default="output/replica_sampling_results_variance.csv")
     parser.add_argument("--python-exec", default=sys.executable)
     args = parser.parse_args()
 
     # Init CSV
+    use_run_column = args.runs > 1
+    csv_header = "Run,Scene,Sampling,HashSize,Accuracy,Completion,CompletionRatio,DepthL1" if use_run_column else "Scene,Sampling,HashSize,Accuracy,Completion,CompletionRatio,DepthL1"
     if not args.output_csv.exists():
-        args.output_csv.parent.mkdir(parents=True, exist_ok=True)
+        ensure_dir(args.output_csv.parent)
         with open(args.output_csv, "w") as f:
-            f.write("Scene,HashSize,Accuracy,Completion,CompletionRatio,DepthL1\n")
+            f.write(csv_header + "\n")
+    else:
+        with open(args.output_csv, "r") as f:
+            existing_header = f.readline().strip()
+        if existing_header != csv_header:
+            raise SystemExit(
+                f"Existing CSV has incompatible header: {args.output_csv}\n"
+                f"Expected: {csv_header}\n"
+                "Use a new --output-csv path or update the existing CSV header before appending."
+            )
 
     # Main Loop
-    for scene, size in itertools.product(args.scenes, args.sizes):
-        metrics = run_sequence(args, scene, size)
-        
-        if metrics:
-            row = f"{scene},{size},{metrics['Accuracy']},{metrics['Completion']},{metrics['Completion_Ratio']},{metrics['Depth_L1']}"
-            print(f"  > Done: {row}")
-            with open(args.output_csv, "a") as f:
-                f.write(row + "\n")
-        else:
-            print(f"  > Failed: {scene} T{size}")
+    total_runs = len(args.scenes) * len(args.sampling) * len(args.sizes) * args.runs
+    print(f"Total Runs Scheduled: {total_runs} ({args.runs} iterations of the grid)")
+
+    for run_idx in range(1, args.runs + 1):
+        if use_run_column:
+            print(f"\n=== STARTING RUN ITERATION {run_idx}/{args.runs} ===")
+
+        for scene, sampling, size in itertools.product(args.scenes, args.sampling, args.sizes):
+            effective_run_idx = run_idx if use_run_column else None
+            metrics = run_sequence(args, scene, sampling, size, run_idx=effective_run_idx)
+            sampling_name = normalize_sampling_name(sampling)
+            
+            if metrics:
+                if use_run_column:
+                    row = f"{run_idx},{scene},{sampling_name},{size},{metrics['Accuracy']},{metrics['Completion']},{metrics['Completion_Ratio']},{metrics['Depth_L1']}"
+                else:
+                    row = f"{scene},{sampling_name},{size},{metrics['Accuracy']},{metrics['Completion']},{metrics['Completion_Ratio']},{metrics['Depth_L1']}"
+                print(f"  > Done: {row}")
+                with open(args.output_csv, "a") as f:
+                    f.write(row + "\n")
+            else:
+                prefix = f"Run {run_idx} " if use_run_column else ""
+                print(f"  > Failed: {prefix}{scene} {sampling_name} T{size}")
 
 if __name__ == "__main__":
     main()

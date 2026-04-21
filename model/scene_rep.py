@@ -289,8 +289,42 @@ class JointEncoding(nn.Module):
                 z_samples[target_d.squeeze()<=0] = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], steps=self.config['training']['n_range_d']).to(target_d) 
 
                 if self.config['training']['n_samples_d'] > 0:
-                    z_vals = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], self.config['training']['n_samples_d'])[None, :].repeat(n_rays, 1).to(rays_o)
-                    z_vals, _ = torch.sort(torch.cat([z_vals, z_samples], -1), -1)
+                    # Optional mode: keep depth-centered samples, and reduce the number of
+                    # uniform samples so they stop at depth (instead of always near->far).
+                    # Falls back to classic near->far uniform sampling when disabled.
+                    if self.config['training'].get('uniform_samples_until_depth', False):
+                        near = self.config['cam']['near']
+                        far = self.config['cam']['far']
+
+                        depth_end = target_d.squeeze(-1).clamp(min=near, max=far)
+                        valid_depth = (target_d.squeeze(-1) > 0)
+                        n_samples_d = self.config['training']['n_samples_d']
+
+                        # Compute an adaptive count from valid depths using the original near->far bins.
+                        # This makes z_vals length shrink when scene depth is closer than far.
+                        base_uniform = torch.linspace(near, far, n_samples_d).to(rays_o)
+                        if valid_depth.any():
+                            valid_depth_end = depth_end[valid_depth]
+                            counts = (base_uniform[None, :] <= valid_depth_end[:, None]).sum(dim=1)
+                            n_uniform = max(1, int(counts.max().item()))
+                        else:
+                            n_uniform = n_samples_d
+
+                        if self.config['training'].get('debug_uniform_samples_until_depth', False):
+                            print(f"[sampling] uniform_until_depth=True n_uniform={n_uniform} n_range_d={self.config['training']['n_range_d']}")
+
+                        t_vals = torch.linspace(0., 1., steps=n_uniform).to(rays_o)
+                        z_uniform_depth = near * (1. - t_vals)[None, :] + depth_end[:, None] * t_vals[None, :]
+                        z_uniform_full = torch.linspace(near, far, n_uniform)[None, :].repeat(n_rays, 1).to(rays_o)
+                        z_uniform = torch.where(valid_depth[:, None], z_uniform_depth, z_uniform_full)
+                    else:
+                        z_uniform = torch.linspace(
+                            self.config['cam']['near'],
+                            self.config['cam']['far'],
+                            self.config['training']['n_samples_d']
+                        )[None, :].repeat(n_rays, 1).to(rays_o)
+
+                    z_vals, _ = torch.sort(torch.cat([z_uniform, z_samples], -1), -1)
                 else:
                     z_vals = z_samples
             else:

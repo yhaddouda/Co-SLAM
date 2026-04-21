@@ -171,3 +171,4 @@ experiment_data/
 plots/
 profiling/
 .torch_extensions_ada/
+.codex

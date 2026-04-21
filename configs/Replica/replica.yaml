@@ -53,7 +53,7 @@ sampling_tracking:
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size:  20
+  hash_size:  16
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True
@@ -106,6 +106,9 @@ training:
   trunc: 0.1
   rot_rep: 'axis_angle'
   rgb_missing: 0.05
+  uniform_samples_until_depth: True
+  debug_uniform_samples_until_depth: False
+
 
 mesh:
   resolution: 512
