@@ -1,5 +1,6 @@
 inherit_from: configs/Replica/replica.yaml
 mapping:
+  first_mesh: False
   bound: [[-3,3],[-4,2.5],[-2,2.5]]
   marching_cubes_bound: [[-2.2,2.6],[-3.4,2.1],[-1.4,2.0]]
   
@@ -8,4 +9,26 @@ data:
   datadir: ../datasets/data/Replica/office0
   trainskip: 1
   output: output/Replica/office0
-  exp_name: "quality"
+  exp_name: "cropped"
+
+mesh:
+  vis: 1000000000
+  visualisation: False
+
+timing:
+  mode: coslam   # options: none, scene_rep, coslam
+  warmup_frames: 11
+  max_frames: 60
+  disable_eval: True
+  scene_output_csv: ./office0_scene_rep_timing_cropped.csv
+  coslam_output_csv: ./office0_coslam_layer_timing_cropped.csv
+
+# Add profiling config here
+profiling:
+  enabled: False
+  output_dir: ./profiling/PytorchProfiler/office0
+  schedule:
+    wait: 1
+    warmup: 0
+    active: 10
+    repeat: 1

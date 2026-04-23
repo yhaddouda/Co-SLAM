@@ -19,6 +19,7 @@ from tqdm import tqdm
 # Local imports
 import config
 from model.scene_rep import JointEncoding
+from model.layer_timing import DeferredCudaTimer
 from model.keyframe import KeyFrameDatabase
 from datasets.dataset import get_dataset
 from utils import coordinates, extract_mesh, colormap_image
@@ -33,7 +34,25 @@ import os
 #nvtx 
 import nvtx
 
+from contextlib import contextmanager
+
+@contextmanager
+def nvtx_range(name: str):
+    """NVTX range using Start/End (cross-thread friendly for profilers)."""
+    if torch.cuda.is_available():
+        rid = torch.cuda.nvtx.range_start(name)
+        try:
+            yield
+        finally:
+            torch.cuda.nvtx.range_end(rid)
+    else:
+        # Fallback for CPU-only execution
+        yield
+
 import math
+
+#CUDA extension for Morton code
+#from model.morton_2D import morton2d_keys_cuda
 
 # Helpers for patch sampling
 def _grid_jitter_toplefts_fast(H, W, ph, pw, sh, sw, seed=None):
@@ -122,6 +141,16 @@ class CoSLAM():
         self.keyframeDatabase = self.create_kf_database(config)
         self.model = JointEncoding(config, self.bounding_box).to(self.device)
 
+        timing_cfg = config.get('timing', {})
+        mode = timing_cfg.get('mode', 'none')
+        self.max_timing_frames = timing_cfg.get('max_frames', None)
+        self.disable_timing_eval = bool(timing_cfg.get('disable_eval', True))
+        self.coslam_timing = DeferredCudaTimer(
+            enabled=(mode == 'coslam'),
+            output_csv=timing_cfg.get('coslam_output_csv', './profiling/pass1/office0/coslam_layer_timing.csv'),
+            warmup_frames=timing_cfg.get('warmup_frames', 0),
+        )
+
         # Profiling configuration
         self.enable_profiling = False #config.get('profiling', {}).get('enabled', False)
         self.profiler_config = create_profiler_config(
@@ -129,7 +158,53 @@ class CoSLAM():
         )
         self.profiler = None
         self.profiling_step = 0
+        print("Morton2D is :", self.config['grid'].get('morton2D', False))
+    
+    def sort_rays_by_morton(self, indices=None, rays_d=None, frame_ids=None, H=None, W=None):
+        """
+        Sorts rays based on 2D Morton codes to improve cache locality.
+        Conditioned by config['grid']['morton2D'].
+        """
+        # 1. Ablation Switch
+        if not self.config['grid'].get('morton2D', False):
+            return None 
 
+        with nvtx_range("morton_sort_overhead"):
+            R = 128 
+            
+            # --- CASE A: Single Frame (using flattened indices) ---
+            if indices is not None:
+                # Recover 2D coordinates from flattened indices
+                # u = idx % W, v = idx // W
+                y = (indices // W).float() / H
+                x = (indices % W).float() / W
+                uv = torch.stack([x, y], dim=-1).to(self.device) # [N, 2]
+                
+                # Generate keys (frame_id is None, so it's just pure spatial sort)
+                keys = morton2d_keys_cuda(uv, None, R)
+                
+            # --- CASE B: Multi-Frame / Bundle Adjustment ---
+            elif rays_d is not None:
+                # We use ray directions as a proxy for screen coordinates.
+                # Project or simpler: normalize direction X/Y to [0,1].
+                # (We just need relative order, not exact pixels)
+                uv = rays_d[:, :2] * 0.5 + 0.5 
+                uv = torch.clamp(uv, 0.0, 1.0)
+                
+                # frame_ids MUST be Int64 for the C++ kernel
+                fids = frame_ids.to(torch.int64) if frame_ids is not None else None
+                
+                # Generate packed keys: [Frame_ID | Morton_Code]
+                keys = morton2d_keys_cuda(uv, fids, R)
+            
+            else:
+                return None
+
+            # 2. Sort the keys to get permutation
+            perm = torch.argsort(keys)
+            
+        return perm
+    
     def start_profiling(self, wait=1, warmup=0, active=10, repeat=1):
         """Start profiling with optimized schedule for SLAM"""
         if not self.enable_profiling:
@@ -354,30 +429,44 @@ class CoSLAM():
         
         '''
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        self.model.set_timing_context(0, 'First_frame_mapping')
+        self.coslam_timing.set_context(0, 'First_frame_mapping')
         with record_function("FF_mapping"):
             print('First frame mapping...')
-            with torch.cuda.nvtx.range("cpu_to_gpu_c2w"):
+            with nvtx_range("cpu_to_gpu_c2w_FFM"):
                 c2w = batch['c2w'][0].to(self.device)
 
             self.est_c2w_data[0] = c2w
             self.est_c2w_data_rel[0] = c2w
 
-            with torch.cuda.nvtx.range("model_train?"):
+            with nvtx_range("model_train?_FFM"):
                 self.model.train()
 
             # Training
             for i in range(n_iters):
 
-                with torch.cuda.nvtx.range("initialize_map_optimizer"):
+                with nvtx_range("initialize_map_optimizer_FFM"):
                     self.map_optimizer.zero_grad()
 
-                with torch.cuda.nvtx.range("select_samples"):    
+                with nvtx_range("select_samples_FFM"):    
                     """ 
                     To do patch sampling, you should edit the config file of the dataset, and provide patch dimensions
                      """
                     indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
+                    # --- START FIX ---
+                    # 1. Move to GPU for sorting
+                    indice = indice.to(self.device)
+                    
+                    # 2. Sort
+                    perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
+                    if perm is not None:
+                        indice = indice[perm]
+                    
+                    # 3. CRITICAL: Move back to CPU to index the CPU batch tensors
+                    indice = indice.cpu()
+                    # --- END FIX ---
                 
-                with torch.cuda.nvtx.range("ray_sampling&coords_transform"):
+                with nvtx_range("ray_sampling&coords_transform_FFM"):
                     indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
                     rays_d_cam = batch['direction'].squeeze(0)[indice_h, indice_w, :].to(self.device)
                     target_s = batch['rgb'].squeeze(0)[indice_h, indice_w, :].to(self.device)
@@ -387,19 +476,23 @@ class CoSLAM():
                     rays_d = torch.sum(rays_d_cam[..., None, :] * c2w[:3, :3], -1)
 
                 # Forward
-                with torch.cuda.nvtx.range("forward"):
-                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                with self.coslam_timing.stage('forward_FFM'):
+                    with nvtx_range("forward_FFM"):
+                        ret = self.model.forward(rays_o, rays_d, target_s, target_d)
 
-                with torch.cuda.nvtx.range("Loss_calculation"):
-                    loss = self.get_loss_from_ret(ret)
+                with self.coslam_timing.stage('Loss_calculation_FFM'):
+                    with nvtx_range("Loss_calculation_FFM"):
+                        loss = self.get_loss_from_ret(ret)
 
-                with torch.cuda.nvtx.range("backward"):
-                    loss.backward()
+                with self.coslam_timing.stage('backward_FFM'):
+                    with nvtx_range("backward_FFM"):
+                        loss.backward()
 
-                with torch.cuda.nvtx.range("map_optim"):
-                    self.map_optimizer.step()
+                with self.coslam_timing.stage('map_optim_FFM'):
+                    with nvtx_range("map_optim_FFM"):
+                        self.map_optimizer.step()
 
-            with torch.cuda.nvtx.range("add_keyframe"):
+            with nvtx_range("add_keyframe_FFM"):
                 # First frame will always be a keyframe
                 self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
                 if self.config['mapping']['first_mesh']:
@@ -407,6 +500,10 @@ class CoSLAM():
             
             print('First frame mapping done')
 
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
         self.step_profiler()
         return ret, loss
 
@@ -426,6 +523,8 @@ class CoSLAM():
         if self.config['mapping']['cur_frame_iters'] <= 0:
             return
         print('Current frame mapping...')
+        self.model.set_timing_context(cur_frame_id, 'Current_frame_mapping')
+        self.coslam_timing.set_context(cur_frame_id, 'Current_frame_mapping')
         
         c2w = self.est_c2w_data[cur_frame_id].to(self.device)
 
@@ -435,6 +534,13 @@ class CoSLAM():
         for i in range(self.config['mapping']['cur_frame_iters']):
             self.cur_map_optimizer.zero_grad()
             indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
+            # --- START FIX ---
+            indice = indice.to(self.device)
+            perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
+            if perm is not None:
+                indice = indice[perm]
+            indice = indice.cpu() # <--- Move back to CPU
+            # --- END FIX ---
             
             indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
             rays_d_cam = batch['direction'].squeeze(0)[indice_h, indice_w, :].to(self.device)
@@ -445,11 +551,17 @@ class CoSLAM():
             rays_d = torch.sum(rays_d_cam[..., None, :] * c2w[:3, :3], -1)
 
             # Forward
-            ret = self.model.forward(rays_o, rays_d, target_s, target_d)
-            loss = self.get_loss_from_ret(ret)
-            loss.backward()
-            self.cur_map_optimizer.step()
+            with self.coslam_timing.stage('Forward_CFM'):
+                ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+            with self.coslam_timing.stage('Loss_calculation_CFM'):
+                loss = self.get_loss_from_ret(ret)
+            with self.coslam_timing.stage('Backward_CFM'):
+                loss.backward()
+            with self.coslam_timing.stage('Optimize_map_CFM'):
+                self.cur_map_optimizer.step()
         
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
         
         return ret, loss
 
@@ -500,16 +612,18 @@ class CoSLAM():
             cur_frame_id: current frame id
         '''
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        self.model.set_timing_context(cur_frame_id, 'Bundle_Adjustment')
+        self.coslam_timing.set_context(cur_frame_id, 'Bundle_Adjustment')
         with record_function("Bundle_Adjustment"):
 
             pose_optimizer = None
         
             # all the KF poses: 0, 5, 10, ...
-            with torch.cuda.nvtx.range("stack_KF_poses"):
+            with nvtx_range("stack_KF_poses_BA"):
                 poses = torch.stack([self.est_c2w_data[i] for i in range(0, cur_frame_id, self.config['mapping']['keyframe_every'])])
             
             # frame ids for all KFs, used for update poses after optimization
-            with torch.cuda.nvtx.range("which_poses_to_opt"):
+            with nvtx_range("which_poses_to_opt_BA"):
                 frame_ids_all = torch.tensor(list(range(0, cur_frame_id, self.config['mapping']['keyframe_every'])))
                 if len(self.keyframeDatabase.frame_ids) < 2:
                     poses_fixed = torch.nn.parameter.Parameter(poses).to(self.device)
@@ -531,80 +645,99 @@ class CoSLAM():
                         poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
             
             # Set up optimizer
-            with torch.cuda.nvtx.range("setup_optimizer"):
+            with nvtx_range("setup_optimizer_BA"):
                 self.map_optimizer.zero_grad()
                 if pose_optimizer is not None:
                     pose_optimizer.zero_grad()
 
-            with torch.cuda.nvtx.range("cat&reshape"):
+            with nvtx_range("cat&reshape_BA"):
                 current_rays = torch.cat([batch['direction'], batch['rgb'], batch['depth'][..., None]], dim=-1)
                 current_rays = current_rays.reshape(-1, current_rays.shape[-1])
             
 
             for i in range(self.config['mapping']['iters']):
+                with self.coslam_timing.stage('BA_ITER_PROFILE_TOTAL'):
+                    with nvtx_range(f"BA_ITER_PROFILE_TOTAL"):
+                        # Sample rays with real frame ids
+                        # rays [bs, 7]
+                        # frame_ids [bs]
+                        with self.coslam_timing.stage('sample_global_rays_BA'):
+                            with nvtx_range("sample_global_rays_BA"):
+                                rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
 
-                # Sample rays with real frame ids
-                # rays [bs, 7]
-                # frame_ids [bs]
-                with torch.cuda.nvtx.range("sample_global_rays"):
-                    rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
+                                #TODO: Checkpoint...
+                                idx_cur = random.sample(range(0, self.dataset.H * self.dataset.W),max(self.config['mapping']['sample'] // len(self.keyframeDatabase.frame_ids), self.config['mapping']['min_pixels_cur']))
+                                current_rays_batch = current_rays[idx_cur, :]
 
-                with torch.cuda.nvtx.range("sampling&cat"):
-                    #TODO: Checkpoint...
-                    idx_cur = random.sample(range(0, self.dataset.H * self.dataset.W),max(self.config['mapping']['sample'] // len(self.keyframeDatabase.frame_ids), self.config['mapping']['min_pixels_cur']))
-                    current_rays_batch = current_rays[idx_cur, :]
+                                rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
+                                ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
+                                # --- NEW: Sort Multi-Frame Rays ---
+                                perm = self.sort_rays_by_morton(
+                                    rays_d=rays[..., :3].to(self.device), 
+                                    frame_ids=ids_all.to(self.device)
+                                )
+                                
+                                if perm is not None:
+                                    # Fix: move perm to cpu() because 'rays' is likely on CPU
+                                    perm = perm.cpu() 
+                                    rays = rays[perm]
+                                    ids_all = ids_all[perm]
+                                # ----------------------------------
+                        with self.coslam_timing.stage('cpu_to_gpu_BA'):
+                            with nvtx_range("cpu_to_gpu_gt_BA"):
+                                rays_d_cam = rays[..., :3].to(self.device)
+                                target_s = rays[..., 3:6].to(self.device)
+                                target_d = rays[..., 6:7].to(self.device)
 
-                    rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
-                    ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
+                        # [N, Bs, 1, 3] * [N, 1, 3, 3] = (N, Bs, 3)
+                        with self.coslam_timing.stage('resize_tensors_BA'):
+                            with nvtx_range("resize_tensors_BA"):
+                                rays_d = torch.sum(rays_d_cam[..., None, None, :] * poses_all[ids_all, None, :3, :3], -1)
+                                rays_o = poses_all[ids_all, None, :3, -1].repeat(1, rays_d.shape[1], 1).reshape(-1, 3)
+                                rays_d = rays_d.reshape(-1, 3)
 
-                with torch.cuda.nvtx.range("cpu_to_gpu_gt"):
-                    rays_d_cam = rays[..., :3].to(self.device)
-                    target_s = rays[..., 3:6].to(self.device)
-                    target_d = rays[..., 6:7].to(self.device)
+                        with self.coslam_timing.stage('Forward_BA'):
+                            with nvtx_range("Forward_BA"):
+                                ret = self.model.forward(rays_o, rays_d, target_s, target_d)
 
-                # [N, Bs, 1, 3] * [N, 1, 3, 3] = (N, Bs, 3)
-                with torch.cuda.nvtx.range("resize_tensors"):
-                    rays_d = torch.sum(rays_d_cam[..., None, None, :] * poses_all[ids_all, None, :3, :3], -1)
-                    rays_o = poses_all[ids_all, None, :3, -1].repeat(1, rays_d.shape[1], 1).reshape(-1, 3)
-                    rays_d = rays_d.reshape(-1, 3)
+                        with self.coslam_timing.stage('Loss_calculation_BA'):
+                            with nvtx_range("Loss_calculation_BA"):
+                                loss = self.get_loss_from_ret(ret, smooth=True)
 
-                with torch.cuda.nvtx.range("Forward"):
-                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                        with self.coslam_timing.stage('Backward_BA'):
+                            with nvtx_range("Backward_BA"):
+                                loss.backward(retain_graph=True)
 
-                with torch.cuda.nvtx.range("Loss_calculation"):
-                    loss = self.get_loss_from_ret(ret, smooth=True)
+                        with self.coslam_timing.stage('Optimize_map_pose_BA'):
+                            with nvtx_range("Optimize_map_pose_BA"):
+                                if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
+                                    if (i + 1) > cfg["mapping"]["map_wait_step"]:
+                                        self.map_optimizer.step()
+                                    else:
+                                        print('Wait update')
+                                    self.map_optimizer.zero_grad()
 
-                with torch.cuda.nvtx.range("Backward"):
-                    loss.backward(retain_graph=True)
+                                if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
+                                    pose_optimizer.step()
+                                    # get SE3 poses to do forward pass
+                                    pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
+                                    pose_optim = pose_optim.to(self.device)
+                                    # So current pose is always unchanged
+                                    if self.config['mapping']['optim_cur']:
+                                        poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
+                                    else:
+                                        current_pose = self.est_c2w_data[cur_frame_id][None,...]
+                                        # SE3 poses
+                                        poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
 
-                with torch.cuda.nvtx.range("Optimize_map_pose"):
-                    if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
-                    
-                        if (i + 1) > cfg["mapping"]["map_wait_step"]:
-                            self.map_optimizer.step()
-                        else:
-                            print('Wait update')
-                        self.map_optimizer.zero_grad()
+                                    # zero_grad here
+                                    pose_optimizer.zero_grad()
+                        # CRITICAL: Sync here so NCU captures the full duration of kernels 
+                        # launched within this NVTX range. but only for ncu not other types of profiling
+                        if self.config.get('sync_for_ncu', False):
+                            torch.cuda.synchronize()
 
-                    if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
-                        pose_optimizer.step()
-                        # get SE3 poses to do forward pass
-                        pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
-                        pose_optim = pose_optim.to(self.device)
-                        # So current pose is always unchanged
-                        if self.config['mapping']['optim_cur']:
-                            poses_all = torch.cat([poses_fixed, pose_optim], dim=0)
-                        
-                        else:
-                            current_pose = self.est_c2w_data[cur_frame_id][None,...]
-                            # SE3 poses
-
-                            poses_all = torch.cat([poses_fixed, pose_optim, current_pose], dim=0)
-
-
-                        # zero_grad here
-                        pose_optimizer.zero_grad()
-            with torch.cuda.nvtx.range("update_pose"):
+            with nvtx_range("update_pose_BA"):
                 if pose_optimizer is not None and len(frame_ids_all) > 1:
                     for i in range(len(frame_ids_all[1:])):
                         self.est_c2w_data[int(frame_ids_all[i+1].item())] = self.matrix_from_tensor(cur_rot[i:i+1], cur_trans[i:i+1]).detach().clone()[0]
@@ -612,6 +745,8 @@ class CoSLAM():
                     if self.config['mapping']['optim_cur']:
                         print('Update current pose')
                         self.est_c2w_data[cur_frame_id] = self.matrix_from_tensor(cur_rot[-1:], cur_trans[-1:]).detach().clone()[0]
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
         self.step_profiler()
  
     def predict_current_pose(self, frame_id, constant_speed=True):
@@ -728,12 +863,14 @@ class CoSLAM():
             frame_id: Current frame id (int)
         '''
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        self.model.set_timing_context(frame_id, 'Tracking')
+        self.coslam_timing.set_context(frame_id, 'Tracking')
         with record_function("tracking_render"):
-            with torch.cuda.nvtx.range("cpu_to_gpu_pose"):
+            with nvtx_range("cpu_to_gpu_pose_tr"):
                 c2w_gt = batch['c2w'][0].to(self.device)
 
             # Initialize current pose
-            with torch.cuda.nvtx.range("initialize_pose"):
+            with nvtx_range("initialize_pose_tr"):
                 if self.config['tracking']['iter_point'] > 0:
                     cur_c2w = self.est_c2w_data[frame_id]
                 else:
@@ -750,57 +887,73 @@ class CoSLAM():
 
             # Start tracking
             for i in range(self.config['tracking']['iter']):
-                with torch.cuda.nvtx.range("initialize_pose_optimizer"):
-                    pose_optimizer.zero_grad()
-                with torch.cuda.nvtx.range("pos_matrix_from_tensor"):    
-                    c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
+                with self.coslam_timing.stage('TR_ITER_PROFILE_TOTAL'):
+                    with nvtx_range("TR_ITER_PROFILE_TOTAL"):
+                        with nvtx_range("initialize_pose_optimizer_tr"):
+                            pose_optimizer.zero_grad()
+                        with nvtx_range("pos_matrix_from_tensor_tr"):    
+                            c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
 
-                # Note here we fix the sampled points for optimisation
-                with torch.cuda.nvtx.range("select_samples"):
-                    if indice is None:
-                        indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
-                    
-                        # Slicing
-                        indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
-                        rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
-                with torch.cuda.nvtx.range("Tensor_ops_s&d"):
-                    target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
-                    target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
+                        # Note here we fix the sampled points for optimisation
+                        with nvtx_range("select_samples_tr"):
+                            if indice is None:
+                                indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
+                                # --- START FIX ---
+                                indice = indice.to(self.device)
+                                perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
+                                if perm is not None:
+                                    indice = indice[perm]
+                                indice = indice.cpu() # <--- Move back to CPU
+                                # --- END FIX ---
+                            
+                                # Slicing
+                                indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
+                                rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                        with nvtx_range("Tensor_ops_s&d_tr"):
+                            target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                            target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
 
-                    rays_o = c2w_est[...,:3, -1].repeat(self.config['tracking']['sample'], 1)
-                    rays_d = torch.sum(rays_d_cam[..., None, :] * c2w_est[:, :3, :3], -1)
+                            rays_o = c2w_est[...,:3, -1].repeat(self.config['tracking']['sample'], 1)
+                            rays_d = torch.sum(rays_d_cam[..., None, :] * c2w_est[:, :3, :3], -1)
 
-                with torch.cuda.nvtx.range("forward"):
-                    ret = self.model.forward(rays_o, rays_d, target_s, target_d)
-                
-                with torch.cuda.nvtx.range("loss_calculation"):
-                    loss = self.get_loss_from_ret(ret)
-                
-                with torch.cuda.nvtx.range("sdf_loss"):
-                    if best_sdf_loss is None:
-                        best_sdf_loss = loss.cpu().item()
-                        best_c2w_est = c2w_est.detach()
+                        with self.coslam_timing.stage('forward_tr'):
+                            with nvtx_range("forward_tr"):
+                                ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                        
+                        with self.coslam_timing.stage('loss_calculation_tr'):
+                            with nvtx_range("loss_calculation_tr"):
+                                loss = self.get_loss_from_ret(ret)
+                        
+                        with nvtx_range("sdf_loss_tr"):
+                            if best_sdf_loss is None:
+                                best_sdf_loss = loss.cpu().item()
+                                best_c2w_est = c2w_est.detach()
 
-                with torch.cuda.nvtx.range("c2w_from_matrix"):
-                    with torch.no_grad():
-                        c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
+                        with nvtx_range("c2w_from_matrix_tr"):
+                            with torch.no_grad():
+                                c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
 
-                        if loss.cpu().item() < best_sdf_loss:
-                            best_sdf_loss = loss.cpu().item()
-                            best_c2w_est = c2w_est.detach()
-                            thresh = 0
-                        else:
-                            thresh +=1
-                    
-                    if thresh >self.config['tracking']['wait_iters']:
-                        break
+                                if loss.cpu().item() < best_sdf_loss:
+                                    best_sdf_loss = loss.cpu().item()
+                                    best_c2w_est = c2w_est.detach()
+                                    thresh = 0
+                                else:
+                                    thresh +=1
+                            
+                            if thresh >self.config['tracking']['wait_iters']:
+                                break
 
-                with torch.cuda.nvtx.range("backward"):
-                    loss.backward()
+                        with self.coslam_timing.stage('backward_tr'):
+                            with nvtx_range("backward_tr"):
+                                loss.backward()
 
-                with torch.cuda.nvtx.range("pose_optimizer"):
-                    pose_optimizer.step()
-            
+                        with self.coslam_timing.stage('pose_optimizer_tr'):
+                            with nvtx_range("pose_optimizer_tr"):
+                                pose_optimizer.step()
+                        # Only synchronize for NCU to capture the full duration of kernels launched within this NVTX range. but only for ncu not other types of profiling       
+                        if self.config.get('sync_for_ncu', False):
+                                torch.cuda.synchronize()
+
             if self.config['tracking']['best']:
                 # Use the pose with smallest loss
                 self.est_c2w_data[frame_id] = best_c2w_est.detach().clone()[0]
@@ -809,7 +962,7 @@ class CoSLAM():
                 self.est_c2w_data[frame_id] = c2w_est.detach().clone()[0]
 
             # Save relative pose of non-keyframes
-            with torch.cuda.nvtx.range("save_pose_frame"):
+            with nvtx_range("save_pose_frame_tr"):
                 if frame_id % self.config['mapping']['keyframe_every'] != 0:
                     kf_id = frame_id // self.config['mapping']['keyframe_every']
                     kf_frame_id = kf_id * self.config['mapping']['keyframe_every']
@@ -818,6 +971,8 @@ class CoSLAM():
                     self.est_c2w_data_rel[frame_id] = delta
             
             print('Best loss: {}, Last loss{}'.format(F.l1_loss(best_c2w_est.to(self.device)[0,:3], c2w_gt[:3]).cpu().item(), F.l1_loss(c2w_est[0,:3], c2w_gt[:3]).cpu().item()))
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
         self.step_profiler()
 
     def convert_relative_pose(self):
@@ -878,6 +1033,8 @@ class CoSLAM():
 
         # Start Co-SLAM!
         for i, batch in tqdm(enumerate(data_loader)):
+            if self.max_timing_frames is not None and i >= int(self.max_timing_frames):
+                break
             # Visualisation
             if self.config['mesh']['visualisation']:
                 rgb = cv2.cvtColor(batch["rgb"].squeeze().cpu().numpy(), cv2.COLOR_BGR2RGB)
@@ -893,30 +1050,30 @@ class CoSLAM():
 
             # First frame mapping
             if i == 0:
-                with torch.cuda.nvtx.range("First_frame_mapping"):
+                with nvtx_range("First_frame_mapping"):
                     self.first_frame_mapping(batch, self.config['mapping']['first_iters'])
             
             # Tracking + Mapping
             else:
                 if self.config['tracking']['iter_point'] > 0:
                     self.tracking_pc(batch, i)
-                with torch.cuda.nvtx.range("Tracking"):
+                with nvtx_range("Tracking"):
                     self.tracking_render(batch, i)
     
                 if i%self.config['mapping']['map_every']==0:
                     self.current_frame_mapping(batch, i)
-                    with torch.cuda.nvtx.range("Bundle_Adjustment"):
+                    with nvtx_range("Bundle_Adjustment"):
                         self.global_BA(batch, i)
 
                     
                 # Add keyframe
                 if i % self.config['mapping']['keyframe_every'] == 0:
-                    with torch.cuda.nvtx.range("add_Keyframe"):
+                    with nvtx_range("add_Keyframe"):
                         self.keyframeDatabase.add_keyframe(batch, filter_depth=self.config['mapping']['filter_depth'])
                     print('add keyframe:',i)
             
 
-                if i % self.config['mesh']['vis']==0:
+                if (not self.disable_timing_eval) and i % self.config['mesh']['vis']==0:
                     self.save_mesh(i, voxel_size=self.config['mesh']['voxel_eval'])
                     pose_relative = self.convert_relative_pose()
                     pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
@@ -932,14 +1089,17 @@ class CoSLAM():
                         key = cv2.waitKey(1)
 
 
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
         model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
         
         self.save_ckpt(model_savepath)
-        self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
-        
-        pose_relative = self.convert_relative_pose()
-        pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
-        pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
+        if not self.disable_timing_eval:
+            self.save_mesh(i, voxel_size=self.config['mesh']['voxel_final'])
+            
+            pose_relative = self.convert_relative_pose()
+            pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
+            pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
 
         #TODO: Evaluation of reconstruction
 
