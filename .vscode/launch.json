@@ -1,0 +1,299 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Co-SLAM",
+            "type": "debugpy",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "python": "/home/yh279050/miniforge3/envs/coslam/bin/python",
+            "program": "/home/yh279050/work/Co-SLAM/coslam.py",
+            "args": [
+                "--config",
+                "/home/yh279050/work/Co-SLAM/configs/Replica/office0.yaml"
+            ],
+            "env": {
+                "PATH": "/home/yh279050/miniforge3/envs/coslam/bin:/usr/local/cuda-12.6/bin:${env:PATH}",
+                "CUDA_HOME": "/usr/local/cuda-12.6",
+                "LD_LIBRARY_PATH": "/usr/local/cuda-12.6/lib64:${env:LD_LIBRARY_PATH}",
+                // "CUDA_LAUNCH_BLOCKING": "1"
+            }
+        },
+        {
+            "name": "ringnerf-incr",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-train",
+            "args": [
+                // ------ CONFIG ------
+                "ring-nerf",
+                "--config-path", "configs/models/nerfacto8_ln.yml",
+                // ------ META ------
+                "--timestamp", "ringnerf-incr",
+                "--max-num-iterations", "5000",
+                "--steps-per-eval-progress-images", "250",
+                "--logging.profiler", "pytorch",
+                "--vis", "viewer+tensorboard",
+                "--viewer.image-format", "png",
+                "--viewer.quit-on-train-completion", "False",
+                "--steps-per-eval-all-images", "0",
+                // ------ INCREMENTAL ------
+                "--pretrained_decoder_dir", "${env:EXPERIMENTS_DIR}/pretrain/nerfacto8_ln",
+                "--pipeline.datamanager.use-keyframes-manager", "True",
+                "--pipeline.datamanager.use-keyframe-scheduler", "True",
+                "--pipeline.datamanager.keyframes-manager.window-size", "16",
+                "--pipeline.datamanager.frames_batch_size", "1",
+                "--pipeline.model.resolution-scheduler", "off",
+                "--pipeline.model.initial-lod", "-1",
+                "--pipeline.model.zero-initialization", "True",
+                // ------ DATA ------
+                "--data",
+                "${env:DATASETS_DIR}/360_v2/garden",
+                "--pipeline.datamanager.train-num-rays-per-batch", "4096",
+                // ------ DATAPARSER ------
+                // "blender-data",
+                "nerfstudio-data",
+                "--downscale-factor", "4",
+                // "--scale-factor", "0.5"
+            ],
+            "env": {
+                // "CUDA_LAUNCH_BLOCKING": "1"
+            }
+        },
+        {
+            "name": "ringnerf-gt",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-train",
+            "args": [
+                // ------ CONFIG ------
+                "ring-nerf",
+                "--config-path", "configs/models/nerfacto_ln.yml",
+                // ------ OPTIMIZER ------
+                // ------ META ------
+                "--timestamp", "nerfacto-gt",
+                "--viewer.websocket-port", "7007",
+                "--max-num-iterations", "30000",
+                "--steps-per-eval-fixed", "128",
+                "--num-eval-fixed-rays", "65536",
+                "--save_only_latest_checkpoint", "False",
+                "--logging.profiler", "pytorch",
+                "--log-gradients", "True",
+                "--vis", "viewer+tensorboard",
+                "--viewer.image-format", "png",
+                "--viewer.quit-on-train-completion", "False",
+                "--steps-per-eval-all-images", "0",
+                "--pipeline.datamanager.train-num-rays-per-batch", "4096",
+                "--pipeline.datamanager.eval-num-rays-per-batch", "4096",
+                "--pipeline.model.eval-num-rays-per-chunk", "4096",
+                "--pipeline.model.radiance-field.max-res", "2048",
+                "--pipeline.model.geometry-field.max-res", "2048",
+                "--pipeline.model.radiance-field.log2-hashmap-size", "21",
+                "--pipeline.model.geometry-field.log2-hashmap-size", "21",
+                // ------ INCREMENTAL ------
+                "--pipeline.model.initial-lod", "-1",
+                "--pipeline.model.zero-initialization", "True",
+                // ------ DATA ------
+                "--data",
+                "${env:DATASETS_DIR}/360_v2/garden",
+                // ------ DATAPARSER ------
+                "nerfstudio-data",
+                "--downscale-factor", "4"
+            ],
+            "env": {
+                // "CUDA_LAUNCH_BLOCKING": "1"
+            }
+        },
+        {
+            "name": "ringnerf-gt-svo",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-train",
+            "args": [
+                // ------ CONFIG ------
+                "ring-nerf",
+                "--config-path", "configs/models/nerfacto_ln.yml",
+                // ------SVO ------
+                "--pretrained-nerf-dir", "outputs/garden/ring-nerf/nerfacto-gt/nerfstudio_models",
+                "--start-paused", "False",
+                "--pipeline.model.background-color", "black",
+                "--pipeline.point-cloud-path", "/home/nd275005/PhD/Projects/nemar/RING-NeRF/exports/pcd/garden/point_cloud.ply",
+                "--pipeline.model.use-svo", "True",
+                "--pipeline.model.use-svo-selector", "False",
+                "--pipeline.model.radiance-field.svo.use-cascaded-codes", "True",
+                "--pipeline.model.radiance-field.svo.level", "11",
+                "--pipeline.model.radiance-field.svo.coarse-level", "5",
+                "--pipeline.model.geometry-field.svo.use-cascaded-codes", "True",
+                "--pipeline.model.geometry-field.svo.level", "11",
+                "--pipeline.model.geometry-field.svo.coarse-level", "5",
+                "--pipeline.model.radiance-field.max-res", "2048",
+                "--pipeline.model.geometry-field.max-res", "2048",
+                "--pipeline.model.radiance-field.log2-hashmap-size", "21",
+                "--pipeline.model.geometry-field.log2-hashmap-size", "21",
+                // ------ META ------
+                "--timestamp", "nerfacto-gt-svo-cas",
+                "--max-num-iterations", "500",
+                "--steps-per-eval-progress-images", "20",
+                "--save-only-latest-checkpoint", "True",
+                "--logging.profiler", "pytorch",
+                "--log-gradients", "True",
+                "--vis", "viewer+tensorboard",
+                "--viewer.image-format", "png",
+                "--viewer.quit-on-train-completion", "False",
+                "--steps-per-eval-all-images", "0",
+                // ------ DATA ------
+                "--data",
+                "${env:DATASETS_DIR}/360_v2/garden",
+                // ------ DATAPARSER ------
+                // "blender-data",
+                "nerfstudio-data",
+                "--downscale-factor", "4",
+                // "--scale-factor", "0.5"
+            ],
+            "env": {
+                // "CUDA_LAUNCH_BLOCKING": "1"
+            }
+        },
+        {
+            "name": "ringnerf-svo-viewer",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-svo-viewer",
+            "args": [
+                "--load-config", "outputs/garden/ring-nerf/nerfacto-gt/config.yml",
+                "--point-cloud-path", "/home/nd275005/PhD/Projects/nemar/RING-NeRF/exports/pcd/garden/point_cloud.ply",
+                "--use-svo-selector", "False",
+                "--use-svo-cascaded-codes", "False",
+                "--svo-level", "11",
+                "--svo-coarse-level", "5"
+            ]
+        },
+        {
+            "name": "ringnerf-fourier",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-train",
+            "args": [
+                "ring-nerf",
+                "--config-path", "configs/models/nerfacto.yml",
+                "--viewer.websocket-port", "7007",
+                "--timestamp", "ringnerf-fourier",
+                "--max-num-iterations", "10000",
+                "--save_only_latest_checkpoint", "False",
+                "--steps-per-eval-fixed", "4",
+                "--logging.profiler", "pytorch",
+                "--log-gradients", "True",
+                "--vis", "viewer+tensorboard",
+                "--viewer.image-format", "png",
+                "--viewer.quit-on-train-completion", "False",
+                "--steps-per-eval-all-images", "0",
+                "--pipeline.datamanager.train-num-rays-per-batch", "4096",
+                "--pipeline.datamanager.eval-num-rays-per-batch", "4096",
+                "--pipeline.model.eval-num-rays-per-chunk", "4096",
+                "--data",
+                "${env:DATASETS_DIR}/360_v2/garden/transforms_nerf_depths.json",
+                "--pipeline.model.radiance-field.num-levels", "4",
+                "--pipeline.model.radiance-field.base-res", "16",
+                "--pipeline.model.radiance-field.max-res", "128",
+                "--pipeline.model.radiance-field.log2-hashmap-size", "21",
+                "--pipeline.model.radiance-field.features-per-level", "8",
+                "--pipeline.model.radiance-field.fourier-features", "6",
+                // "--pipeline.model.radiance-field.input-fourier-features", "6",
+                // "--pipeline.model.radiance-field.reduce_sum", "True",
+                // "--pipeline.model.radiance-field.hidden-dim", "256",
+                // "--pipeline.model.radiance-field.input-encoding", "layer_norm",
+                "nerfstudio-data",
+                "--downscale-factor", "4",
+            ]
+        },
+        {
+            "name": "ringnerf-viewer",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-viewer",
+            "args": [
+                "--load-config", "outputs/garden/ring-nerf/nerfacto-gt/config.yml"
+            ]
+        },
+        {
+            "name": "neus-bench",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-train",
+            "args": [
+                // ------ CONFIG ------
+                "neus-facto",
+                // ------ META ------
+                "--timestamp", "neus-bench",
+                "--max-num-iterations", "10000",
+                "--save_only_latest_checkpoint", "False",
+                "--logging.profiler", "pytorch",
+                "--log-gradients", "True",
+                "--vis", "viewer+tensorboard",
+                "--viewer.image-format", "png",
+                "--viewer.quit-on-train-completion", "False",
+                "--steps-per-eval-all-images", "0",
+                "--pipeline.datamanager.train-num-rays-per-batch", "4096",
+                "--pipeline.datamanager.eval-num-rays-per-batch", "4096",
+                // ------ DATA ------
+                "--data",
+                "${env:DATASETS_DIR}/360_v2/garden",
+                // ------ DATAPARSER ------
+                // "blender-data",
+                "nerfstudio-data",
+                "--downscale-factor", "4",
+                // "--scale-factor", "0.5"
+            ],
+            "env": {
+                // "CUDA_LAUNCH_BLOCKING": "1"
+            }
+        },
+        {
+            "name": "ingp",
+            "type": "debugpy",
+            "request": "launch",
+            "subProcess": true,
+            "console": "integratedTerminal",
+            "program": "${env:HOME}/miniforge3/envs/nemar/bin/ns-train",
+            "args": [
+                // ------ CONFIG ------
+                "instant-ngp",
+                // ------ META ------
+                "--timestamp", "ingp",
+                "--max-num-iterations", "2000",
+                "--logging.profiler", "pytorch",
+                "--vis", "viewer+tensorboard",
+                "--viewer.image-format", "png",
+                "--steps-per-eval-all-images", "0",
+                // ------ DATA ------
+                "--data",
+                "~/PhD/Projects/Clones/instant-ngp/data/nerf/fox",
+                // ------ DATAPARSER ------
+                "instant-ngp-data",
+                // "--downscale-factor", "4",
+                // "--scale-factor", "0.5"
+            ],
+            "env": {
+                // "CUDA_LAUNCH_BLOCKING": "1"
+            }
+        }
+    ]
+}
