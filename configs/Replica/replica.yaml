@@ -39,6 +39,13 @@ tracking:
   const_speed: True
   best: True
 
+tracking_bucket:
+  enabled: True
+  pool_factor: 10
+  shuffle_bucket_order: True  # for ablation, false is supposed to hurt tracking precision
+  morton_inside_bucket: True  # use existing 3D fast-Morton sample sorting per bucket
+  debug_log: False
+
 sampling_tracking:
   mode: random
   ph: 1
@@ -58,7 +65,7 @@ grid:
   voxel_sdf: 0.02
   oneGrid: True
   hash: CoherentPrime # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton", "CoherentPrime"
-  morton_sort: True # enable/disable
+  morton_sort: False # enable/disable
   morton_R: 128        # 64..256 good defaults
 
 pos:
@@ -106,7 +113,7 @@ training:
   trunc: 0.1
   rot_rep: 'axis_angle'
   rgb_missing: 0.05
-  uniform_samples_until_depth: True
+  uniform_samples_until_depth: False
   debug_uniform_samples_until_depth: False
   collect_uniform_samples_until_depth_stats: False
   uniform_samples_until_depth_stats_csv: ./output_csv_room2  # defaults to <data.output>/<data.exp_name>/uniform_samples_until_depth_stats.csv

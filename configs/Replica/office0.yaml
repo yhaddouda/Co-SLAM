@@ -16,8 +16,8 @@ mesh:
   visualisation: False
 
 timing:
-  mode: coslam   # options: none, scene_rep, coslam
-  warmup_frames: 11
+  mode: none # options: none, scene_rep, coslam
+  warmup_frames: 0
   max_frames: 60
   disable_eval: True
   scene_output_csv: ./office0_scene_rep_timing_cropped.csv

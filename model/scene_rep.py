@@ -125,13 +125,16 @@ class JointEncoding(nn.Module):
             warmup_frames=timing_cfg.get('warmup_frames', 0),
         )
         training_cfg = config.get('training', {})
+        self.collect_uniform_sampling_stats = bool(
+            training_cfg.get('collect_uniform_samples_until_depth_stats', False)
+        )
         default_sampling_stats_csv = (
             Path(config['data']['output'])
             / config['data']['exp_name']
             / 'uniform_samples_until_depth_stats.csv'
         )
         self.uniform_sampling_stats = UniformSamplingStatsWriter(
-            enabled=training_cfg.get('collect_uniform_samples_until_depth_stats', False),
+            enabled=self.collect_uniform_sampling_stats,
             output_csv=training_cfg.get(
                 'uniform_samples_until_depth_stats_csv',
                 default_sampling_stats_csv,
@@ -148,11 +151,13 @@ class JointEncoding(nn.Module):
 
     def set_timing_context(self, frame_id: int, outer_stage: str):
         self.layer_timing.set_context(frame_id, outer_stage)
-        self.uniform_sampling_stats.set_context(frame_id, outer_stage)
+        if self.collect_uniform_sampling_stats:
+            self.uniform_sampling_stats.set_context(frame_id, outer_stage)
 
     def flush_scene_timing(self):
         self.layer_timing.flush()
-        self.uniform_sampling_stats.flush()
+        if self.collect_uniform_sampling_stats:
+            self.uniform_sampling_stats.flush()
 
     def get_resolution(self):
         '''
@@ -328,7 +333,7 @@ class JointEncoding(nn.Module):
                 out = self.decoder(embed, embe_pos)
         return out
 
-    def run_network(self, inputs):
+    def run_network(self, inputs, morton_sort_override=None):
         """
         Run the network on a batch of inputs.
 
@@ -342,7 +347,11 @@ class JointEncoding(nn.Module):
                 inputs_flat = torch.reshape(inputs, [-1, inputs.shape[-1]])  # [N,3]
 
             use_tcnn = self.config['grid']['tcnn_encoding']
-            do_morton = bool(self.config['grid'].get('morton_sort', True))  # enable/disable via config
+            do_morton = bool(
+                self.config['grid'].get('morton_sort', True)
+                if morton_sort_override is None
+                else morton_sort_override
+            )
             R = int(self.config['grid'].get('morton_R', 128))               # quantization per axis
 
             if use_tcnn:
@@ -402,7 +411,15 @@ class JointEncoding(nn.Module):
         rgb, disp_map, acc_map, weights, depth_map, depth_var = self.raw2outputs(raw, z_vals, self.config['training']['white_bkgd'])
         return rgb
     
-    def render_rays(self, rays_o, rays_d, target_d=None):
+    def render_rays(
+        self,
+        rays_o,
+        rays_d,
+        target_d=None,
+        uniform_samples_until_depth=None,
+        uniform_sample_count=None,
+        morton_sort_override=None,
+    ):
         '''
         Params:
             rays_o: [N_rays, 3]
@@ -424,7 +441,11 @@ class JointEncoding(nn.Module):
                         # Optional mode: keep depth-centered samples, and reduce the number of
                         # uniform samples so they stop at depth (instead of always near->far).
                         # Falls back to classic near->far uniform sampling when disabled.
-                        if self.config['training'].get('uniform_samples_until_depth', False):
+                        adaptive_uniform = self.config['training'].get('uniform_samples_until_depth', False)
+                        if uniform_samples_until_depth is not None:
+                            adaptive_uniform = uniform_samples_until_depth
+
+                        if adaptive_uniform:
                             near = self.config['cam']['near']
                             far = self.config['cam']['far']
 
@@ -432,22 +453,27 @@ class JointEncoding(nn.Module):
                             valid_depth = (target_d.squeeze(-1) > 0)
                             n_samples_d = self.config['training']['n_samples_d']
 
-                            # Compute an adaptive count from valid depths using the original near->far bins.
-                            # This makes z_vals length shrink when scene depth is closer than far.
-                            base_uniform = torch.linspace(near, far, n_samples_d).to(rays_o)
-                            counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1)
-                            counts = torch.where(valid_depth, counts, torch.zeros_like(counts))
-                            if valid_depth.any():
-                                n_uniform = max(1, int(counts[valid_depth].max().item()))
+                            if uniform_sample_count is not None:
+                                n_uniform = max(1, min(int(uniform_sample_count), n_samples_d))
                             else:
-                                n_uniform = n_samples_d
+                                # Compute an adaptive count from valid depths using the original near->far bins.
+                                # This makes z_vals length shrink when scene depth is closer than far.
+                                base_uniform = torch.linspace(near, far, n_samples_d).to(rays_o)
+                                # Ablation baseline: counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1)
+                                counts = torch.searchsorted(base_uniform, depth_end.contiguous(), right=True)
+                                counts = torch.where(valid_depth, counts, torch.zeros_like(counts))
+                                if valid_depth.any():
+                                    n_uniform = max(1, int(counts[valid_depth].max().item()))
+                                else:
+                                    n_uniform = n_samples_d
 
-                            self.uniform_sampling_stats.record_batch(
-                                ray_counts_before_depth=counts,
-                                valid_depth=valid_depth,
-                                selected_uniform_samples=n_uniform,
-                                requested_uniform_samples=n_samples_d,
-                            )
+                                if self.collect_uniform_sampling_stats:
+                                    self.uniform_sampling_stats.record_batch(
+                                        ray_counts_before_depth=counts,
+                                        valid_depth=valid_depth,
+                                        selected_uniform_samples=n_uniform,
+                                        requested_uniform_samples=n_samples_d,
+                                    )
 
                             if self.config['training'].get('debug_uniform_samples_until_depth', False):
                                 print(f"[sampling] uniform_until_depth=True n_uniform={n_uniform} n_range_d={self.config['training']['n_range_d']}")
@@ -480,44 +506,13 @@ class JointEncoding(nn.Module):
         # Run rendering pipeline
         with self.layer_timing.stage('compute_points'):
             with torch.cuda.nvtx.range("compute_points"):
-                # Check the flag
-                do_morton = self.config['grid'].get('morton2D', False)
-
-                if do_morton:
-                    # --- OPTIMIZED PATH: Transposed Layout [Samples, Rays, 3] ---
-                    # 1. Transpose z_vals from [Rays, Samples] to [Samples, Rays]
-                    z_vals_T = z_vals.permute(1, 0).contiguous()
-                    
-                    # 2. Broadcast: 
-                    # rays_o/d: [Rays, 3] -> [1, Rays, 3]
-                    # z_vals_T: [Samples, Rays] -> [Samples, Rays, 1]
-                    # Result pts: [Samples, Rays, 3]
-                    pts = rays_o[None, ...] + rays_d[None, ...] * z_vals_T[..., None]
-                    
-                    # 3. Flatten. In memory, this is now:
-                    # Sample0_Ray0, Sample0_Ray1, Sample0_Ray2...
-                    # Since we sorted Rays 0,1,2 to be neighbors, this is a linear memory read!
-                    pts_flat = pts.reshape(-1, 3)
-                    
-                else:
-                    # --- ORIGINAL PATH: Standard Layout [Rays, Samples, 3] ---
-                    pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None] 
-                    pts_flat = pts.reshape(-1, 3)
+                pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None]
+                pts_flat = pts.reshape(-1, 3)
                 
         with self.layer_timing.stage('run_network'):
             with torch.cuda.nvtx.range("run_network"):
-                # Pass the flattened points (layout agnostic)
-                raw_flat = self.run_network(pts_flat)
-                
-                # Reshape back based on which layout we used
-                if do_morton:
-                    # Output was [S*R, 4] -> reshape [S, R, 4]
-                    raw = raw_flat.reshape(z_vals.shape[1], z_vals.shape[0], 4)
-                    # Permute back to [R, S, 4] for volume rendering accumulation
-                    raw = raw.permute(1, 0, 2).contiguous()
-                else:
-                    # Output was [R*S, 4] -> reshape [R, S, 4]
-                    raw = raw_flat.reshape(z_vals.shape[0], z_vals.shape[1], 4)
+                raw_flat = self.run_network(pts_flat, morton_sort_override=morton_sort_override)
+                raw = raw_flat.reshape(z_vals.shape[0], z_vals.shape[1], 4)
 
         with self.layer_timing.stage('volume_rendering'):
             with torch.cuda.nvtx.range("volume_rendering"):
@@ -540,7 +535,7 @@ class JointEncoding(nn.Module):
                 pts = rays_o[...,None,:] + rays_d[...,None,:] * z_vals[...,:,None] # [N_rays, N_samples + N_importance, 3]
 
             with torch.cuda.nvtx.range("run_network_importance"):
-                raw = self.run_network(pts)
+                raw = self.run_network(pts, morton_sort_override=morton_sort_override)
 
             with torch.cuda.nvtx.range("raw2outputs_importance"):
                 rgb_map, disp_map, acc_map, weights, depth_map, depth_var = self.raw2outputs(raw, z_vals, self.config['training']['white_bkgd'])
@@ -564,7 +559,17 @@ class JointEncoding(nn.Module):
 
         return ret
     
-    def forward(self, rays_o, rays_d, target_rgb, target_d, global_step=0):
+    def forward(
+        self,
+        rays_o,
+        rays_d,
+        target_rgb,
+        target_d,
+        global_step=0,
+        uniform_samples_until_depth=None,
+        uniform_sample_count=None,
+        morton_sort_override=None,
+    ):
         '''
         Params:
             rays_o: ray origins (Bs, 3)
@@ -581,7 +586,14 @@ class JointEncoding(nn.Module):
         # Get render results
         with self.layer_timing.stage('render_rays'):
             with torch.cuda.nvtx.range("render_rays"):
-                rend_dict = self.render_rays(rays_o, rays_d, target_d=target_d)
+                rend_dict = self.render_rays(
+                    rays_o,
+                    rays_d,
+                    target_d=target_d,
+                    uniform_samples_until_depth=uniform_samples_until_depth,
+                    uniform_sample_count=uniform_sample_count,
+                    morton_sort_override=morton_sort_override,
+                )
 
         if not self.training:
             return rend_dict

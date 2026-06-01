@@ -51,9 +51,6 @@ def nvtx_range(name: str):
 
 import math
 
-#CUDA extension for Morton code
-#from model.morton_2D import morton2d_keys_cuda
-
 # Helpers for patch sampling
 def _grid_jitter_toplefts_fast(H, W, ph, pw, sh, sw, seed=None):
     """
@@ -132,6 +129,7 @@ def create_profiler_config(
 class CoSLAM():
     def __init__(self, config):
         self.config = config
+        self.validate_tracking_bucket_config()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dataset = get_dataset(config)
         
@@ -158,52 +156,131 @@ class CoSLAM():
         )
         self.profiler = None
         self.profiling_step = 0
-        print("Morton2D is :", self.config['grid'].get('morton2D', False))
+        print("3D Morton sample sort is :", self.config['grid'].get('morton_sort', False))
+
+    def validate_tracking_bucket_config(self):
+        bucket_enabled = self.config.get('tracking_bucket', {}).get('enabled', False)
+        naive_enabled = self.config.get('training', {}).get('uniform_samples_until_depth', False)
+        if bucket_enabled and naive_enabled:
+            raise ValueError(
+                "Config error: tracking_bucket.enabled and "
+                "training.uniform_samples_until_depth cannot both be true. "
+                "Disable the old global uniform_samples_until_depth flag when using "
+                "the tracking-only bucketed sampler."
+            )
+        if bucket_enabled and self.config.get('training', {}).get('n_samples_d', 0) <= 0:
+            raise ValueError(
+                "Config error: tracking_bucket.enabled requires "
+                "training.n_samples_d > 0."
+            )
     
-    def sort_rays_by_morton(self, indices=None, rays_d=None, frame_ids=None, H=None, W=None):
-        """
-        Sorts rays based on 2D Morton codes to improve cache locality.
-        Conditioned by config['grid']['morton2D'].
-        """
-        # 1. Ablation Switch
-        if not self.config['grid'].get('morton2D', False):
-            return None 
+    def compute_uniform_until_depth_counts(self, target_d):
+        near = self.config['cam']['near']
+        far = self.config['cam']['far']
+        n_samples_d = self.config['training']['n_samples_d']
 
-        with nvtx_range("morton_sort_overhead"):
-            R = 128 
-            
-            # --- CASE A: Single Frame (using flattened indices) ---
-            if indices is not None:
-                # Recover 2D coordinates from flattened indices
-                # u = idx % W, v = idx // W
-                y = (indices // W).float() / H
-                x = (indices % W).float() / W
-                uv = torch.stack([x, y], dim=-1).to(self.device) # [N, 2]
-                
-                # Generate keys (frame_id is None, so it's just pure spatial sort)
-                keys = morton2d_keys_cuda(uv, None, R)
-                
-            # --- CASE B: Multi-Frame / Bundle Adjustment ---
-            elif rays_d is not None:
-                # We use ray directions as a proxy for screen coordinates.
-                # Project or simpler: normalize direction X/Y to [0,1].
-                # (We just need relative order, not exact pixels)
-                uv = rays_d[:, :2] * 0.5 + 0.5 
-                uv = torch.clamp(uv, 0.0, 1.0)
-                
-                # frame_ids MUST be Int64 for the C++ kernel
-                fids = frame_ids.to(torch.int64) if frame_ids is not None else None
-                
-                # Generate packed keys: [Frame_ID | Morton_Code]
-                keys = morton2d_keys_cuda(uv, fids, R)
-            
-            else:
-                return None
+        depth = target_d.squeeze(-1)
+        valid_depth = torch.isfinite(depth) & (depth > 0)
+        dense_count = torch.full_like(depth, n_samples_d, dtype=torch.long)
 
-            # 2. Sort the keys to get permutation
-            perm = torch.argsort(keys)
-            
-        return perm
+        depth_end = torch.where(valid_depth, depth, torch.full_like(depth, far))
+        depth_end = depth_end.clamp(min=near, max=far)
+        base_uniform = torch.linspace(near, far, n_samples_d, device=target_d.device)
+        # Ablation baseline: counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1).long()
+        counts = torch.searchsorted(base_uniform, depth_end.contiguous(), right=True).long()
+        counts = counts.clamp(min=1, max=n_samples_d)
+        return torch.where(valid_depth, counts, dense_count)
+
+    def sample_unique_indices_randint_optimized(self, population_size, sample_size):
+        """
+        Rejection sampling for unique indices without allocating a full permutation.
+        Good when sample_size is much smaller than population_size, as on Jetson Orin.
+        """
+        # First draw with a small margin for the expected duplicates.
+        draw_size = sample_size + int(sample_size * 0.05)
+        candidates = torch.randint(0, population_size, (draw_size,), device=self.device)
+
+        selected = torch.unique(candidates, sorted=False)
+
+        while selected.numel() < sample_size:
+            need = sample_size - selected.numel()
+            draw_size = need + int(need * 0.5)
+            extra = torch.randint(0, population_size, (draw_size,), device=self.device)
+            selected = torch.unique(torch.cat((selected, extra)), sorted=False)
+
+        return selected[:sample_size]
+
+    def prepare_tracking_buckets(self, batch, iH, iW, frame_id):
+        bucket_cfg = self.config.get('tracking_bucket', {})
+        tracking_iters = self.config['tracking']['iter']
+        tracking_sample = self.config['tracking']['sample']
+        pool_factor = int(bucket_cfg.get('pool_factor', tracking_iters))
+        if pool_factor < tracking_iters:
+            raise ValueError(
+                "Config error: tracking_bucket.pool_factor must be >= tracking.iter "
+                "so enough rays exist to form one bucket per tracking iteration."
+            )
+
+        H = self.dataset.H - iH * 2
+        W = self.dataset.W - iW * 2
+        pool_size = pool_factor * tracking_sample
+        if pool_size > H * W:
+            raise ValueError(
+                f"Config error: tracking_bucket pool size {pool_size} exceeds "
+                f"available tracking pixels {H * W}."
+            )
+
+        pool_indices_cpu = torch.tensor(random.sample(range(H * W), pool_size), dtype=torch.long)
+        # Ablation GPU full permutation: pool_indices = torch.randperm(H * W, device=self.device)[:pool_size]
+        # Ablation GPU rejection sampling: pool_indices = self.sample_unique_indices_randint_optimized(H * W, pool_size)
+        indice_h = pool_indices_cpu % H
+        indice_w = pool_indices_cpu // H
+
+        direction = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :]
+        rgb = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :]
+        depth = batch['depth'].squeeze(0)[iH:-iH, iW:-iW]
+
+        rays_d_cam_pool = direction[indice_h, indice_w, :].to(self.device)
+        target_s_pool = rgb[indice_h, indice_w, :].to(self.device)
+        target_d_pool = depth[indice_h, indice_w].unsqueeze(-1).to(self.device)
+        target_d_pool = torch.where(torch.isfinite(target_d_pool), target_d_pool, torch.zeros_like(target_d_pool))
+        counts = self.compute_uniform_until_depth_counts(target_d_pool)
+
+        count_order = torch.argsort(counts)
+        usable = pool_factor * tracking_sample
+        pool_positions = torch.arange(pool_size, device=self.device)
+        bucket_indices = pool_positions[count_order[:usable]].reshape(pool_factor, tracking_sample)
+        bucket_counts = counts[count_order[:usable]].reshape(pool_factor, tracking_sample)
+
+        if bucket_cfg.get('shuffle_bucket_order', True):
+            bucket_order = torch.randperm(pool_factor, device=self.device)
+            bucket_indices = bucket_indices[bucket_order]
+            bucket_counts = bucket_counts[bucket_order]
+
+        bucket_indices = bucket_indices[:tracking_iters]
+        bucket_counts = bucket_counts[:tracking_iters]
+
+        flat_indices = bucket_indices.reshape(-1)
+        bucket_shape = (tracking_iters, tracking_sample)
+        uniform_counts = bucket_counts.max(dim=1).values.detach().cpu().tolist()
+        target_d_flat = target_d_pool[flat_indices]
+        target_d_flat = torch.where(torch.isfinite(target_d_flat), target_d_flat, torch.zeros_like(target_d_flat))
+
+        if bucket_cfg.get('debug_log', False):
+            print(
+                "[tracking-bucket] "
+                f"frame={frame_id} pool={pool_size} buckets={tracking_iters} "
+                f"sample={tracking_sample} "
+                f"morton3d_samples={bucket_cfg.get('morton_inside_bucket', True)} "
+                f"uniform_counts={uniform_counts}"
+            )
+
+        return {
+            'rays_d_cam': rays_d_cam_pool[flat_indices].reshape(*bucket_shape, 3),
+            'target_s': target_s_pool[flat_indices].reshape(*bucket_shape, 3),
+            'target_d': target_d_flat.reshape(*bucket_shape, 1),
+            'uniform_counts': uniform_counts,
+        }
     
     def start_profiling(self, wait=1, warmup=0, active=10, repeat=1):
         """Start profiling with optimized schedule for SLAM"""
@@ -453,18 +530,6 @@ class CoSLAM():
                     To do patch sampling, you should edit the config file of the dataset, and provide patch dimensions
                      """
                     indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
-                    # --- START FIX ---
-                    # 1. Move to GPU for sorting
-                    indice = indice.to(self.device)
-                    
-                    # 2. Sort
-                    perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
-                    if perm is not None:
-                        indice = indice[perm]
-                    
-                    # 3. CRITICAL: Move back to CPU to index the CPU batch tensors
-                    indice = indice.cpu()
-                    # --- END FIX ---
                 
                 with nvtx_range("ray_sampling&coords_transform_FFM"):
                     indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
@@ -534,13 +599,6 @@ class CoSLAM():
         for i in range(self.config['mapping']['cur_frame_iters']):
             self.cur_map_optimizer.zero_grad()
             indice = self.select_samples(self.dataset.H, self.dataset.W, self.config['mapping']['sample'])
-            # --- START FIX ---
-            indice = indice.to(self.device)
-            perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
-            if perm is not None:
-                indice = indice[perm]
-            indice = indice.cpu() # <--- Move back to CPU
-            # --- END FIX ---
             
             indice_h, indice_w = indice % (self.dataset.H), indice // (self.dataset.H)
             rays_d_cam = batch['direction'].squeeze(0)[indice_h, indice_w, :].to(self.device)
@@ -671,18 +729,6 @@ class CoSLAM():
 
                                 rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
                                 ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
-                                # --- NEW: Sort Multi-Frame Rays ---
-                                perm = self.sort_rays_by_morton(
-                                    rays_d=rays[..., :3].to(self.device), 
-                                    frame_ids=ids_all.to(self.device)
-                                )
-                                
-                                if perm is not None:
-                                    # Fix: move perm to cpu() because 'rays' is likely on CPU
-                                    perm = perm.cpu() 
-                                    rays = rays[perm]
-                                    ids_all = ids_all[perm]
-                                # ----------------------------------
                         with self.coslam_timing.stage('cpu_to_gpu_BA'):
                             with nvtx_range("cpu_to_gpu_gt_BA"):
                                 rays_d_cam = rays[..., :3].to(self.device)
@@ -882,6 +928,16 @@ class CoSLAM():
 
             iW = self.config['tracking']['ignore_edge_W']
             iH = self.config['tracking']['ignore_edge_H']
+            tracking_bucket_cfg = self.config.get('tracking_bucket', {})
+            bucketed_tracking = tracking_bucket_cfg.get('enabled', False)
+            bucket_morton_sort = tracking_bucket_cfg.get(
+                'morton_inside_bucket',
+                self.config['grid'].get('morton_sort', True),
+            )
+            tracking_buckets = None
+            if bucketed_tracking:
+                with nvtx_range("prepare_tracking_buckets"):
+                    tracking_buckets = self.prepare_tracking_buckets(batch, iH, iW, frame_id)
 
             cur_rot, cur_trans, pose_optimizer = self.get_pose_param_optim(cur_c2w[None,...], mapping=False)
 
@@ -896,29 +952,38 @@ class CoSLAM():
 
                         # Note here we fix the sampled points for optimisation
                         with nvtx_range("select_samples_tr"):
-                            if indice is None:
+                            if bucketed_tracking:
+                                rays_d_cam = tracking_buckets['rays_d_cam'][i]
+                                target_s = tracking_buckets['target_s'][i]
+                                target_d = tracking_buckets['target_d'][i]
+                                uniform_count = tracking_buckets['uniform_counts'][i]
+                            elif indice is None:
                                 indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
-                                # --- START FIX ---
-                                indice = indice.to(self.device)
-                                perm = self.sort_rays_by_morton(indices=indice, H=self.dataset.H, W=self.dataset.W)
-                                if perm is not None:
-                                    indice = indice[perm]
-                                indice = indice.cpu() # <--- Move back to CPU
-                                # --- END FIX ---
                             
                                 # Slicing
                                 indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
                                 rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
                         with nvtx_range("Tensor_ops_s&d_tr"):
-                            target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
-                            target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
+                            if not bucketed_tracking:
+                                target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                                target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
+                                uniform_count = None
 
-                            rays_o = c2w_est[...,:3, -1].repeat(self.config['tracking']['sample'], 1)
+                            n_tracking_rays = rays_d_cam.shape[0]
+                            rays_o = c2w_est[...,:3, -1].repeat(n_tracking_rays, 1)
                             rays_d = torch.sum(rays_d_cam[..., None, :] * c2w_est[:, :3, :3], -1)
 
                         with self.coslam_timing.stage('forward_tr'):
                             with nvtx_range("forward_tr"):
-                                ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                                ret = self.model.forward(
+                                    rays_o,
+                                    rays_d,
+                                    target_s,
+                                    target_d,
+                                    uniform_samples_until_depth=True if bucketed_tracking else None,
+                                    uniform_sample_count=uniform_count,
+                                    morton_sort_override=bool(bucket_morton_sort) if bucketed_tracking else None,
+                                )
                         
                         with self.coslam_timing.stage('loss_calculation_tr'):
                             with nvtx_range("loss_calculation_tr"):
