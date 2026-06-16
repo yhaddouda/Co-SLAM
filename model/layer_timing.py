@@ -49,3 +49,102 @@ class DeferredCudaTimer:
                     continue
                 writer.writerow([frame_id, outer_stage, stage_name, float(start_evt.elapsed_time(end_evt))])
         self.pending.clear()
+
+    def finish_frame(self, frame_id: int):
+        return
+
+
+class IterationProfileFrameTimer:
+    PROFILE_STAGES = ('TR_ITER_PROFILE_TOTAL', 'BA_ITER_PROFILE_TOTAL')
+
+    def __init__(
+        self,
+        enabled=False,
+        output_csv='./profiling/iter_profile_frame_totals.csv',
+        warmup_frames=0,
+        write_header=False,
+    ):
+        self.enabled = bool(enabled)
+        self.output_csv = Path(output_csv)
+        self.warmup_frames = int(warmup_frames)
+        self.write_header = bool(write_header)
+        self.current_frame_id = -1
+        self.current_outer_stage = ''
+        self.pending = []
+        self.frame_totals = {}
+        self.written_frames = set()
+        self.header_written = False
+
+        if self.enabled:
+            self.output_csv.parent.mkdir(parents=True, exist_ok=True)
+            self.header_written = self.output_csv.exists() and self.output_csv.stat().st_size > 0
+
+    def set_context(self, frame_id: int, outer_stage: str):
+        self.current_frame_id = int(frame_id)
+        self.current_outer_stage = str(outer_stage)
+
+    @contextmanager
+    def stage(self, name: str):
+        if not self.enabled or name not in self.PROFILE_STAGES or not torch.cuda.is_available():
+            yield
+            return
+
+        start_evt = torch.cuda.Event(enable_timing=True)
+        end_evt = torch.cuda.Event(enable_timing=True)
+        start_evt.record()
+        try:
+            yield
+        finally:
+            end_evt.record()
+            self.pending.append((self.current_frame_id, name, start_evt, end_evt))
+
+    def flush(self):
+        if not self.enabled or not self.pending:
+            return
+
+        torch.cuda.synchronize()
+        for frame_id, stage_name, start_evt, end_evt in self.pending:
+            if frame_id < self.warmup_frames:
+                continue
+            totals = self.frame_totals.setdefault(
+                frame_id,
+                {stage: 0.0 for stage in self.PROFILE_STAGES},
+            )
+            totals[stage_name] += float(start_evt.elapsed_time(end_evt))
+        self.pending.clear()
+
+    def finish_frame(self, frame_id: int):
+        if not self.enabled:
+            return
+
+        self.flush()
+        frame_id = int(frame_id)
+        if frame_id < self.warmup_frames or frame_id in self.written_frames:
+            return
+
+        totals = self.frame_totals.setdefault(
+            frame_id,
+            {stage: 0.0 for stage in self.PROFILE_STAGES},
+        )
+        tr_ms = totals['TR_ITER_PROFILE_TOTAL']
+        ba_ms = totals['BA_ITER_PROFILE_TOTAL']
+        total_ms = tr_ms + ba_ms
+
+        with open(self.output_csv, 'a', newline='') as f:
+            writer = csv.writer(f)
+            if self.write_header and not self.header_written:
+                writer.writerow([
+                    'frame_id',
+                    'total_iter_profile_ms',
+                    'tr_iter_profile_total_ms',
+                    'ba_iter_profile_total_ms',
+                ])
+                self.header_written = True
+            writer.writerow([
+                frame_id,
+                f'{total_ms:.6f}',
+                f'{tr_ms:.6f}',
+                f'{ba_ms:.6f}',
+            ])
+
+        self.written_frames.add(frame_id)

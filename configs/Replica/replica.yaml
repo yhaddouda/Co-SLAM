@@ -39,6 +39,28 @@ tracking:
   const_speed: True
   best: True
 
+tracking_bucket:  # hurts quality,, because it used a different batch every iteration.
+  enabled: False
+  pool_factor: 10
+  shuffle_bucket_order: True  # for ablation, false is supposed to hurt tracking precision
+  morton_inside_bucket: False  # use existing 3D fast-Morton sample sorting per bucket
+  debug_log: False
+
+tracking_naive_pruning:
+  enabled: True  # If false, defaults to regular tracking without pruning
+  morton_sort: False  # use existing 3D fast-Morton sample sorting during naive tracking
+  debug_log: False
+  collect_stats: False
+  stats_csv: ./output_csv_room2  # defaults to <data.output>/<data.exp_name>/tracking_naive_pruning_stats.csv
+
+ba_bucket:
+  enabled: True
+  pool_factor: 10
+  shuffle_bucket_order: True
+  morton_inside_bucket: False  # use existing 3D fast-Morton sample sorting during bucketed BA
+  preserve_current_ratio: True
+  debug_log: False
+
 sampling_tracking:
   mode: random
   ph: 1
@@ -57,10 +79,9 @@ grid:
   voxel_color: 0.08
   voxel_sdf: 0.02
   oneGrid: True
-  hash: CoherentPrime  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
+  hash: CoherentPrime # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton", "CoherentPrime"
   morton_sort: False # enable/disable
   morton_R: 128        # 64..256 good defaults
-  morton2D : False  # more efficient than morton 3D, cannot be activated simaultaneously
 
 pos:
   enc: 'OneBlob'
@@ -107,10 +128,7 @@ training:
   trunc: 0.1
   rot_rep: 'axis_angle'
   rgb_missing: 0.05
-  uniform_samples_until_depth: True
-  debug_uniform_samples_until_depth: False
-  collect_uniform_samples_until_depth_stats: True
-  uniform_samples_until_depth_stats_csv: ./output_csv_office1  # defaults to <data.output>/<data.exp_name>/uniform_samples_until_depth_stats.csv
+
 
 mesh:
   resolution: 512
@@ -120,5 +138,12 @@ mesh:
   voxel_final: 0.02
   visualisation: False
   
+# Add profiling config here
 profiling:
-  sync_for_ncu: False
+  enabled: False
+  output_dir: ./profiling/PytorchProfiler/office0
+  schedule:
+    wait: 1
+    warmup: 0
+    active: 10
+    repeat: 1

@@ -9,19 +9,21 @@ data:
   datadir: ../data/Replica/office0
   trainskip: 1
   output: output/Replica/office0
-  exp_name: "morton2D"
+  exp_name: "complete_pruning"
 
 mesh:
   vis: 1000000000
   visualisation: False
 
 timing:
-  mode: none   # options: none, scene_rep, coslam
-  warmup_frames: 0
+  mode: frame_total # options: none, scene_rep, coslam, frame_total
+  warmup_frames: 1
   max_frames: 2000
   disable_eval: True
-  scene_output_csv: ./Monitoring/multilayer/office0/scene_rep_timing_A.csv
-  coslam_output_csv: ./Monitoring/multilayer/office0/coslam_layer_timing_A.csv
+  scene_output_csv: ./office0_scene_rep_timing_complete_pruningD.csv
+  coslam_output_csv: ./office0_coslam_layer_timing_complete_pruningD.csv
+  frame_total_output_csv: ./office0_frame_total_timing_complete_pruning.csv
+  frame_total_write_header: False
 
 # Add profiling config here
 profiling:

@@ -4,6 +4,7 @@ This patch adds **selectable profiling layers** for Co-SLAM so you can measure e
 
 - **`scene_rep` mode**: deep forward-side timings inside `scene_rep.py`
 - **`coslam` mode**: shallow timings in `coslam.py` for forward / loss / backward / optimizer
+- **`frame_total` mode**: one compact row per frame, summing only `TR_ITER_PROFILE_TOTAL` and `BA_ITER_PROFILE_TOTAL`
 - **`none`**: disables extra timing
 
 Only **one layer is active at a time** to limit overhead.
@@ -17,6 +18,7 @@ Only **one layer is active at a time** to limit overhead.
 ## Outputs
 - `scene_rep` mode -> `scene_rep_timing.csv`
 - `coslam` mode -> `coslam_layer_timing.csv`
+- `frame_total` mode -> `frame_total_output_csv`
 
 ## Tools used
 - **CUDA events** for GPU timing
@@ -26,11 +28,25 @@ Only **one layer is active at a time** to limit overhead.
 ## Main config flags
 ```yaml
 timing:
-  mode: scene_rep   # or coslam or none
+  mode: scene_rep   # or coslam, frame_total, none
   warmup_frames: 5
   max_frames: 40
   disable_eval: True
 ```
+
+For a full per-frame iteration total file:
+```yaml
+timing:
+  mode: frame_total
+  warmup_frames: 0
+  max_frames: 2000
+  frame_total_output_csv: ./office0_frame_total_timing.csv
+  frame_total_write_header: False
+```
+
+With `frame_total_write_header: False`, a 2000-frame run writes exactly 2000 data lines.
+Columns are:
+`frame_id,total_iter_profile_ms,tr_iter_profile_total_ms,ba_iter_profile_total_ms`.
 
 ## Run
 ```bash
@@ -45,4 +61,4 @@ Edit:
 timing:
   mode: scene_rep
 ```
-Change `scene_rep` to `coslam` or `none` as needed.
+Change `scene_rep` to `coslam`, `frame_total`, or `none` as needed.
