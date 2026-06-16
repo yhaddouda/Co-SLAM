@@ -125,27 +125,40 @@ class JointEncoding(nn.Module):
             warmup_frames=timing_cfg.get('warmup_frames', 0),
         )
         training_cfg = config.get('training', {})
+        naive_pruning_cfg = config.get('tracking_naive_pruning', {})
         self.collect_uniform_sampling_stats = bool(
-            training_cfg.get('collect_uniform_samples_until_depth_stats', False)
+            naive_pruning_cfg.get(
+                'collect_stats',
+                training_cfg.get('collect_uniform_samples_until_depth_stats', False),
+            )
+        )
+        self.debug_naive_pruning = bool(
+            naive_pruning_cfg.get(
+                'debug_log',
+                training_cfg.get('debug_uniform_samples_until_depth', False),
+            )
         )
         default_sampling_stats_csv = (
             Path(config['data']['output'])
             / config['data']['exp_name']
-            / 'uniform_samples_until_depth_stats.csv'
+            / 'tracking_naive_pruning_stats.csv'
         )
         self.uniform_sampling_stats = UniformSamplingStatsWriter(
             enabled=self.collect_uniform_sampling_stats,
-            output_csv=training_cfg.get(
-                'uniform_samples_until_depth_stats_csv',
-                default_sampling_stats_csv,
+            output_csv=naive_pruning_cfg.get(
+                'stats_csv',
+                training_cfg.get(
+                    'uniform_samples_until_depth_stats_csv',
+                    default_sampling_stats_csv,
+                ),
             ),
         )
         if self.uniform_sampling_stats.enabled:
-            print(f"[sampling-stats] Collecting cropped-sampling stats in {self.uniform_sampling_stats.output_csv}")
-            if not training_cfg.get('uniform_samples_until_depth', False):
+            print(f"[sampling-stats] Collecting naive-pruning stats in {self.uniform_sampling_stats.output_csv}")
+            if not naive_pruning_cfg.get('enabled', training_cfg.get('uniform_samples_until_depth', False)):
                 print(
-                    "[sampling-stats] uniform_samples_until_depth is disabled, "
-                    "so no cropped-sampling stats will be recorded."
+                    "[sampling-stats] tracking_naive_pruning.enabled is disabled, "
+                    "so no naive-pruning stats will be recorded."
                 )
         
 
@@ -441,9 +454,7 @@ class JointEncoding(nn.Module):
                         # Optional mode: keep depth-centered samples, and reduce the number of
                         # uniform samples so they stop at depth (instead of always near->far).
                         # Falls back to classic near->far uniform sampling when disabled.
-                        adaptive_uniform = self.config['training'].get('uniform_samples_until_depth', False)
-                        if uniform_samples_until_depth is not None:
-                            adaptive_uniform = uniform_samples_until_depth
+                        adaptive_uniform = bool(uniform_samples_until_depth)
 
                         if adaptive_uniform:
                             near = self.config['cam']['near']
@@ -475,7 +486,7 @@ class JointEncoding(nn.Module):
                                         requested_uniform_samples=n_samples_d,
                                     )
 
-                            if self.config['training'].get('debug_uniform_samples_until_depth', False):
+                            if self.debug_naive_pruning and uniform_sample_count is None:
                                 print(f"[sampling] uniform_until_depth=True n_uniform={n_uniform} n_range_d={self.config['training']['n_range_d']}")
 
                             t_vals = torch.linspace(0., 1., steps=n_uniform).to(rays_o)

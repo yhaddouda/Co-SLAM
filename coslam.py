@@ -160,19 +160,78 @@ class CoSLAM():
 
     def validate_tracking_bucket_config(self):
         bucket_enabled = self.config.get('tracking_bucket', {}).get('enabled', False)
-        naive_enabled = self.config.get('training', {}).get('uniform_samples_until_depth', False)
+        ba_bucket_enabled = self.config.get('ba_bucket', {}).get('enabled', False)
+        naive_enabled = self.tracking_naive_pruning_enabled()
         if bucket_enabled and naive_enabled:
             raise ValueError(
                 "Config error: tracking_bucket.enabled and "
-                "training.uniform_samples_until_depth cannot both be true. "
-                "Disable the old global uniform_samples_until_depth flag when using "
-                "the tracking-only bucketed sampler."
+                "tracking_naive_pruning.enabled cannot both be true. "
+                "Disable naive tracking pruning when using the bucketed sampler."
             )
         if bucket_enabled and self.config.get('training', {}).get('n_samples_d', 0) <= 0:
             raise ValueError(
                 "Config error: tracking_bucket.enabled requires "
                 "training.n_samples_d > 0."
             )
+        if ba_bucket_enabled and self.config.get('training', {}).get('n_samples_d', 0) <= 0:
+            raise ValueError(
+                "Config error: ba_bucket.enabled requires "
+                "training.n_samples_d > 0."
+            )
+        ba_pool_factor = self.config.get('ba_bucket', {}).get('pool_factor', self.config['mapping']['iters'])
+        if ba_bucket_enabled and ba_pool_factor < self.config['mapping']['iters']:
+            raise ValueError(
+                "Config error: ba_bucket.pool_factor must be >= mapping.iters "
+                "so enough buckets exist for bundle adjustment."
+            )
+
+    def tracking_naive_pruning_enabled(self):
+        naive_cfg = self.config.get('tracking_naive_pruning', {})
+        legacy_enabled = self.config.get('training', {}).get('uniform_samples_until_depth', False)
+        return bool(naive_cfg.get('enabled', False) or legacy_enabled)
+
+    def tracking_naive_pruning_morton_sort_enabled(self):
+        naive_cfg = self.config.get('tracking_naive_pruning', {})
+        return bool(naive_cfg.get('morton_sort', self.config['grid'].get('morton_sort', True)))
+
+    def prepare_naive_tracking_pruning(self, target_d, frame_id):
+        n_samples_d = self.config['training']['n_samples_d']
+        if n_samples_d <= 0:
+            return None
+
+        near = self.config['cam']['near']
+        far = self.config['cam']['far']
+        depth = target_d.squeeze(-1)
+        valid_depth = (depth > 0)
+        depth_end = depth.clamp(min=near, max=far)
+        base_uniform = torch.linspace(near, far, n_samples_d, device=target_d.device)
+        # Ablation baseline: counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1).long()
+        counts = torch.searchsorted(base_uniform, depth_end.contiguous(), right=True).long()
+        counts = torch.where(valid_depth, counts, torch.zeros_like(counts))
+
+        if valid_depth.any():
+            n_uniform = max(1, min(int(counts[valid_depth].max().item()), n_samples_d))
+        else:
+            n_uniform = n_samples_d
+
+        if getattr(self.model, 'collect_uniform_sampling_stats', False):
+            self.model.uniform_sampling_stats.record_batch(
+                ray_counts_before_depth=counts,
+                valid_depth=valid_depth,
+                selected_uniform_samples=n_uniform,
+                requested_uniform_samples=n_samples_d,
+            )
+
+        naive_cfg = self.config.get('tracking_naive_pruning', {})
+        if naive_cfg.get('debug_log', False):
+            print(
+                "[tracking-naive-pruning] "
+                f"frame={frame_id} sample={target_d.shape[0]} "
+                f"uniform_count={n_uniform} "
+                f"morton3d_samples={self.tracking_naive_pruning_morton_sort_enabled()}"
+            )
+
+        return n_uniform
     
     def compute_uniform_until_depth_counts(self, target_d):
         near = self.config['cam']['near']
@@ -279,6 +338,151 @@ class CoSLAM():
             'rays_d_cam': rays_d_cam_pool[flat_indices].reshape(*bucket_shape, 3),
             'target_s': target_s_pool[flat_indices].reshape(*bucket_shape, 3),
             'target_d': target_d_flat.reshape(*bucket_shape, 1),
+            'uniform_counts': uniform_counts,
+        }
+
+    def bucket_ray_pool_by_uniform_count(self, rays_cpu, ids_cpu, bucket_count, bucket_sample):
+        pool_size = bucket_count * bucket_sample
+        if pool_size > rays_cpu.shape[0]:
+            raise ValueError(
+                f"Config error: requested BA bucket pool {pool_size} exceeds "
+                f"available sampled rays {rays_cpu.shape[0]}."
+            )
+
+        rays_cpu = rays_cpu[:pool_size]
+        ids_cpu = ids_cpu[:pool_size]
+        rays_d_cam_pool = rays_cpu[..., :3].to(self.device)
+        target_s_pool = rays_cpu[..., 3:6].to(self.device)
+        target_d_pool = rays_cpu[..., 6:7].to(self.device)
+        ids_pool = ids_cpu.to(device=self.device, dtype=torch.int64)
+        target_d_pool = torch.where(torch.isfinite(target_d_pool), target_d_pool, torch.zeros_like(target_d_pool))
+        counts = self.compute_uniform_until_depth_counts(target_d_pool)
+
+        count_order = torch.argsort(counts)
+        bucket_indices = count_order[:pool_size].reshape(bucket_count, bucket_sample)
+        bucket_counts = counts[count_order[:pool_size]].reshape(bucket_count, bucket_sample)
+        bucket_shape = (bucket_count, bucket_sample)
+        flat_indices = bucket_indices.reshape(-1)
+
+        return {
+            'rays_d_cam': rays_d_cam_pool[flat_indices].reshape(*bucket_shape, 3),
+            'target_s': target_s_pool[flat_indices].reshape(*bucket_shape, 3),
+            'target_d': target_d_pool[flat_indices].reshape(*bucket_shape, 1),
+            'ids_all': ids_pool[flat_indices].reshape(*bucket_shape),
+            'bucket_counts': bucket_counts,
+        }
+
+    def prepare_ba_buckets(self, current_rays, cur_frame_id):
+        ba_cfg = self.config.get('ba_bucket', {})
+        mapping_iters = self.config['mapping']['iters']
+        mapping_sample = self.config['mapping']['sample']
+        pool_factor = int(ba_cfg.get('pool_factor', mapping_iters))
+        if pool_factor < mapping_iters:
+            raise ValueError(
+                "Config error: ba_bucket.pool_factor must be >= mapping.iters "
+                "so enough buckets exist for bundle adjustment."
+            )
+
+        num_keyframes = len(self.keyframeDatabase.frame_ids)
+        cur_sample = max(
+            mapping_sample // num_keyframes,
+            self.config['mapping']['min_pixels_cur'],
+        )
+        kf_pool_size = pool_factor * mapping_sample
+        cur_pool_size = pool_factor * cur_sample
+        keyframe_population = num_keyframes * self.keyframeDatabase.num_rays_to_save
+        current_population = self.dataset.H * self.dataset.W
+        if kf_pool_size > keyframe_population:
+            raise ValueError(
+                f"Config error: ba_bucket keyframe pool size {kf_pool_size} exceeds "
+                f"available keyframe rays {keyframe_population}."
+            )
+        if cur_pool_size > current_population:
+            raise ValueError(
+                f"Config error: ba_bucket current-frame pool size {cur_pool_size} exceeds "
+                f"available current pixels {current_population}."
+            )
+
+        kf_rays, kf_ids = self.keyframeDatabase.sample_global_rays(kf_pool_size)
+        kf_ids_all = (kf_ids // self.config['mapping']['keyframe_every']).to(torch.int64)
+
+        idx_cur = torch.tensor(random.sample(range(0, current_population), cur_pool_size), dtype=torch.long)
+        cur_rays = current_rays[idx_cur, :]
+        cur_ids_all = torch.full((cur_pool_size,), -1, dtype=torch.int64)
+
+        preserve_ratio = ba_cfg.get('preserve_current_ratio', True)
+        if preserve_ratio:
+            kf_buckets = self.bucket_ray_pool_by_uniform_count(
+                kf_rays,
+                kf_ids_all,
+                pool_factor,
+                mapping_sample,
+            )
+            cur_buckets = self.bucket_ray_pool_by_uniform_count(
+                cur_rays,
+                cur_ids_all,
+                pool_factor,
+                cur_sample,
+            )
+
+            if ba_cfg.get('shuffle_bucket_order', True):
+                bucket_order = torch.randperm(pool_factor, device=self.device)
+                for buckets in (kf_buckets, cur_buckets):
+                    for key in ('rays_d_cam', 'target_s', 'target_d', 'ids_all', 'bucket_counts'):
+                        buckets[key] = buckets[key][bucket_order]
+
+            for buckets in (kf_buckets, cur_buckets):
+                for key in ('rays_d_cam', 'target_s', 'target_d', 'ids_all', 'bucket_counts'):
+                    buckets[key] = buckets[key][:mapping_iters]
+
+            uniform_counts_tensor = torch.maximum(
+                kf_buckets['bucket_counts'].max(dim=1).values,
+                cur_buckets['bucket_counts'].max(dim=1).values,
+            )
+            rays_d_cam = torch.cat([kf_buckets['rays_d_cam'], cur_buckets['rays_d_cam']], dim=1)
+            target_s = torch.cat([kf_buckets['target_s'], cur_buckets['target_s']], dim=1)
+            target_d = torch.cat([kf_buckets['target_d'], cur_buckets['target_d']], dim=1)
+            ids_all = torch.cat([kf_buckets['ids_all'], cur_buckets['ids_all']], dim=1)
+        else:
+            combined_rays = torch.cat([kf_rays, cur_rays], dim=0)
+            combined_ids = torch.cat([kf_ids_all, cur_ids_all], dim=0)
+            combined_buckets = self.bucket_ray_pool_by_uniform_count(
+                combined_rays,
+                combined_ids,
+                pool_factor,
+                mapping_sample + cur_sample,
+            )
+
+            if ba_cfg.get('shuffle_bucket_order', True):
+                bucket_order = torch.randperm(pool_factor, device=self.device)
+                for key in ('rays_d_cam', 'target_s', 'target_d', 'ids_all', 'bucket_counts'):
+                    combined_buckets[key] = combined_buckets[key][bucket_order]
+
+            for key in ('rays_d_cam', 'target_s', 'target_d', 'ids_all', 'bucket_counts'):
+                combined_buckets[key] = combined_buckets[key][:mapping_iters]
+
+            uniform_counts_tensor = combined_buckets['bucket_counts'].max(dim=1).values
+            rays_d_cam = combined_buckets['rays_d_cam']
+            target_s = combined_buckets['target_s']
+            target_d = combined_buckets['target_d']
+            ids_all = combined_buckets['ids_all']
+
+        uniform_counts = uniform_counts_tensor.detach().cpu().tolist()
+        if ba_cfg.get('debug_log', False):
+            print(
+                "[ba-bucket] "
+                f"frame={cur_frame_id} pool_kf={kf_pool_size} pool_cur={cur_pool_size} "
+                f"buckets={mapping_iters} sample_kf={mapping_sample} sample_cur={cur_sample} "
+                f"preserve_current_ratio={preserve_ratio} "
+                f"morton3d_samples={ba_cfg.get('morton_inside_bucket', self.config['grid'].get('morton_sort', True))} "
+                f"uniform_counts={uniform_counts}"
+            )
+
+        return {
+            'rays_d_cam': rays_d_cam,
+            'target_s': target_s,
+            'target_d': target_d,
+            'ids_all': ids_all,
             'uniform_counts': uniform_counts,
         }
     
@@ -711,7 +915,17 @@ class CoSLAM():
             with nvtx_range("cat&reshape_BA"):
                 current_rays = torch.cat([batch['direction'], batch['rgb'], batch['depth'][..., None]], dim=-1)
                 current_rays = current_rays.reshape(-1, current_rays.shape[-1])
-            
+
+            ba_bucket_cfg = self.config.get('ba_bucket', {})
+            bucketed_ba = ba_bucket_cfg.get('enabled', False)
+            ba_morton_sort = ba_bucket_cfg.get(
+                'morton_inside_bucket',
+                self.config['grid'].get('morton_sort', True),
+            )
+            ba_buckets = None
+            if bucketed_ba and self.config['mapping']['iters'] > 0:
+                with nvtx_range("prepare_ba_buckets"):
+                    ba_buckets = self.prepare_ba_buckets(current_rays, cur_frame_id)
 
             for i in range(self.config['mapping']['iters']):
                 with self.coslam_timing.stage('BA_ITER_PROFILE_TOTAL'):
@@ -721,19 +935,28 @@ class CoSLAM():
                         # frame_ids [bs]
                         with self.coslam_timing.stage('sample_global_rays_BA'):
                             with nvtx_range("sample_global_rays_BA"):
-                                rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
+                                if bucketed_ba:
+                                    rays_d_cam = ba_buckets['rays_d_cam'][i]
+                                    target_s = ba_buckets['target_s'][i]
+                                    target_d = ba_buckets['target_d'][i]
+                                    ids_all = ba_buckets['ids_all'][i]
+                                    uniform_count = ba_buckets['uniform_counts'][i]
+                                else:
+                                    rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
 
-                                #TODO: Checkpoint...
-                                idx_cur = random.sample(range(0, self.dataset.H * self.dataset.W),max(self.config['mapping']['sample'] // len(self.keyframeDatabase.frame_ids), self.config['mapping']['min_pixels_cur']))
-                                current_rays_batch = current_rays[idx_cur, :]
+                                    #TODO: Checkpoint...
+                                    idx_cur = random.sample(range(0, self.dataset.H * self.dataset.W),max(self.config['mapping']['sample'] // len(self.keyframeDatabase.frame_ids), self.config['mapping']['min_pixels_cur']))
+                                    current_rays_batch = current_rays[idx_cur, :]
 
-                                rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
-                                ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
-                        with self.coslam_timing.stage('cpu_to_gpu_BA'):
-                            with nvtx_range("cpu_to_gpu_gt_BA"):
-                                rays_d_cam = rays[..., :3].to(self.device)
-                                target_s = rays[..., 3:6].to(self.device)
-                                target_d = rays[..., 6:7].to(self.device)
+                                    rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
+                                    ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
+                                    uniform_count = None
+                        if not bucketed_ba:
+                            with self.coslam_timing.stage('cpu_to_gpu_BA'):
+                                with nvtx_range("cpu_to_gpu_gt_BA"):
+                                    rays_d_cam = rays[..., :3].to(self.device)
+                                    target_s = rays[..., 3:6].to(self.device)
+                                    target_d = rays[..., 6:7].to(self.device)
 
                         # [N, Bs, 1, 3] * [N, 1, 3, 3] = (N, Bs, 3)
                         with self.coslam_timing.stage('resize_tensors_BA'):
@@ -744,7 +967,15 @@ class CoSLAM():
 
                         with self.coslam_timing.stage('Forward_BA'):
                             with nvtx_range("Forward_BA"):
-                                ret = self.model.forward(rays_o, rays_d, target_s, target_d)
+                                ret = self.model.forward(
+                                    rays_o,
+                                    rays_d,
+                                    target_s,
+                                    target_d,
+                                    uniform_samples_until_depth=bool(bucketed_ba),
+                                    uniform_sample_count=uniform_count,
+                                    morton_sort_override=bool(ba_morton_sort) if bucketed_ba else None,
+                                )
 
                         with self.coslam_timing.stage('Loss_calculation_BA'):
                             with nvtx_range("Loss_calculation_BA"):
@@ -930,9 +1161,16 @@ class CoSLAM():
             iH = self.config['tracking']['ignore_edge_H']
             tracking_bucket_cfg = self.config.get('tracking_bucket', {})
             bucketed_tracking = tracking_bucket_cfg.get('enabled', False)
+            naive_tracking_pruning = self.tracking_naive_pruning_enabled()
             bucket_morton_sort = tracking_bucket_cfg.get(
                 'morton_inside_bucket',
                 self.config['grid'].get('morton_sort', True),
+            )
+            naive_uniform_count = None
+            naive_morton_sort = (
+                self.tracking_naive_pruning_morton_sort_enabled()
+                if naive_tracking_pruning
+                else None
             )
             tracking_buckets = None
             if bucketed_tracking:
@@ -963,11 +1201,14 @@ class CoSLAM():
                                 # Slicing
                                 indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
                                 rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
-                        with nvtx_range("Tensor_ops_s&d_tr"):
-                            if not bucketed_tracking:
                                 target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
                                 target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
-                                uniform_count = None
+                                if naive_tracking_pruning:
+                                    with nvtx_range("prepare_naive_tracking_pruning"):
+                                        naive_uniform_count = self.prepare_naive_tracking_pruning(target_d, frame_id)
+                        with nvtx_range("Tensor_ops_s&d_tr"):
+                            if not bucketed_tracking:
+                                uniform_count = naive_uniform_count
 
                             n_tracking_rays = rays_d_cam.shape[0]
                             rays_o = c2w_est[...,:3, -1].repeat(n_tracking_rays, 1)
@@ -980,9 +1221,15 @@ class CoSLAM():
                                     rays_d,
                                     target_s,
                                     target_d,
-                                    uniform_samples_until_depth=True if bucketed_tracking else None,
+                                    uniform_samples_until_depth=bool(bucketed_tracking or naive_tracking_pruning),
                                     uniform_sample_count=uniform_count,
-                                    morton_sort_override=bool(bucket_morton_sort) if bucketed_tracking else None,
+                                    morton_sort_override=(
+                                        bool(bucket_morton_sort)
+                                        if bucketed_tracking
+                                        else bool(naive_morton_sort)
+                                        if naive_tracking_pruning
+                                        else None
+                                    ),
                                 )
                         
                         with self.coslam_timing.stage('loss_calculation_tr'):

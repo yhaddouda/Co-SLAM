@@ -9,16 +9,16 @@ data:
   datadir: ../datasets/data/Replica/room0
   trainskip: 1
   output: output/Replica/room0
-  exp_name: "quality"
+  exp_name: "bucket"
 
 mesh:
   vis: 1000000000
   visualisation: False
 
 timing:
-  mode: coslam   # options: none, scene_rep, coslam
-  warmup_frames: 11
-  max_frames: 60
+  mode: none   # options: none, scene_rep, coslam
+  warmup_frames: 0
+  max_frames: 2000
   disable_eval: True
   scene_output_csv: ./room0_scene_rep_timing_cropped.csv
   coslam_output_csv: ./room0_coslam_layer_timing_cropped.csv
