@@ -17,7 +17,8 @@ mapping:
   lr_trans: 0.001
   keyframe_every: 5
   map_every: 5
-  n_pixels: 0.05
+  # 480 * 640 * 0.07 = 21,504 saved rays, enough for 10 BA buckets of 2,048 rays.
+  n_pixels: 0.07
   first_iters: 200
   optim_cur: True
   min_pixels_cur: 100
@@ -39,6 +40,27 @@ tracking:
   const_speed: True
   best: True
 
+tracking_bucket:
+  enabled: False
+  pool_factor: 10
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  debug_log: False
+
+tracking_naive_pruning:
+  enabled: True
+  morton_sort: False
+  debug_log: False
+  collect_stats: False
+
+ba_bucket:
+  enabled: True
+  pool_factor: 10
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  preserve_current_ratio: True
+  debug_log: False
+
 sampling_tracking:
   mode: random
   ph: 1
@@ -48,11 +70,11 @@ sampling_tracking:
   # cap_per_patch: 128        # uncomment to limit per-patch contribution (keeps groups)
   # shuffle_patches: false    # keep groups ordered across patches
   # seed: 0
-  
+
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size: 16
+  hash_size: 19
   voxel_color: 0.08
   voxel_sdf: 0.01
   oneGrid: True
@@ -113,4 +135,3 @@ mesh:
   voxel_eval: 0.05
   voxel_final: 0.02
   visualisation: False
-  
