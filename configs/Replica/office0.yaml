@@ -18,7 +18,7 @@ mesh:
 timing:
   mode: frame_total # options: none, scene_rep, coslam, frame_total
   warmup_frames: 1
-  max_frames: 2000
+  max_frames: null
   disable_eval: True
   scene_output_csv: ./office0_scene_rep_timing_complete_pruningD.csv
   coslam_output_csv: ./office0_coslam_layer_timing_complete_pruningD.csv

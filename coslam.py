@@ -19,7 +19,11 @@ from tqdm import tqdm
 # Local imports
 import config
 from model.scene_rep import JointEncoding
-from model.layer_timing import DeferredCudaTimer, IterationProfileFrameTimer
+from model.layer_timing import (
+    DeferredCudaTimer,
+    IterationBreakdownCudaTimer,
+    IterationProfileFrameTimer,
+)
 from model.keyframe import KeyFrameDatabase
 from datasets.dataset import get_dataset
 from utils import coordinates, extract_mesh, colormap_image
@@ -144,7 +148,16 @@ class CoSLAM():
         frame_total_modes = {'frame_total', 'iter_total', 'iter_profile_total'}
         self.max_timing_frames = timing_cfg.get('max_frames', None)
         self.disable_timing_eval = bool(timing_cfg.get('disable_eval', True))
-        if mode in frame_total_modes:
+        if mode == 'iteration_breakdown':
+            self.coslam_timing = IterationBreakdownCudaTimer(
+                enabled=True,
+                output_csv=timing_cfg.get(
+                    'iteration_output_csv',
+                    './profiling/pass1/office0/iteration_breakdown.csv',
+                ),
+                warmup_frames=timing_cfg.get('warmup_frames', 0),
+            )
+        elif mode in frame_total_modes:
             self.coslam_timing = IterationProfileFrameTimer(
                 enabled=True,
                 output_csv=timing_cfg.get(

@@ -1,5 +1,6 @@
 inherit_from: configs/Synthetic/synthetic.yaml
 mapping:
+  first_mesh: False
   bound: [[-1.5, 2.2],[-0.3, 2.2],[-2.3, 1.9]]
   marching_cubes_bound: [[-1.5, 2.2],[-0.3, 2.2],[-2.3, 1.9]]
   
@@ -9,3 +10,17 @@ data:
   trainskip: 1
   output: output/Synthetic/ma
   exp_name: 19_base
+
+mesh:
+  vis: 1000000000
+  visualisation: False
+
+timing:
+  mode: none
+  warmup_frames: 0
+  max_frames: null
+  disable_eval: True
+  scene_output_csv: ./results/layer_timing/Synthetic/ma_scene_rep_timing.csv
+  coslam_output_csv: ./results/layer_timing/Synthetic/ma_coslam_layer_timing.csv
+  frame_total_output_csv: ./results/frame_total/Synthetic/ma_frame_total_timing_complete_pruning.csv
+  frame_total_write_header: False

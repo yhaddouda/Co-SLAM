@@ -62,6 +62,17 @@ def parse_size_arg(value):
     return int(value)
 
 
+def parse_frame_count_arg(value):
+    if str(value).lower() in ["all", "null", "none", "default"]:
+        return None
+    frame_count = int(value)
+    if frame_count <= 0:
+        raise argparse.ArgumentTypeError(
+            "--frame-count must be a positive integer or 'all'."
+        )
+    return frame_count
+
+
 def normalize_scene_arg(value: str) -> str:
     scene_name = Path(value).name
     return Path(scene_name).stem if scene_name.endswith(".yaml") else scene_name
@@ -109,7 +120,7 @@ def override_config(
     setup_key: str,
     table_size: int | None,
     run_idx: int,
-    frame_count: int,
+    frame_count: int | None,
     timing_csv: Path,
     timing_write_header: bool,
     disable_eval: bool,
@@ -137,7 +148,7 @@ def override_config(
     cfg.setdefault("timing", {})
     cfg["timing"]["mode"] = "frame_total"
     cfg["timing"]["warmup_frames"] = 0
-    cfg["timing"]["max_frames"] = int(frame_count)
+    cfg["timing"]["max_frames"] = frame_count
     cfg["timing"]["disable_eval"] = bool(disable_eval)
     cfg["timing"]["frame_total_output_csv"] = format_config_path(timing_csv)
     cfg["timing"]["frame_total_write_header"] = bool(timing_write_header)
@@ -203,7 +214,16 @@ def main():
     parser.add_argument("--mode", nargs="+", default=["baseline", "pruning"], choices=sorted(MODE_DEFINITIONS))
     parser.add_argument("--scenes", nargs="+", default=None)
     parser.add_argument("--configs-root", default="configs/Replica", type=Path)
-    parser.add_argument("--frame-count", type=int, default=2000)
+    parser.add_argument(
+        "--frame-count",
+        type=parse_frame_count_arg,
+        default=None,
+        metavar="N|all",
+        help=(
+            "Optional maximum number of frames per scene. "
+            "Defaults to all available frames."
+        ),
+    )
     parser.add_argument("--timing-dir", type=Path, default=Path("."))
     parser.add_argument("--timing-write-header", action="store_true", default=False)
     parser.add_argument("--append-timing-csv", action="store_true", default=False)
@@ -222,10 +242,6 @@ def main():
     if not args.configs_root.exists():
         print(f"ERROR: configs root not found: {args.configs_root}")
         sys.exit(1)
-    if args.frame_count <= 0:
-        print("ERROR: --frame-count must be positive.")
-        sys.exit(1)
-
     selected_modes = list(dict.fromkeys(args.mode))
     selected_setups = list(dict.fromkeys(args.setups))
     parsed_sizes = [parse_size_arg(size) for size in args.sizes]
@@ -237,7 +253,8 @@ def main():
     print(f"Scenes: {', '.join(scenes)}")
     print(f"Modes: {', '.join(selected_modes)}")
     print(f"Setups: {', '.join(selected_setups)}")
-    print(f"Frame count: {args.frame_count}")
+    frame_count_log = "All" if args.frame_count is None else str(args.frame_count)
+    print(f"Frame count: {frame_count_log}")
     if add_timing_suffix:
         print("Timing CSV names include setup/size/run suffixes because a sweep was requested.")
     print("-" * 60)
@@ -307,7 +324,7 @@ def main():
                 with open(args.log_file, "a", encoding="utf-8") as f:
                     f.write(
                         f"{run_idx},{mode},{scene},{setup},{size_log},"
-                        f"{args.frame_count},{timing_csv},{duration:.4f}\n"
+                        f"{frame_count_log},{timing_csv},{duration:.4f}\n"
                     )
 
                 print(f"    SUCCESS: finished in {duration:.2f}s")

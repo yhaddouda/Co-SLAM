@@ -43,3 +43,6 @@ Mode IDs for AGX Orin (depends on the jetpack):
 ``` Bash
 sudo chown -R user:user /path/to/folder
 ```
+
+## For every nvpmodel set maximum performance
+sudo jetson_clocks

@@ -1,5 +1,6 @@
 inherit_from: configs/Synthetic/synthetic.yaml
 mapping:
+  first_mesh: False
   bound: [[-5.7, 3.8],[-0.2, 3.3],[-6.6, 3.6]]
   marching_cubes_bound: [[-5.7, 3.8],[-0.2, 3.3],[-6.6, 3.6]]
   
@@ -13,3 +14,17 @@ data:
 cam:
   near: 0
   far: 8
+
+mesh:
+  vis: 1000000000
+  visualisation: False
+
+timing:
+  mode: none
+  warmup_frames: 0
+  max_frames: null
+  disable_eval: True
+  scene_output_csv: ./results/layer_timing/Synthetic/ck_scene_rep_timing.csv
+  coslam_output_csv: ./results/layer_timing/Synthetic/ck_coslam_layer_timing.csv
+  frame_total_output_csv: ./results/frame_total/Synthetic/ck_frame_total_timing_complete_pruning.csv
+  frame_total_write_header: False

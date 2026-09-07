@@ -17,7 +17,8 @@ mapping:
   lr_trans: 0.001
   keyframe_every: 5
   map_every: 5
-  n_pixels: 0.05
+  # Keep enough keyframe rays to prebuild all 20 BA iteration buckets.
+  n_pixels: 0.15
   first_iters: 1000
   optim_cur: True
   min_pixels_cur: 100
@@ -38,6 +39,34 @@ tracking:
   wait_iters: 100
   const_speed: True
   best: False
+
+tracking_bucket:
+  enabled: False
+  pool_factor: 10
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  debug_log: False
+
+tracking_naive_pruning:
+  enabled: False
+  morton_sort: False
+  debug_log: False
+  collect_stats: False
+
+ba_bucket:
+  enabled: False
+  pool_factor: 20
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  preserve_current_ratio: True
+  debug_log: False
+
+sampling_tracking:
+  mode: random
+  ph: 1
+  pw: 16
+  sh: 1
+  sw: 16
 
 grid:
   enc: 'HashGrid'
@@ -103,4 +132,12 @@ mesh:
   voxel_eval: 0.05
   voxel_final: 0.03
   visualisation: False
-  
+
+profiling:
+  enabled: False
+  output_dir: ./profiling/PytorchProfiler/tum
+  schedule:
+    wait: 1
+    warmup: 0
+    active: 10
+    repeat: 1

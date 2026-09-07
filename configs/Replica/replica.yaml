@@ -47,14 +47,14 @@ tracking_bucket:  # hurts quality,, because it used a different batch every iter
   debug_log: False
 
 tracking_naive_pruning:
-  enabled: True  # If false, defaults to regular tracking without pruning
+  enabled: False  # If false, defaults to regular tracking without pruning
   morton_sort: False  # use existing 3D fast-Morton sample sorting during naive tracking
   debug_log: False
   collect_stats: False
   stats_csv: ./output_csv_room2  # defaults to <data.output>/<data.exp_name>/tracking_naive_pruning_stats.csv
 
 ba_bucket:
-  enabled: True
+  enabled: False
   pool_factor: 10
   shuffle_bucket_order: True
   morton_inside_bucket: False  # use existing 3D fast-Morton sample sorting during bucketed BA

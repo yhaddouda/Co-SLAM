@@ -18,7 +18,7 @@ mesh:
 timing:
   mode: none   # options: none, scene_rep, coslam
   warmup_frames: 0
-  max_frames: 2000
+  max_frames: null
   disable_eval: True
   scene_output_csv: ./Monitoring/multilayer/room1/scene_rep_timing_A.csv
   coslam_output_csv: ./Monitoring/multilayer/room1/coslam_layer_timing_A.csv
