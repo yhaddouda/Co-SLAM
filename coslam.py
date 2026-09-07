@@ -19,7 +19,11 @@ from tqdm import tqdm
 # Local imports
 import config
 from model.scene_rep import JointEncoding
-from model.layer_timing import DeferredCudaTimer
+from model.layer_timing import (
+    DeferredCudaTimer,
+    FrameTotalCudaTimer,
+    IterationBreakdownCudaTimer,
+)
 from model.keyframe import KeyFrameDatabase
 from datasets.dataset import get_dataset
 from utils import coordinates, extract_mesh, colormap_image
@@ -141,13 +145,48 @@ class CoSLAM():
 
         timing_cfg = config.get('timing', {})
         mode = timing_cfg.get('mode', 'none')
+        supported_timing_modes = {
+            'none',
+            'scene_rep',
+            'coslam',
+            'frame_total',
+            'iteration_breakdown',
+        }
+        if mode not in supported_timing_modes:
+            raise ValueError(
+                f"Unsupported timing.mode '{mode}'. Expected one of: "
+                + ', '.join(sorted(supported_timing_modes))
+            )
         self.max_timing_frames = timing_cfg.get('max_frames', None)
         self.disable_timing_eval = bool(timing_cfg.get('disable_eval', True))
-        self.coslam_timing = DeferredCudaTimer(
-            enabled=(mode == 'coslam'),
-            output_csv=timing_cfg.get('coslam_output_csv', './profiling/pass1/office0/coslam_layer_timing.csv'),
-            warmup_frames=timing_cfg.get('warmup_frames', 0),
-        )
+        if mode == 'frame_total':
+            self.coslam_timing = FrameTotalCudaTimer(
+                enabled=True,
+                output_csv=timing_cfg.get(
+                    'frame_total_output_csv',
+                    './profiling/frame_total.csv',
+                ),
+                warmup_frames=timing_cfg.get('warmup_frames', 0),
+                write_header=timing_cfg.get(
+                    'frame_total_write_header',
+                    False,
+                ),
+            )
+        elif mode == 'iteration_breakdown':
+            self.coslam_timing = IterationBreakdownCudaTimer(
+                enabled=True,
+                output_csv=timing_cfg.get(
+                    'iteration_output_csv',
+                    './profiling/iteration_breakdown.csv',
+                ),
+                warmup_frames=timing_cfg.get('warmup_frames', 0),
+            )
+        else:
+            self.coslam_timing = DeferredCudaTimer(
+                enabled=(mode == 'coslam'),
+                output_csv=timing_cfg.get('coslam_output_csv', './profiling/pass1/office0/coslam_layer_timing.csv'),
+                warmup_frames=timing_cfg.get('warmup_frames', 0),
+            )
 
         # Profiling configuration
         self.enable_profiling = False #config.get('profiling', {}).get('enabled', False)
@@ -1399,6 +1438,8 @@ class CoSLAM():
                         image_show = traj_image
                         cv2.imshow('Traj:'.format(i), image_show)
                         key = cv2.waitKey(1)
+
+            self.coslam_timing.finish_frame(i)
 
 
         self.model.flush_scene_timing()

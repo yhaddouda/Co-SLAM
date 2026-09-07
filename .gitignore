@@ -172,3 +172,5 @@ plots/
 profiling/
 .torch_extensions_ada/
 .codex
+DASIP paper/
+Neuslam paper/
