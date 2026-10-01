@@ -21,8 +21,8 @@ import config
 from model.scene_rep import JointEncoding
 from model.layer_timing import (
     DeferredCudaTimer,
-    FrameTotalCudaTimer,
     IterationBreakdownCudaTimer,
+    IterationProfileFrameTimer,
 )
 from model.keyframe import KeyFrameDatabase
 from datasets.dataset import get_dataset
@@ -145,41 +145,30 @@ class CoSLAM():
 
         timing_cfg = config.get('timing', {})
         mode = timing_cfg.get('mode', 'none')
-        supported_timing_modes = {
-            'none',
-            'scene_rep',
-            'coslam',
-            'frame_total',
-            'iteration_breakdown',
-        }
-        if mode not in supported_timing_modes:
-            raise ValueError(
-                f"Unsupported timing.mode '{mode}'. Expected one of: "
-                + ', '.join(sorted(supported_timing_modes))
-            )
+        frame_total_modes = {'frame_total', 'iter_total', 'iter_profile_total'}
         self.max_timing_frames = timing_cfg.get('max_frames', None)
         self.disable_timing_eval = bool(timing_cfg.get('disable_eval', True))
-        if mode == 'frame_total':
-            self.coslam_timing = FrameTotalCudaTimer(
-                enabled=True,
-                output_csv=timing_cfg.get(
-                    'frame_total_output_csv',
-                    './profiling/frame_total.csv',
-                ),
-                warmup_frames=timing_cfg.get('warmup_frames', 0),
-                write_header=timing_cfg.get(
-                    'frame_total_write_header',
-                    False,
-                ),
-            )
-        elif mode == 'iteration_breakdown':
+        if mode == 'iteration_breakdown':
             self.coslam_timing = IterationBreakdownCudaTimer(
                 enabled=True,
                 output_csv=timing_cfg.get(
                     'iteration_output_csv',
-                    './profiling/iteration_breakdown.csv',
+                    './profiling/pass1/office0/iteration_breakdown.csv',
                 ),
                 warmup_frames=timing_cfg.get('warmup_frames', 0),
+            )
+        elif mode in frame_total_modes:
+            self.coslam_timing = IterationProfileFrameTimer(
+                enabled=True,
+                output_csv=timing_cfg.get(
+                    'frame_total_output_csv',
+                    timing_cfg.get(
+                        'coslam_output_csv',
+                        './profiling/pass1/office0/iter_profile_frame_totals.csv',
+                    ),
+                ),
+                warmup_frames=timing_cfg.get('warmup_frames', 0),
+                write_header=timing_cfg.get('frame_total_write_header', False),
             )
         else:
             self.coslam_timing = DeferredCudaTimer(
@@ -199,6 +188,8 @@ class CoSLAM():
 
     def validate_tracking_bucket_config(self):
         bucket_enabled = self.config.get('tracking_bucket', {}).get('enabled', False)
+        spatial_cfg = self.config.get('tracking_depth_spatial', {})
+        spatial_enabled = spatial_cfg.get('enabled', False)
         ba_bucket_enabled = self.config.get('ba_bucket', {}).get('enabled', False)
         naive_enabled = self.tracking_naive_pruning_enabled()
         if bucket_enabled and naive_enabled:
@@ -207,11 +198,56 @@ class CoSLAM():
                 "tracking_naive_pruning.enabled cannot both be true. "
                 "Disable naive tracking pruning when using the bucketed sampler."
             )
+        if spatial_enabled and (bucket_enabled or naive_enabled):
+            raise ValueError(
+                "Config error: tracking_depth_spatial.enabled cannot be combined "
+                "with tracking_bucket.enabled or tracking_naive_pruning.enabled."
+            )
         if bucket_enabled and self.config.get('training', {}).get('n_samples_d', 0) <= 0:
             raise ValueError(
                 "Config error: tracking_bucket.enabled requires "
                 "training.n_samples_d > 0."
             )
+        if spatial_enabled and self.config.get('training', {}).get('n_samples_d', 0) <= 0:
+            raise ValueError(
+                "Config error: tracking_depth_spatial.enabled requires "
+                "training.n_samples_d > 0."
+            )
+        if spatial_enabled:
+            pool_factor = spatial_cfg.get('pool_factor', 4)
+            if isinstance(pool_factor, bool) or int(pool_factor) != pool_factor or pool_factor < 1:
+                raise ValueError(
+                    "Config error: tracking_depth_spatial.pool_factor must be "
+                    "an integer >= 1."
+                )
+
+            grid_h = spatial_cfg.get('grid_h', 8)
+            grid_w = spatial_cfg.get('grid_w', 8)
+            if (
+                isinstance(grid_h, bool)
+                or isinstance(grid_w, bool)
+                or int(grid_h) != grid_h
+                or int(grid_w) != grid_w
+                or grid_h < 1
+                or grid_w < 1
+            ):
+                raise ValueError(
+                    "Config error: tracking_depth_spatial grid dimensions must "
+                    "be integers >= 1."
+                )
+
+            min_coverage = float(spatial_cfg.get('min_coverage', 0.75))
+            if not 0.0 <= min_coverage <= 1.0:
+                raise ValueError(
+                    "Config error: tracking_depth_spatial.min_coverage must be "
+                    "between 0 and 1."
+                )
+            required_cells = math.ceil(int(grid_h) * int(grid_w) * min_coverage)
+            if required_cells > self.config['tracking']['sample']:
+                raise ValueError(
+                    "Config error: tracking_depth_spatial.min_coverage requires "
+                    "more occupied grid cells than tracking.sample can provide."
+                )
         if ba_bucket_enabled and self.config.get('training', {}).get('n_samples_d', 0) <= 0:
             raise ValueError(
                 "Config error: ba_bucket.enabled requires "
@@ -233,6 +269,39 @@ class CoSLAM():
         naive_cfg = self.config.get('tracking_naive_pruning', {})
         return bool(naive_cfg.get('morton_sort', self.config['grid'].get('morton_sort', True)))
 
+    def uniform_depth_count_locations(self, reference):
+        """Return cached near-to-far locations used to count uniform samples."""
+        near = float(self.config['cam']['near'])
+        far = float(self.config['cam']['far'])
+        n_samples_d = int(self.config['training']['n_samples_d'])
+        cache_key = (
+            near,
+            far,
+            n_samples_d,
+            reference.device.type,
+            reference.device.index,
+            reference.dtype,
+        )
+        if getattr(self, '_uniform_depth_count_cache_key', None) != cache_key:
+            self._uniform_depth_count_cache_key = cache_key
+            self._uniform_depth_count_cache = torch.linspace(
+                near,
+                far,
+                n_samples_d,
+                device=reference.device,
+                dtype=reference.dtype,
+            )
+        return self._uniform_depth_count_cache
+
+    def tracking_depth_spatial_rng(self):
+        """Return a cached NumPy generator for uniform candidate subsets."""
+        if not hasattr(self, '_tracking_depth_spatial_rng'):
+            # Drawing the initial state from Python's RNG preserves
+            # reproducibility when seed_everything() was called.
+            seed = random.randrange(0, np.iinfo(np.int64).max)
+            self._tracking_depth_spatial_rng = np.random.default_rng(seed)
+        return self._tracking_depth_spatial_rng
+
     def prepare_naive_tracking_pruning(self, target_d, frame_id):
         n_samples_d = self.config['training']['n_samples_d']
         if n_samples_d <= 0:
@@ -243,7 +312,7 @@ class CoSLAM():
         depth = target_d.squeeze(-1)
         valid_depth = (depth > 0)
         depth_end = depth.clamp(min=near, max=far)
-        base_uniform = torch.linspace(near, far, n_samples_d, device=target_d.device)
+        base_uniform = self.uniform_depth_count_locations(target_d)
         # Ablation baseline: counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1).long()
         counts = torch.searchsorted(base_uniform, depth_end.contiguous(), right=True).long()
         counts = torch.where(valid_depth, counts, torch.zeros_like(counts))
@@ -272,18 +341,19 @@ class CoSLAM():
 
         return n_uniform
     
-    def compute_uniform_until_depth_counts(self, target_d):
+    def compute_uniform_until_depth_counts(self, target_d, valid_depth=None):
         near = self.config['cam']['near']
         far = self.config['cam']['far']
         n_samples_d = self.config['training']['n_samples_d']
 
         depth = target_d.squeeze(-1)
-        valid_depth = torch.isfinite(depth) & (depth > 0)
+        if valid_depth is None:
+            valid_depth = torch.isfinite(depth) & (depth > 0)
         dense_count = torch.full_like(depth, n_samples_d, dtype=torch.long)
 
         depth_end = torch.where(valid_depth, depth, torch.full_like(depth, far))
         depth_end = depth_end.clamp(min=near, max=far)
-        base_uniform = torch.linspace(near, far, n_samples_d, device=target_d.device)
+        base_uniform = self.uniform_depth_count_locations(target_d)
         # Ablation baseline: counts = (base_uniform[None, :] <= depth_end[:, None]).sum(dim=1).long()
         counts = torch.searchsorted(base_uniform, depth_end.contiguous(), right=True).long()
         counts = counts.clamp(min=1, max=n_samples_d)
@@ -378,6 +448,192 @@ class CoSLAM():
             'target_s': target_s_pool[flat_indices].reshape(*bucket_shape, 3),
             'target_d': target_d_flat.reshape(*bucket_shape, 1),
             'uniform_counts': uniform_counts,
+        }
+
+    def prepare_tracking_depth_spatial_batch(self, batch, iH, iW, frame_id):
+        """Select one fixed, spatially distributed depth-pruned tracking batch.
+
+        Candidate screening deliberately stays on the input tensor's device
+        (normally CPU). Directions and RGB values are gathered only after the
+        count ceiling and final pixel indices have been selected.
+
+        Returns ``None`` when the candidate pool cannot provide both a complete
+        batch and the requested grid coverage. The caller then uses the existing
+        fixed random-batch depth-pruning path.
+        """
+        spatial_cfg = self.config.get('tracking_depth_spatial', {})
+        tracking_sample = int(self.config['tracking']['sample'])
+        pool_factor = int(spatial_cfg.get('pool_factor', 4))
+        grid_h = int(spatial_cfg.get('grid_h', 8))
+        grid_w = int(spatial_cfg.get('grid_w', 8))
+        min_coverage = float(spatial_cfg.get('min_coverage', 0.75))
+
+        for input_name in ('depth', 'direction', 'rgb'):
+            if batch[input_name].device.type != 'cpu':
+                raise ValueError(
+                    "tracking_depth_spatial requires CPU batch tensors before "
+                    f"selection; {input_name} is on "
+                    f"{batch[input_name].device.type}"
+                )
+
+        with nvtx_range("tracking_depth_spatial_candidate_generation"):
+            H = self.dataset.H - iH * 2
+            W = self.dataset.W - iW * 2
+            population_size = H * W
+            pool_size = min(pool_factor * tracking_sample, population_size)
+            if pool_size < tracking_sample:
+                return None
+
+            if pool_size == population_size:
+                pool_indices = torch.arange(population_size, dtype=torch.long)
+            else:
+                pool_indices = torch.from_numpy(
+                    self.tracking_depth_spatial_rng().choice(
+                        population_size,
+                        size=pool_size,
+                        replace=False,
+                        shuffle=False,
+                    ).astype(np.int64, copy=False)
+                )
+
+            # Co-SLAM indices are column-major: index = column * H + row.
+            candidate_h = pool_indices % H
+            candidate_w = pool_indices // H
+            h_slice = slice(iH, -iH if iH else None)
+            w_slice = slice(iW, -iW if iW else None)
+            depth = batch['depth'].squeeze(0)[h_slice, w_slice]
+            candidate_depth = depth[candidate_h, candidate_w]
+            valid_depth = torch.isfinite(candidate_depth) & (candidate_depth > 0)
+            if int(valid_depth.sum()) < tracking_sample:
+                return None
+
+            counts = self.compute_uniform_until_depth_counts(
+                candidate_depth.unsqueeze(-1),
+                valid_depth=valid_depth,
+            )
+            cell_h = candidate_h * grid_h // H
+            cell_w = candidate_w * grid_w // W
+            cells = cell_h * grid_w + cell_w
+
+        with nvtx_range("tracking_depth_spatial_ceiling_selection"):
+            num_cells = grid_h * grid_w
+            required_cells = math.ceil(num_cells * min_coverage)
+
+            # A small count-by-cell histogram gives every possible ceiling in
+            # one pass, avoiding a candidate-depth sort.
+            valid_counts = counts[valid_depth]
+            valid_cells = cells[valid_depth]
+            n_samples_d = int(self.config['training']['n_samples_d'])
+            histogram_indices = (valid_counts - 1) * num_cells + valid_cells
+            histogram = torch.bincount(
+                histogram_indices,
+                minlength=n_samples_d * num_cells,
+            ).reshape(n_samples_d, num_cells)
+            cumulative = histogram.cumsum(dim=0)
+            feasible = (
+                (cumulative.sum(dim=1) >= tracking_sample)
+                & ((cumulative > 0).sum(dim=1) >= required_cells)
+            )
+            feasible_ceilings = torch.nonzero(feasible, as_tuple=False).flatten()
+            if feasible_ceilings.numel() == 0:
+                return None
+            ceiling = int(feasible_ceilings[0]) + 1
+
+            eligible_positions = torch.nonzero(
+                valid_depth & (counts <= ceiling),
+                as_tuple=False,
+            ).flatten()
+            eligible_cells = cells[eligible_positions]
+
+        with nvtx_range("tracking_depth_spatial_grouping_selection"):
+            # Randomize once, then group by cell. Each cell occupies one
+            # contiguous [offset[cell], offset[cell + 1]) range, and its order
+            # is already random for sampling without replacement.
+            eligible_count = eligible_positions.numel()
+            random_order = torch.randperm(eligible_count)
+            shuffled_cells = eligible_cells[random_order]
+            group_order = torch.argsort(shuffled_cells)
+            grouped_positions = eligible_positions[random_order[group_order]]
+            cell_counts = torch.bincount(
+                eligible_cells,
+                minlength=num_cells,
+            )
+            cell_offsets = torch.empty(num_cells + 1, dtype=torch.long)
+            cell_offsets[0] = 0
+            torch.cumsum(cell_counts, dim=0, out=cell_offsets[1:])
+
+            # Find the largest equal water level whose capped cell capacities
+            # do not exceed the requested batch size.
+            low, high = 0, tracking_sample
+            while low < high:
+                midpoint = (low + high + 1) // 2
+                allocated = torch.clamp(cell_counts, max=midpoint).sum()
+                if int(allocated) <= tracking_sample:
+                    low = midpoint
+                else:
+                    high = midpoint - 1
+
+            quotas = torch.clamp(cell_counts, max=low)
+            remainder = tracking_sample - int(quotas.sum())
+            if remainder:
+                expandable_cells = torch.nonzero(
+                    cell_counts > quotas,
+                    as_tuple=False,
+                ).flatten()
+                extra_order = torch.randperm(expandable_cells.numel())
+                quotas[expandable_cells[extra_order[:remainder]]] += 1
+
+            # The feasibility test concerns eligible candidates, while this
+            # check guarantees that the final allocated batch retains it.
+            selected_coverage = int((quotas > 0).sum())
+            if (
+                selected_coverage < required_cells
+                or int(quotas.sum()) != tracking_sample
+            ):
+                return None
+
+            selected_positions = torch.empty(tracking_sample, dtype=torch.long)
+            write_offset = 0
+            for cell in range(num_cells):
+                quota = int(quotas[cell])
+                if quota == 0:
+                    continue
+                group_start = int(cell_offsets[cell])
+                selected_positions[write_offset:write_offset + quota] = (
+                    grouped_positions[group_start:group_start + quota]
+                )
+                write_offset += quota
+            if write_offset != tracking_sample:
+                return None
+            selected_positions = selected_positions[
+                torch.randperm(tracking_sample)
+            ]
+
+            # Reuse screened coordinates, depths, and counts; do not recompute
+            # them from flattened pixel indices after selection.
+            selected_h = candidate_h[selected_positions]
+            selected_w = candidate_w[selected_positions]
+            selected_depth = candidate_depth[selected_positions].unsqueeze(-1)
+            uniform_count = int(counts[selected_positions].max())
+
+        with nvtx_range("tracking_depth_spatial_gather_transfer"):
+            direction = batch['direction'].squeeze(0)[h_slice, w_slice, :]
+            rgb = batch['rgb'].squeeze(0)[h_slice, w_slice, :]
+            selected_rays_cpu = torch.cat(
+                (
+                    direction[selected_h, selected_w, :],
+                    rgb[selected_h, selected_w, :],
+                    selected_depth,
+                ),
+                dim=-1,
+            )
+            selected_rays = selected_rays_cpu.to(self.device)
+
+        return {
+            'rays_d_cam': selected_rays[:, :3],
+            'target_s': selected_rays[:, 3:6],
+            'target_d': selected_rays[:, 6:7],
+            'uniform_count': uniform_count,
         }
 
     def bucket_ray_pool_by_uniform_count(self, rays_cpu, ids_cpu, bucket_count, bucket_sample):
@@ -560,6 +816,7 @@ class CoSLAM():
         random.seed(seed)
         os.environ['PYTHONHASHSEED'] = str(seed)
         np.random.seed(seed)
+        self._tracking_depth_spatial_rng = np.random.default_rng(seed)
         torch.manual_seed(seed)
         torch.cuda.manual_seed(seed)
         
@@ -962,13 +1219,21 @@ class CoSLAM():
                 self.config['grid'].get('morton_sort', True),
             )
             ba_buckets = None
-            if bucketed_ba and self.config['mapping']['iters'] > 0:
-                with nvtx_range("prepare_ba_buckets"):
-                    ba_buckets = self.prepare_ba_buckets(current_rays, cur_frame_id)
+            ba_buckets_prepared = False
 
             for i in range(self.config['mapping']['iters']):
                 with self.coslam_timing.stage('BA_ITER_PROFILE_TOTAL'):
                     with nvtx_range(f"BA_ITER_PROFILE_TOTAL"):
+                        if bucketed_ba and not ba_buckets_prepared:
+                            # Include one-time bucket preprocessing in the first
+                            # complete BA-iteration and derived frame totals.
+                            with nvtx_range("prepare_ba_buckets"):
+                                ba_buckets = self.prepare_ba_buckets(
+                                    current_rays,
+                                    cur_frame_id,
+                                )
+                            ba_buckets_prepared = True
+
                         # Sample rays with real frame ids
                         # rays [bs, 7]
                         # frame_ids [bs]
@@ -1200,18 +1465,23 @@ class CoSLAM():
             iH = self.config['tracking']['ignore_edge_H']
             tracking_bucket_cfg = self.config.get('tracking_bucket', {})
             bucketed_tracking = tracking_bucket_cfg.get('enabled', False)
+            depth_spatial_tracking = self.config.get(
+                'tracking_depth_spatial', {}
+            ).get('enabled', False)
             naive_tracking_pruning = self.tracking_naive_pruning_enabled()
             bucket_morton_sort = tracking_bucket_cfg.get(
                 'morton_inside_bucket',
                 self.config['grid'].get('morton_sort', True),
             )
             naive_uniform_count = None
-            naive_morton_sort = (
-                self.tracking_naive_pruning_morton_sort_enabled()
-                if naive_tracking_pruning
-                else None
-            )
+            pruning_morton_sort = None
+            if naive_tracking_pruning:
+                pruning_morton_sort = self.tracking_naive_pruning_morton_sort_enabled()
+            elif depth_spatial_tracking:
+                pruning_morton_sort = self.config['grid'].get('morton_sort', True)
             tracking_buckets = None
+            tracking_depth_spatial_batch = None
+            tracking_depth_spatial_prepared = False
             if bucketed_tracking:
                 with nvtx_range("prepare_tracking_buckets"):
                     tracking_buckets = self.prepare_tracking_buckets(batch, iH, iW, frame_id)
@@ -1234,6 +1504,37 @@ class CoSLAM():
                                 target_s = tracking_buckets['target_s'][i]
                                 target_d = tracking_buckets['target_d'][i]
                                 uniform_count = tracking_buckets['uniform_counts'][i]
+                            elif depth_spatial_tracking:
+                                if not tracking_depth_spatial_prepared:
+                                    # Keep one-time preprocessing inside the first
+                                    # iteration's total tracking timing range.
+                                    with nvtx_range("prepare_tracking_depth_spatial_batch"):
+                                        tracking_depth_spatial_batch = self.prepare_tracking_depth_spatial_batch(
+                                            batch, iH, iW, frame_id
+                                        )
+                                    tracking_depth_spatial_prepared = True
+
+                                if tracking_depth_spatial_batch is not None:
+                                    rays_d_cam = tracking_depth_spatial_batch['rays_d_cam']
+                                    target_s = tracking_depth_spatial_batch['target_s']
+                                    target_d = tracking_depth_spatial_batch['target_d']
+                                    uniform_count = tracking_depth_spatial_batch['uniform_count']
+                                elif indice is None:
+                                    # Fall back to the existing fixed random-batch
+                                    # depth-pruning method for this frame.
+                                    indice = self.select_samples(
+                                        self.dataset.H-iH*2,
+                                        self.dataset.W-iW*2,
+                                        self.config['tracking']['sample'],
+                                    )
+                                    indice_h = indice % (self.dataset.H - iH * 2)
+                                    indice_w = indice // (self.dataset.H - iH * 2)
+                                    rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                                    target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
+                                    target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
+                                    with nvtx_range("prepare_naive_tracking_pruning"):
+                                        naive_uniform_count = self.prepare_naive_tracking_pruning(target_d, frame_id)
+                                    uniform_count = naive_uniform_count
                             elif indice is None:
                                 indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
                             
@@ -1246,7 +1547,7 @@ class CoSLAM():
                                     with nvtx_range("prepare_naive_tracking_pruning"):
                                         naive_uniform_count = self.prepare_naive_tracking_pruning(target_d, frame_id)
                         with nvtx_range("Tensor_ops_s&d_tr"):
-                            if not bucketed_tracking:
+                            if not bucketed_tracking and not depth_spatial_tracking:
                                 uniform_count = naive_uniform_count
 
                             n_tracking_rays = rays_d_cam.shape[0]
@@ -1260,13 +1561,17 @@ class CoSLAM():
                                     rays_d,
                                     target_s,
                                     target_d,
-                                    uniform_samples_until_depth=bool(bucketed_tracking or naive_tracking_pruning),
+                                    uniform_samples_until_depth=bool(
+                                        bucketed_tracking
+                                        or depth_spatial_tracking
+                                        or naive_tracking_pruning
+                                    ),
                                     uniform_sample_count=uniform_count,
                                     morton_sort_override=(
                                         bool(bucket_morton_sort)
                                         if bucketed_tracking
-                                        else bool(naive_morton_sort)
-                                        if naive_tracking_pruning
+                                        else bool(pruning_morton_sort)
+                                        if depth_spatial_tracking or naive_tracking_pruning
                                         else None
                                     ),
                                 )
@@ -1440,7 +1745,6 @@ class CoSLAM():
                         key = cv2.waitKey(1)
 
             self.coslam_timing.finish_frame(i)
-
 
         self.model.flush_scene_timing()
         self.coslam_timing.flush()

@@ -53,8 +53,15 @@ tracking_naive_pruning:
   collect_stats: False
   stats_csv: ./output_csv_room2  # defaults to <data.output>/<data.exp_name>/tracking_naive_pruning_stats.csv
 
+tracking_depth_spatial:
+  enabled: True  # select one fixed spatially distributed depth-pruned batch per frame
+  pool_factor: 4  # candidate pool size = pool_factor * tracking.sample
+  grid_h: 8
+  grid_w: 8
+  min_coverage: 0.75  # minimum fraction of grid cells containing eligible rays
+
 ba_bucket:
-  enabled: False
+  enabled: True
   pool_factor: 10
   shuffle_bucket_order: True
   morton_inside_bucket: False  # use existing 3D fast-Morton sample sorting during bucketed BA
