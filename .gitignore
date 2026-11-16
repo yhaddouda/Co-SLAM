@@ -194,3 +194,9 @@ DASIP_suite/
 
 # Audited source copies from ignored paper folders contain code/configs only.
 !/reproduction/sources/**
+
+# Generated local research reports and their evidence stay beside the code.
+/docs/**/*.pdf
+/docs/**/*.png
+/docs/**/*.tex
+/docs/**/*.json
