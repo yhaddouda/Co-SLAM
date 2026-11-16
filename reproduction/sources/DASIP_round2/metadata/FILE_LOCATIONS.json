@@ -1,0 +1,371 @@
+{
+  "date": "2026-10-21T15:31:42.082659+02:00",
+  "moves": {
+    "ORIN_EXISTING_DP_INVENTORY.md": "docs/orin/ORIN_EXISTING_DP_INVENTORY.md",
+    "ORIN_CONTINUOUS_PROMPT.md": "docs/orin/ORIN_CONTINUOUS_PROMPT.md",
+    "ORIN_PAPER_NIGHT_PROMPT.md": "docs/orin/ORIN_PAPER_NIGHT_PROMPT.md",
+    "orin_ec_component_profile_runtime_v2_single_seed.zip": "bundles/to_orin/orin_ec_component_profile_runtime_v2_single_seed.zip",
+    "COMPONENT_PROFILING_PROTOCOL.md": "docs/protocols/COMPONENT_PROFILING_PROTOCOL.md",
+    "RUN_AGENDA_SNAPSHOT.json": "metadata/RUN_AGENDA_SNAPSHOT.json",
+    "ORIN_MAXN_AND_NOTIFICATIONS.md": "docs/orin/ORIN_MAXN_AND_NOTIFICATIONS.md",
+    "orin_handoff_inventory.zip": "bundles/to_orin/orin_handoff_inventory.zip",
+    "DOCUMENT_READY_EMAIL_RECEIPT.json": "metadata/DOCUMENT_READY_EMAIL_RECEIPT.json",
+    "RUN_TIMES_AND_AUTONOMY.md": "docs/planning/RUN_TIMES_AND_AUTONOMY.md",
+    "EC_COMPONENT_PROFILING_PROTOCOL.md": "docs/protocols/EC_COMPONENT_PROFILING_PROTOCOL.md",
+    "CONTINUOUS_RUN_AGENDA.md": "docs/planning/CONTINUOUS_RUN_AGENDA.md",
+    "orin_ec_component_profile_runtime_v2.zip": "bundles/to_orin/orin_ec_component_profile_runtime_v2.zip",
+    "AGREEMENT_AND_OPEN_ITEMS.md": "docs/planning/AGREEMENT_AND_OPEN_ITEMS.md",
+    "ORIN_PREFLIGHT_REPORTS.zip": "bundles/from_orin/ORIN_PREFLIGHT_REPORTS.zip",
+    "RUN_AGENDA.md": "docs/planning/RUN_AGENDA.md",
+    "missfont.log": "build/logs/missfont.log",
+    "ORIN_AUDITED_SOURCES.zip": "bundles/from_orin/ORIN_AUDITED_SOURCES.zip",
+    "NOTIFICATION_PREFERENCE.json": "metadata/NOTIFICATION_PREFERENCE.json",
+    "ORIN_MAXN_SYNC_REQUEST.txt": "docs/orin/ORIN_MAXN_SYNC_REQUEST.txt",
+    "DP_TABLE_COMPLETION_PRIORITY.md": "docs/planning/DP_TABLE_COMPLETION_PRIORITY.md",
+    "orin_dp_completion_maxn_v1.zip": "bundles/to_orin/orin_dp_completion_maxn_v1.zip",
+    "orin_after_v4_maxn_v2.zip": "bundles/to_orin/orin_after_v4_maxn_v2.zip",
+    "note.txt": "inputs/note.txt",
+    "ORIN_SCANNET_RECOVERY.md": "docs/orin/ORIN_SCANNET_RECOVERY.md",
+    "build_CONSERVATIVE_VARIANT_EXPLAINED.log": "build/logs/build_CONSERVATIVE_VARIANT_EXPLAINED.log",
+    "DOCUMENT_BUILD_MANIFEST.json": "metadata/DOCUMENT_BUILD_MANIFEST.json",
+    "orin_maxn_addendum.zip": "bundles/to_orin/orin_maxn_addendum.zip",
+    "CONSERVATIVE_VARIANT_EXPLAINED.tex": "docs/methods/CONSERVATIVE_VARIANT_EXPLAINED.tex",
+    "NOTIFICATION_POLICY.md": "docs/protocols/NOTIFICATION_POLICY.md",
+    "EXPERIMENT_CONTINUATION_STATUS.json": "metadata/EXPERIMENT_CONTINUATION_STATUS.json",
+    "orin_coslam_runtime_v1.zip": "bundles/to_orin/orin_coslam_runtime_v1.zip",
+    "ABSTRACT_2026-10-20.txt": "paper_round2_placeholder/abstracts/ABSTRACT_2026-10-20.txt",
+    "orin_paper_night_v2.zip": "bundles/to_orin/orin_paper_night_v2.zip",
+    "MAXN_SYNC_AND_REMAINING_WORK.md": "docs/orin/MAXN_SYNC_AND_REMAINING_WORK.md",
+    "CONSERVATIVE_VARIANT_EXPLAINED.pdf": "docs/methods/CONSERVATIVE_VARIANT_EXPLAINED.pdf",
+    "orin_continuous_v3.zip": "bundles/to_orin/orin_continuous_v3.zip",
+    "orin_component_profile_protocol_v1.zip": "bundles/to_orin/orin_component_profile_protocol_v1.zip",
+    "reviews.txt": "inputs/reviews.txt",
+    "ENGINEERING_SCOPE_OVERRIDE.txt": "docs/protocols/ENGINEERING_SCOPE_OVERRIDE.txt",
+    "RTX_REMAINING_NIGHT.md": "docs/planning/RTX_REMAINING_NIGHT.md",
+    "RUNTIME_V1_STATUS.md": "docs/planning/RUNTIME_V1_STATUS.md",
+    "orin_after_v4_maxn_v1.zip": "bundles/to_orin/orin_after_v4_maxn_v1.zip",
+    "orin_continuous_v4.zip": "bundles/to_orin/orin_continuous_v4.zip",
+    "ORIN_COMPLETED_MAXN_FOR_RTX_20261020.zip": "bundles/from_orin/ORIN_COMPLETED_MAXN_FOR_RTX_20261020.zip",
+    "ROUND2_PRIORITIES_AND_PLAN.md": "docs/planning/ROUND2_PRIORITIES_AND_PLAN.md",
+    "orin_source_handoff.zip": "bundles/to_orin/orin_source_handoff.zip",
+    "RTX_EXPERIMENT_STATUS.md": "docs/planning/RTX_EXPERIMENT_STATUS.md",
+    "ORIN_15W_DEADLINE_PLAN.md": "docs/orin/ORIN_15W_DEADLINE_PLAN.md",
+    "ORIN_ENCODER_PRECISION_CHECK.json": "metadata/ORIN_ENCODER_PRECISION_CHECK.json",
+    "ORIN_RECONCILIATION.md": "docs/orin/ORIN_RECONCILIATION.md",
+    "orin_component_profile_runtime_v2.zip": "bundles/to_orin/orin_component_profile_runtime_v2.zip",
+    "DELIVERABLES_AND_NOTIFICATIONS.md": "docs/planning/DELIVERABLES_AND_NOTIFICATIONS.md",
+    "tex_cache": "build/tex_cache",
+    "build_explanation": "build/explanation",
+    "ORIN_MAXN_MISSING_120_PLUS_PROFILES.zip": "bundles/from_orin/ORIN_MAXN_MISSING_120_PLUS_PROFILES.zip"
+  },
+  "scope": "Root-level organization only; frozen snapshots, archive payloads and results retain their paths/bytes",
+  "edited_maintenance_scripts": [
+    "build_round2_documents.py",
+    "build_orin_paper_night_bundle.py",
+    "build_continuous_orin_bundle.py",
+    "build_orin_dp_completion_bundle.py",
+    "build_orin_after_v4_bundle.py",
+    "build_ec_component_profile_handoff.py",
+    "build_orin_runtime_bundle.py",
+    "refresh_paper_results.py",
+    "prepare_round2_placeholder.py",
+    "build_component_profile_handoff.py",
+    "paper_orin_results.py",
+    "round2_paths.py",
+    "reaudit_orin_maxn_results.py"
+  ],
+  "updated_document_links": [
+    "ORIN_MAXN_AND_NOTIFICATIONS.md",
+    "RUN_TIMES_AND_AUTONOMY.md",
+    "CONTINUOUS_RUN_AGENDA.md",
+    "AGREEMENT_AND_OPEN_ITEMS.md",
+    "RUN_AGENDA.md",
+    "MAXN_SYNC_AND_REMAINING_WORK.md",
+    "RUNTIME_V1_STATUS.md",
+    "ROUND2_PRIORITIES_AND_PLAN.md",
+    "RTX_EXPERIMENT_STATUS.md",
+    "ORIN_15W_DEADLINE_PLAN.md",
+    "ORIN_RECONCILIATION.md",
+    "DELIVERABLES_AND_NOTIFICATIONS.md",
+    "experiments/handoff_inventory/AUTHOR_DECISIONS.md"
+  ],
+  "relocation_checks": [
+    {
+      "old": "ORIN_EXISTING_DP_INVENTORY.md",
+      "new": "docs/orin/ORIN_EXISTING_DP_INVENTORY.md",
+      "sha256_after_reference_update": "2aaeab077849bbc32e31e751876194c553062c5d68ccb456046b6cd00e009b11"
+    },
+    {
+      "old": "ORIN_CONTINUOUS_PROMPT.md",
+      "new": "docs/orin/ORIN_CONTINUOUS_PROMPT.md",
+      "sha256_after_reference_update": "70c60fe41b573d71ba3e0de2b61b7df6f5822fb8ab2a57521e76dd887e7925b2"
+    },
+    {
+      "old": "ORIN_PAPER_NIGHT_PROMPT.md",
+      "new": "docs/orin/ORIN_PAPER_NIGHT_PROMPT.md",
+      "sha256_after_reference_update": "52b7904ff8c8f9bf605453dae88cb3fd9db34efde92de76ee5e67c2ed46f8413"
+    },
+    {
+      "old": "orin_ec_component_profile_runtime_v2_single_seed.zip",
+      "new": "bundles/to_orin/orin_ec_component_profile_runtime_v2_single_seed.zip",
+      "sha256_after_reference_update": "3240ba6982451fce173cb4f2c3123b0106e5ae940885a04e36375f197b3b79c4"
+    },
+    {
+      "old": "COMPONENT_PROFILING_PROTOCOL.md",
+      "new": "docs/protocols/COMPONENT_PROFILING_PROTOCOL.md",
+      "sha256_after_reference_update": "b14a38e9db221892a38f8133d794f928f756cab65454521ac67ebbeab3142f82"
+    },
+    {
+      "old": "RUN_AGENDA_SNAPSHOT.json",
+      "new": "metadata/RUN_AGENDA_SNAPSHOT.json",
+      "sha256_after_reference_update": "34f5aec1c6ddb2f2efdcafc17fccdb00bf054ec5faaaac9517f3d040d8a7a184"
+    },
+    {
+      "old": "ORIN_MAXN_AND_NOTIFICATIONS.md",
+      "new": "docs/orin/ORIN_MAXN_AND_NOTIFICATIONS.md",
+      "sha256_after_reference_update": "f58ff09ea22c6d6f427d380ec959159e2cc30bc18e089f6116b25a953b82ce76"
+    },
+    {
+      "old": "orin_handoff_inventory.zip",
+      "new": "bundles/to_orin/orin_handoff_inventory.zip",
+      "sha256_after_reference_update": "d6c07d61fb3f91bb0b0d9b1826d792c6dc12fa4d0a21af10b47b5ec151a47442"
+    },
+    {
+      "old": "DOCUMENT_READY_EMAIL_RECEIPT.json",
+      "new": "metadata/DOCUMENT_READY_EMAIL_RECEIPT.json",
+      "sha256_after_reference_update": "a3ccfa150c041d268c16dfe14f6a5afb383e10a37e6c752fd294b864717ff386"
+    },
+    {
+      "old": "RUN_TIMES_AND_AUTONOMY.md",
+      "new": "docs/planning/RUN_TIMES_AND_AUTONOMY.md",
+      "sha256_after_reference_update": "b93682fa64929ecc4638a6981aa5028a3acea51513ad751617280df6e9c122fd"
+    },
+    {
+      "old": "EC_COMPONENT_PROFILING_PROTOCOL.md",
+      "new": "docs/protocols/EC_COMPONENT_PROFILING_PROTOCOL.md",
+      "sha256_after_reference_update": "b4254f18b44736cc305132fcdc4da9ecb2c8befdd9ce34b36237e68dbbe38370"
+    },
+    {
+      "old": "CONTINUOUS_RUN_AGENDA.md",
+      "new": "docs/planning/CONTINUOUS_RUN_AGENDA.md",
+      "sha256_after_reference_update": "1fdaa3d82be2f5d722b9d613416d73c8aaac174aedb9d93c1ed3e91c155c5706"
+    },
+    {
+      "old": "orin_ec_component_profile_runtime_v2.zip",
+      "new": "bundles/to_orin/orin_ec_component_profile_runtime_v2.zip",
+      "sha256_after_reference_update": "57a86efad89e5f8c9d7a1b20e4de0d6dee8cf8689160a6aa7399230e60dc3448"
+    },
+    {
+      "old": "AGREEMENT_AND_OPEN_ITEMS.md",
+      "new": "docs/planning/AGREEMENT_AND_OPEN_ITEMS.md",
+      "sha256_after_reference_update": "dafeafd459cc41d2075c3ad528cdf101251f1031051e0c4f07bee8d028192aed"
+    },
+    {
+      "old": "ORIN_PREFLIGHT_REPORTS.zip",
+      "new": "bundles/from_orin/ORIN_PREFLIGHT_REPORTS.zip",
+      "sha256_after_reference_update": "f4627e9e6b4a7978bf93bfd7539e2ab833d80c2f68e697159c02eb034ca11fe9"
+    },
+    {
+      "old": "RUN_AGENDA.md",
+      "new": "docs/planning/RUN_AGENDA.md",
+      "sha256_after_reference_update": "d406141150dba75dc875c1ec4365b1f029824407fcf55c20d7749d1f551587b6"
+    },
+    {
+      "old": "missfont.log",
+      "new": "build/logs/missfont.log",
+      "sha256_after_reference_update": "ab036a8bc89b1d7ade6db5cfbce7cee75125ecd4b139c507d2ff6bfa1a74c96b"
+    },
+    {
+      "old": "ORIN_AUDITED_SOURCES.zip",
+      "new": "bundles/from_orin/ORIN_AUDITED_SOURCES.zip",
+      "sha256_after_reference_update": "11046478ce51fb47c469346964b6591050e9b3e8451d4b99dfd6a9ec771af8bb"
+    },
+    {
+      "old": "NOTIFICATION_PREFERENCE.json",
+      "new": "metadata/NOTIFICATION_PREFERENCE.json",
+      "sha256_after_reference_update": "8fc630d6b61f7eee09e126f9a44f88343545d40cef3f9d05b6f8feed5d88ee69"
+    },
+    {
+      "old": "ORIN_MAXN_SYNC_REQUEST.txt",
+      "new": "docs/orin/ORIN_MAXN_SYNC_REQUEST.txt",
+      "sha256_after_reference_update": "2bd3d8ef6e89f1a8a5f264eefa28595a09f515e73cc380716ab3a9e93f8f7b9b"
+    },
+    {
+      "old": "DP_TABLE_COMPLETION_PRIORITY.md",
+      "new": "docs/planning/DP_TABLE_COMPLETION_PRIORITY.md",
+      "sha256_after_reference_update": "52dfd0dc012638d10f46f805ee7f075b6ba4bf3a2a3516cdf9d20bbe60cfa437"
+    },
+    {
+      "old": "orin_dp_completion_maxn_v1.zip",
+      "new": "bundles/to_orin/orin_dp_completion_maxn_v1.zip",
+      "sha256_after_reference_update": "1a4203c109b49e2ebcf37c666877ae146bac2321d07446dacf7e0a5360e2d6e8"
+    },
+    {
+      "old": "orin_after_v4_maxn_v2.zip",
+      "new": "bundles/to_orin/orin_after_v4_maxn_v2.zip",
+      "sha256_after_reference_update": "629471e99f4574dbdf48d8914ccbedae2c94d9cd76c5c383ddad6d40f85270ba"
+    },
+    {
+      "old": "note.txt",
+      "new": "inputs/note.txt",
+      "sha256_after_reference_update": "f26783c7ba59754bf1eb9d2ae78436510994704d2b4041c9a1d2b4a8e0b493a9"
+    },
+    {
+      "old": "ORIN_SCANNET_RECOVERY.md",
+      "new": "docs/orin/ORIN_SCANNET_RECOVERY.md",
+      "sha256_after_reference_update": "3f01e7594ebbed0f4c9c131a5ce426d8d0fb2b33871bdf7ca4b32c5db73f978d"
+    },
+    {
+      "old": "build_CONSERVATIVE_VARIANT_EXPLAINED.log",
+      "new": "build/logs/build_CONSERVATIVE_VARIANT_EXPLAINED.log",
+      "sha256_after_reference_update": "a9a1c0aa133caae3d8c6750ded1a1a2399ef51cfa13895fb7a772b254c1d5ab0"
+    },
+    {
+      "old": "DOCUMENT_BUILD_MANIFEST.json",
+      "new": "metadata/DOCUMENT_BUILD_MANIFEST.json",
+      "sha256_after_reference_update": "73b20e2e8385a43ec99bfe51e64e1041100ae81be09b6188a253d330348ee2d0"
+    },
+    {
+      "old": "orin_maxn_addendum.zip",
+      "new": "bundles/to_orin/orin_maxn_addendum.zip",
+      "sha256_after_reference_update": "0be09e65e2c190433e07625125b365c3165e05e9d6ed940c5219ff319ceb475e"
+    },
+    {
+      "old": "CONSERVATIVE_VARIANT_EXPLAINED.tex",
+      "new": "docs/methods/CONSERVATIVE_VARIANT_EXPLAINED.tex",
+      "sha256_after_reference_update": "1f8e06d9d3b23ac1f51798c460601ea520cbaeed6483291d9913488253617f8d"
+    },
+    {
+      "old": "NOTIFICATION_POLICY.md",
+      "new": "docs/protocols/NOTIFICATION_POLICY.md",
+      "sha256_after_reference_update": "5052ccdc69df4b8d25199cbf1063e23d5d215e3e84cef16a38518cef75ab2c61"
+    },
+    {
+      "old": "EXPERIMENT_CONTINUATION_STATUS.json",
+      "new": "metadata/EXPERIMENT_CONTINUATION_STATUS.json",
+      "sha256_after_reference_update": "b9d9bd849ca5441a13b30dc0e5fa015baea0d047f138d75d2d028a39e4068a22"
+    },
+    {
+      "old": "orin_coslam_runtime_v1.zip",
+      "new": "bundles/to_orin/orin_coslam_runtime_v1.zip",
+      "sha256_after_reference_update": "42b189be6d366ab3577089eea5d1065f43e600d23de1b459e9e39cb86e998ffd"
+    },
+    {
+      "old": "ABSTRACT_2026-10-20.txt",
+      "new": "paper_round2_placeholder/abstracts/ABSTRACT_2026-10-20.txt",
+      "sha256_after_reference_update": "7f85ba65411c3bc8ce596f1847c0bf7c30bbc20bdc245f0a6e7cb4ab493ef686"
+    },
+    {
+      "old": "orin_paper_night_v2.zip",
+      "new": "bundles/to_orin/orin_paper_night_v2.zip",
+      "sha256_after_reference_update": "b00c20973964b17454bb45615a3ef6d459271007733616b8f19c2ae0aa6eb264"
+    },
+    {
+      "old": "MAXN_SYNC_AND_REMAINING_WORK.md",
+      "new": "docs/orin/MAXN_SYNC_AND_REMAINING_WORK.md",
+      "sha256_after_reference_update": "8bdf0892c6bfec2b3af98a22ee4a21e3d940ef9ad46bb51a2be859121f118927"
+    },
+    {
+      "old": "CONSERVATIVE_VARIANT_EXPLAINED.pdf",
+      "new": "docs/methods/CONSERVATIVE_VARIANT_EXPLAINED.pdf",
+      "sha256_after_reference_update": "f812346209be9faf7f648fd10e0ff1f6c952b0860aad58efdf4927e9743cdfe6"
+    },
+    {
+      "old": "orin_continuous_v3.zip",
+      "new": "bundles/to_orin/orin_continuous_v3.zip",
+      "sha256_after_reference_update": "82b31c86fae07843e3c14d81b71b5d3a1732a19665644ec9b87639b25ef77f7b"
+    },
+    {
+      "old": "orin_component_profile_protocol_v1.zip",
+      "new": "bundles/to_orin/orin_component_profile_protocol_v1.zip",
+      "sha256_after_reference_update": "46849cd1fa6327c9cf03f94c0c7d7fa0bc7621cac118376b2b053d70d66f7676"
+    },
+    {
+      "old": "reviews.txt",
+      "new": "inputs/reviews.txt",
+      "sha256_after_reference_update": "a9e9935a53164ec308a6717f6bb52b1e24287bb3a0990b9c5d3b77b899cbc58a"
+    },
+    {
+      "old": "ENGINEERING_SCOPE_OVERRIDE.txt",
+      "new": "docs/protocols/ENGINEERING_SCOPE_OVERRIDE.txt",
+      "sha256_after_reference_update": "321b88261e156ab3ff9f5c00f278f6a379c9867ebc0cff3a86c13232aabb14d7"
+    },
+    {
+      "old": "RTX_REMAINING_NIGHT.md",
+      "new": "docs/planning/RTX_REMAINING_NIGHT.md",
+      "sha256_after_reference_update": "1a545e68f39e5f235f3c4f7cf38ecc860d2c8aecd49ce0c672603415aff936b3"
+    },
+    {
+      "old": "RUNTIME_V1_STATUS.md",
+      "new": "docs/planning/RUNTIME_V1_STATUS.md",
+      "sha256_after_reference_update": "a6f092ae1e41f990e88391a66dc5ab80a164e418d2d75e33d64fd100b212e83b"
+    },
+    {
+      "old": "orin_after_v4_maxn_v1.zip",
+      "new": "bundles/to_orin/orin_after_v4_maxn_v1.zip",
+      "sha256_after_reference_update": "ae2524b35581b08fbf05e2d9c30d07bdf70f96c50229e316d2653ebc87dfea02"
+    },
+    {
+      "old": "orin_continuous_v4.zip",
+      "new": "bundles/to_orin/orin_continuous_v4.zip",
+      "sha256_after_reference_update": "dc75e900a718d97539b9deca5189118c063ee26b0da0617983683351f0be0759"
+    },
+    {
+      "old": "ORIN_COMPLETED_MAXN_FOR_RTX_20261020.zip",
+      "new": "bundles/from_orin/ORIN_COMPLETED_MAXN_FOR_RTX_20261020.zip",
+      "sha256_after_reference_update": "f9896791f081ecf7dff5c0a5fe263bfd56cc4010b191b226e1ef8545d79ce4a1"
+    },
+    {
+      "old": "ROUND2_PRIORITIES_AND_PLAN.md",
+      "new": "docs/planning/ROUND2_PRIORITIES_AND_PLAN.md",
+      "sha256_after_reference_update": "ea8b72740d2e856e020ce6b5d97d3b25bdfcc3a2f9cd7f47de374a9ae789e93f"
+    },
+    {
+      "old": "orin_source_handoff.zip",
+      "new": "bundles/to_orin/orin_source_handoff.zip",
+      "sha256_after_reference_update": "329bfb507b7729b5f4283aa87d8298cfd82bce0d9ac7fa1153af58466e2be84d"
+    },
+    {
+      "old": "RTX_EXPERIMENT_STATUS.md",
+      "new": "docs/planning/RTX_EXPERIMENT_STATUS.md",
+      "sha256_after_reference_update": "baf8b00f83edfdfdabbc210b196a1c924071dc8233b3de2860d2e43dd4963034"
+    },
+    {
+      "old": "ORIN_15W_DEADLINE_PLAN.md",
+      "new": "docs/orin/ORIN_15W_DEADLINE_PLAN.md",
+      "sha256_after_reference_update": "357a43f6f39cb6c9ac6c045dd4d64c06b1ba3b827804695bbfcd766349dfb0e7"
+    },
+    {
+      "old": "ORIN_ENCODER_PRECISION_CHECK.json",
+      "new": "metadata/ORIN_ENCODER_PRECISION_CHECK.json",
+      "sha256_after_reference_update": "2e61adc3ff39e6c09465f91b67f89762490fde6e11531018f73aa6d35993d138"
+    },
+    {
+      "old": "ORIN_RECONCILIATION.md",
+      "new": "docs/orin/ORIN_RECONCILIATION.md",
+      "sha256_after_reference_update": "a6b9cb70b087a8f42a8ba0a2186202f794b77db29fff7bf44054ab5ac680a20d"
+    },
+    {
+      "old": "orin_component_profile_runtime_v2.zip",
+      "new": "bundles/to_orin/orin_component_profile_runtime_v2.zip",
+      "sha256_after_reference_update": "9d3a7854f788cdaab82ea257506177600a6169ee2aed19137228431d9b8751b1"
+    },
+    {
+      "old": "DELIVERABLES_AND_NOTIFICATIONS.md",
+      "new": "docs/planning/DELIVERABLES_AND_NOTIFICATIONS.md",
+      "sha256_after_reference_update": "dc13c332a2db7686cc4430b419614078e42d66abcb358cff5723631084d3e80a"
+    },
+    {
+      "old": "tex_cache",
+      "new": "build/tex_cache",
+      "sha256_after_reference_update": null
+    },
+    {
+      "old": "build_explanation",
+      "new": "build/explanation",
+      "sha256_after_reference_update": null
+    }
+  ],
+  "preserved_original_auditor": "experiments/import_orin_maxn_results.py retains its original recorded source hash; experiments/reaudit_orin_maxn_results.py is the relocation-aware entry point",
+  "hash_record_scope": "Move-time hashes verify relocation; active documents/administrative build manifests can subsequently be refreshed"
+}

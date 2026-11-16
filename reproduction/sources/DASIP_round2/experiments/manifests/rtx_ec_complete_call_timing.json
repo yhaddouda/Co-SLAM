@@ -1,0 +1,773 @@
+{
+  "purpose": "Complete active-worker call timing, native threads and settings, all eight Replica scenes H16/H19, seeds 0/1/2; source statements unchanged after removing timer contexts; ATE is instrumentation sensitivity, not a replacement for primary native-quality runs",
+  "jobs": [
+    {
+      "id": "EC_Replica_office0_BASE_H16_seed0",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office0_MC_H16_seed0",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office1_BASE_H16_seed0",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office1_MC_H16_seed0",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office2_BASE_H16_seed0",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office2_MC_H16_seed0",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office3_BASE_H16_seed0",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office3_MC_H16_seed0",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office4_BASE_H16_seed0",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office4_MC_H16_seed0",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room0_BASE_H16_seed0",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room0_MC_H16_seed0",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room1_BASE_H16_seed0",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room1_MC_H16_seed0",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room2_BASE_H16_seed0",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room2_MC_H16_seed0",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office0_MC_H16_seed1",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office0_BASE_H16_seed1",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office1_MC_H16_seed1",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office1_BASE_H16_seed1",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office2_MC_H16_seed1",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office2_BASE_H16_seed1",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office3_MC_H16_seed1",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office3_BASE_H16_seed1",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office4_MC_H16_seed1",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office4_BASE_H16_seed1",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room0_MC_H16_seed1",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room0_BASE_H16_seed1",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room1_MC_H16_seed1",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room1_BASE_H16_seed1",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room2_MC_H16_seed1",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room2_BASE_H16_seed1",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office0_BASE_H16_seed2",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office0_MC_H16_seed2",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office1_BASE_H16_seed2",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office1_MC_H16_seed2",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office2_BASE_H16_seed2",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office2_MC_H16_seed2",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office3_BASE_H16_seed2",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office3_MC_H16_seed2",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office4_BASE_H16_seed2",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office4_MC_H16_seed2",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room0_BASE_H16_seed2",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room0_MC_H16_seed2",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room1_BASE_H16_seed2",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room1_MC_H16_seed2",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room2_BASE_H16_seed2",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room2_MC_H16_seed2",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "MC",
+      "hash_size": 16,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office0_BASE_H19_seed0",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office0_MC_H19_seed0",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office1_BASE_H19_seed0",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office1_MC_H19_seed0",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office2_BASE_H19_seed0",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office2_MC_H19_seed0",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office3_BASE_H19_seed0",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office3_MC_H19_seed0",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office4_BASE_H19_seed0",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office4_MC_H19_seed0",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room0_BASE_H19_seed0",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room0_MC_H19_seed0",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room1_BASE_H19_seed0",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room1_MC_H19_seed0",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room2_BASE_H19_seed0",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_room2_MC_H19_seed0",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 0
+    },
+    {
+      "id": "EC_Replica_office0_MC_H19_seed1",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office0_BASE_H19_seed1",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office1_MC_H19_seed1",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office1_BASE_H19_seed1",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office2_MC_H19_seed1",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office2_BASE_H19_seed1",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office3_MC_H19_seed1",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office3_BASE_H19_seed1",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office4_MC_H19_seed1",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office4_BASE_H19_seed1",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room0_MC_H19_seed1",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room0_BASE_H19_seed1",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room1_MC_H19_seed1",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room1_BASE_H19_seed1",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room2_MC_H19_seed1",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_room2_BASE_H19_seed1",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 1
+    },
+    {
+      "id": "EC_Replica_office0_BASE_H19_seed2",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office0_MC_H19_seed2",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office1_BASE_H19_seed2",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office1_MC_H19_seed2",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_1/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office2_BASE_H19_seed2",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office2_MC_H19_seed2",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_2/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office3_BASE_H19_seed2",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office3_MC_H19_seed2",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_3/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office4_BASE_H19_seed2",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_office4_MC_H19_seed2",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_4/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room0_BASE_H19_seed2",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room0_MC_H19_seed2",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_0/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room1_BASE_H19_seed2",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room1_MC_H19_seed2",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_1/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room2_BASE_H19_seed2",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "BASE",
+      "hash_size": 19,
+      "seed": 2
+    },
+    {
+      "id": "EC_Replica_room2_MC_H19_seed2",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/room_2/imap/00",
+      "condition": "MC",
+      "hash_size": 19,
+      "seed": 2
+    }
+  ]
+}

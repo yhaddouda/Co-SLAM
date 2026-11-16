@@ -1,0 +1,605 @@
+{
+  "purpose": "Complete every configured non-Replica benchmark scene: BASE/MC native settings, three paired seeds, timing plus ATE for all; final mesh for Synthetic only; reuse six core scene results",
+  "jobs": [
+    {
+      "id": "Synthetic_br_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_br_MC_seed0",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_br_MC_seed1",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_br_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_br_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_br_MC_seed2",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gr_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gr_MC_seed0",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gr_MC_seed1",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gr_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gr_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gr_MC_seed2",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gwr_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gwr_MC_seed0",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gwr_MC_seed1",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gwr_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gwr_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_gwr_MC_seed2",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ma_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ma_MC_seed0",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ma_MC_seed1",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ma_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ma_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ma_MC_seed2",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_wr_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_wr_MC_seed0",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_wr_MC_seed1",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_wr_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_wr_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_wr_MC_seed2",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr2_xyz_BASE_seed0",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr2_xyz_MC_seed0",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr2_xyz_MC_seed1",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr2_xyz_BASE_seed1",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr2_xyz_BASE_seed2",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr2_xyz_MC_seed2",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0059_BASE_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0059_MC_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0059_MC_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0059_BASE_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0059_BASE_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0059_MC_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0169_BASE_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0169_MC_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0169_MC_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0169_BASE_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0169_BASE_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0169_MC_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0181_BASE_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0181_MC_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0181_MC_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0181_BASE_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0181_BASE_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0181_MC_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0207_BASE_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0207_MC_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0207_MC_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0207_BASE_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0207_BASE_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0207_MC_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    }
+  ]
+}

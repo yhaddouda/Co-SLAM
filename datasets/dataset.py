@@ -283,6 +283,22 @@ class ScannetDataset(BaseDataset):
         self.depth_paths = sorted(
             glob.glob(os.path.join(
             self.basedir, 'depth', '*.png')), key=lambda x: int(os.path.basename(x)[:-4]))
+        pose_paths = glob.glob(os.path.join(self.basedir, 'pose', '*.txt'))
+        if not self.img_files or not self.depth_paths or not pose_paths:
+            raise ValueError(
+                f"ScanNet data missing or not exported at {self.basedir}. "
+                "Expected color/*.jpg, depth/*.png, and pose/*.txt. "
+                "Set data.datadir (or --input_folder) to the exported scene directory."
+            )
+        frame_ids = [
+            {os.path.splitext(os.path.basename(path))[0] for path in paths}
+            for paths in (self.img_files, self.depth_paths, pose_paths)
+        ]
+        if not frame_ids[0] == frame_ids[1] == frame_ids[2]:
+            raise ValueError(
+                f"ScanNet color, depth, and pose frame IDs do not match at "
+                f"{self.basedir}. Finish exporting the scene before running Co-SLAM."
+            )
         self.load_poses(os.path.join(self.basedir, 'pose'))
 
         # self.depth_cleaner = cv2.rgbd.DepthCleaner_create(cv2.CV_32F, 5)

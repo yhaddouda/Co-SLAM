@@ -17,7 +17,8 @@ mapping:
   lr_trans: 0.001
   keyframe_every: 5
   map_every: 5
-  n_pixels: 0.05
+  # Keep enough keyframe rays to prebuild all 20 BA iteration buckets.
+  n_pixels: 0.15
   first_iters: 1000
   optim_cur: True
   min_pixels_cur: 100
@@ -39,26 +40,55 @@ tracking:
   const_speed: True
   best: False
 
+tracking_bucket:
+  enabled: False
+  pool_factor: 10
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  debug_log: False
+
+tracking_naive_pruning:
+  enabled: False
+  morton_sort: False
+  debug_log: False
+  collect_stats: False
+
+tracking_depth_spatial:
+  mode: balanced_dense  # spatial coverage without a shallow-depth selection bias
+  enabled: True  # select one fixed spatially distributed batch per frame
+  collect_fallback_stats: False  # one integer-only update per frame and one scene-summary CSV
+  collect_sample_count_stats: True  # summarize the selected uniform-count ceiling per frame
+  pool_factor: 4  # candidate pool size = pool_factor * tracking.sample
+  grid_h: 8
+  grid_w: 8
+  min_coverage: 0.75  # minimum fraction of grid cells containing eligible rays
+
+ba_bucket:
+  mode: stable  # preserve dense supervision and optimize batch/pose handling
+  enabled: True
+  pool_factor: 20
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  preserve_current_ratio: True
+  debug_log: False
+
 sampling_tracking:
   mode: random
   ph: 1
   pw: 16
-  sh: 1  
+  sh: 1
   sw: 16
-  # cap_per_patch: 128        # uncomment to limit per-patch contribution (keeps groups)
-  # shuffle_patches: false    # keep groups ordered across patches
-  # seed: 0
-  
+
 grid:
   enc: 'HashGrid'
   tcnn_encoding: True
-  hash_size: 16
+  hash_size: 19
   voxel_color: 0.04
   voxel_sdf: 0.02
   oneGrid: True
-  hash: CoherentPrime # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton", "CoherentPrime"
-  morton_sort: False # enable/disable
-  morton_R: 128        # 64..256 good defaults
+  hash: CoherentPrime  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
+  morton_sort: False  # enable/disable
+  morton_R: 128  
 
 pos:
   enc: 'OneBlob'
@@ -113,4 +143,12 @@ mesh:
   voxel_eval: 0.05
   voxel_final: 0.03
   visualisation: False
-  
+
+profiling:
+  enabled: False
+  output_dir: ./profiling/PytorchProfiler/tum
+  schedule:
+    wait: 1
+    warmup: 0
+    active: 10
+    repeat: 1

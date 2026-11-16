@@ -1,0 +1,33 @@
+{
+  "runtime": "experiments/coslam_reference_runtime_v1",
+  "phases": [
+    {
+      "id": "R1",
+      "label": "BASE/DP core",
+      "manifest": "experiments/manifests/rtx_support_core.json",
+      "output": "results/support_reference_v1",
+      "existing": true
+    },
+    {
+      "id": "R2",
+      "label": "MC core",
+      "manifest": "experiments/manifests/rtx_morton_core.json",
+      "output": "results/morton_core_v1",
+      "report": "results/morton_core_v1_analysis"
+    },
+    {
+      "id": "R3",
+      "label": "BASE/MC Replica extension",
+      "manifest": "experiments/manifests/rtx_replica_native_extension.json",
+      "output": "results/replica_native_extension_v1",
+      "report": "results/replica_native_extension_v1_analysis"
+    },
+    {
+      "id": "R4",
+      "label": "office0 capacity19",
+      "manifest": "experiments/manifests/rtx_capacity_office0_h19.json",
+      "output": "results/capacity_office0_h19_v1",
+      "report": "results/morton_all_native_v1_analysis"
+    }
+  ]
+}

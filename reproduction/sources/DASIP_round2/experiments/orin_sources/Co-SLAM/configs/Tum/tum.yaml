@@ -1,0 +1,152 @@
+dataset: 'tum'
+
+data:
+  downsample: 1
+  sc_factor: 1
+  translation: 0
+  num_workers: 4
+
+mapping:
+  sample: 2048
+  first_mesh: True
+  iters: 20
+  cur_frame_iters: 0
+  lr_embed: 0.01
+  lr_decoder: 0.01
+  lr_rot: 0.001
+  lr_trans: 0.001
+  keyframe_every: 5
+  map_every: 5
+  # Keep enough keyframe rays to prebuild all 20 BA iteration buckets.
+  n_pixels: 0.15
+  first_iters: 1000
+  optim_cur: True
+  min_pixels_cur: 100
+  map_accum_step: 1
+  pose_accum_step: 5
+  map_wait_step: 0
+  filter_depth: False
+
+tracking:
+  iter: 10
+  sample: 1024
+  pc_samples: 40960
+  lr_rot: 0.01
+  lr_trans: 0.01
+  ignore_edge_W: 20
+  ignore_edge_H: 20
+  iter_point: 0
+  wait_iters: 100
+  const_speed: True
+  best: False
+
+tracking_bucket:
+  enabled: False
+  pool_factor: 10
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  debug_log: False
+
+tracking_naive_pruning:
+  enabled: False
+  morton_sort: False
+  debug_log: False
+  collect_stats: False
+
+tracking_depth_spatial:
+  enabled: False  # select one fixed spatially distributed depth-pruned batch per frame
+  collect_fallback_stats: False  # one integer-only update per frame and one scene-summary CSV
+  collect_sample_count_stats: True  # summarize the selected uniform-count ceiling per frame
+  pool_factor: 4  # candidate pool size = pool_factor * tracking.sample
+  grid_h: 8
+  grid_w: 8
+  min_coverage: 0.75  # minimum fraction of grid cells containing eligible rays
+
+ba_bucket:
+  enabled: False
+  pool_factor: 20
+  shuffle_bucket_order: True
+  morton_inside_bucket: False
+  preserve_current_ratio: True
+  debug_log: False
+
+sampling_tracking:
+  mode: random
+  ph: 1
+  pw: 16
+  sh: 1
+  sw: 16
+
+grid:
+  enc: 'HashGrid'
+  tcnn_encoding: True
+  hash_size: 19
+  voxel_color: 0.04
+  voxel_sdf: 0.02
+  oneGrid: True
+  hash: CoherentPrime  # "Prime", "ReversedPrime", "Rng", "BaseConvert", "Morton"
+  morton_sort: False  # enable/disable
+  morton_R: 128  
+
+pos:
+  enc: 'OneBlob'
+  n_bins: 16
+
+decoder:
+  geo_feat_dim: 15
+  hidden_dim: 32
+  num_layers: 2
+  num_layers_color: 2
+  hidden_dim_color: 32
+  tcnn_network: False
+
+cam:  #NOTE: intrinsic is different per scene in TUM
+  H: 480 
+  W: 640 
+  fx: 517.3
+  fy: 516.5
+  cx: 318.6
+  cy: 255.3
+  png_depth_scale: 5000.0
+  crop_edge: 0
+  near: 0
+  far: 5
+  depth_trunc: 5.
+
+training:
+  rgb_weight: 1.0
+  depth_weight: 0.1
+  sdf_weight: 5000
+  fs_weight: 10
+  eikonal_weight: 0
+  smooth_weight: 0.00000001
+  smooth_pts: 64
+  smooth_vox: 0.04
+  smooth_margin: 0.
+  #n_samples: 256
+  n_samples_d: 64
+  range_d: 0.25
+  n_range_d: 21
+  n_importance: 0
+  perturb: 1
+  white_bkgd: False
+  trunc: 0.05
+  rot_rep: 'axis_angle'
+  rgb_missing: 1.0 # Would cause some noisy points around free space, but better completion
+
+mesh:
+  resolution: 512
+  render_color: False
+  vis: 500
+  voxel_eval: 0.05
+  voxel_final: 0.03
+  visualisation: False
+
+profiling:
+  enabled: False
+  output_dir: ./profiling/PytorchProfiler/tum
+  schedule:
+    wait: 1
+    warmup: 0
+    active: 10
+    repeat: 1

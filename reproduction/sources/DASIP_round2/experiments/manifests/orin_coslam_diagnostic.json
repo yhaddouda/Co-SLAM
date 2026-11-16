@@ -1,0 +1,45 @@
+{
+  "purpose": "First Orin runtime validation only; positive frame limit marks every result diagnostic",
+  "jobs": [
+    {
+      "id": "Replica_office0_BASE_diagnostic",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "BASE",
+      "seed": 0,
+      "frames": 50,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_DP_diagnostic",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "DP",
+      "seed": 0,
+      "frames": 50,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_MC_diagnostic",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "MC",
+      "seed": 0,
+      "frames": 50,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_MC_DP_diagnostic",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "MC_DP",
+      "seed": 0,
+      "frames": 50,
+      "quality": false
+    }
+  ]
+}

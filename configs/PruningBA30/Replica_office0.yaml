@@ -1,0 +1,16 @@
+inherit_from: configs/Replica/office0.yaml
+# Explicit overrides keep the scene's camera, bounds and training parameters.
+tracking_bucket: {enabled: False}
+tracking_naive_pruning: {enabled: False}
+tracking_depth_spatial: {enabled: False, collect_sample_count_stats: False, collect_fallback_stats: False, stats_only: False}
+ba_bucket: {enabled: False}
+ba_experiment: {variant: baseline, margin: 0.0, collect_samples: True}
+tracking_experiment: {variant: baseline}
+sample_pruning: {enabled: True, policy: support_tv, tv_fraction: 0.125, tracking_anchor_every: 3, margin: 0.15, anchor_every: 3, free_stride: 2, residual_threshold: 0.35, stages: [Tracking, Bundle_Adjustment], pixel_strategy: random, seed: 0}
+training: {uniform_samples_until_depth: False}
+grid: {hash: CoherentPrime, hash_size: 19, morton_sort: False}
+mapping: {first_mesh: False}
+timing: {mode: none, max_frames: null, disable_eval: False}
+profiling: {enabled: False}
+mesh: {visualisation: False, vis: 1000000000}
+data: {output: output/pruning_ba30/Replica, exp_name: office0}

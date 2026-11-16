@@ -102,11 +102,23 @@ def get_masks(z_vals, target_d, truncation):
 
     num_fs_samples = torch.count_nonzero(front_mask)
     num_sdf_samples = torch.count_nonzero(sdf_mask)
-    num_samples = num_sdf_samples + num_fs_samples
-    fs_weight = 1.0 - num_fs_samples / num_samples
-    sdf_weight = 1.0 - num_sdf_samples / num_samples
+    # Depth-sorted buckets can contain only missing depths. Keep both losses
+    # zero in that case instead of poisoning the optimizer with 0 / 0.
+    num_samples = (num_sdf_samples + num_fs_samples).clamp_min(1)
+    fs_weight = num_sdf_samples / num_samples
+    sdf_weight = num_fs_samples / num_samples
 
     return front_mask, sdf_mask, fs_weight, sdf_weight
+
+def masked_mse_loss(prediction, target, mask):
+    """Valid-element mean, with zero loss/gradient for an empty mask.
+
+    Dense masking avoids dynamic boolean gathers and their CUDA host syncs.
+    Mask before squaring so excluded targets do not enter the gradient.
+    """
+    residual = torch.where(mask, prediction - target, 0.0)
+    return residual.square().sum() / mask.sum().clamp_min(1)
+
 
 def compute_loss(prediction, target, loss_type='l2'):
     '''
@@ -143,7 +155,7 @@ def get_sdf_loss(z_vals, target_d, predicted_sdf, truncation, loss_type=None, gr
     sdf_loss = compute_loss((z_vals + predicted_sdf * truncation) * sdf_mask, target_d * sdf_mask, loss_type) * sdf_weight
 
     if grad is not None:
-        eikonal_loss = (((grad.norm(2, dim=-1) - 1) ** 2) * sdf_mask / sdf_mask.sum()).sum()
+        eikonal_loss = (((grad.norm(2, dim=-1) - 1) ** 2) * sdf_mask / sdf_mask.sum().clamp_min(1)).sum()
         return fs_loss, sdf_loss, eikonal_loss
 
     return fs_loss, sdf_loss

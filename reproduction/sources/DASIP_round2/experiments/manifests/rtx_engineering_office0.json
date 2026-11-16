@@ -1,0 +1,77 @@
+{
+  "purpose": "Separate contemporaneous native BASE/ENG comparison, no pruning/Morton, office0 native H16, three paired seeds; complete-call timing and ATE",
+  "jobs": [
+    {
+      "id": "office0_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "variant": "BASE",
+      "engineering": false,
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "office0_ENG_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "variant": "ENG",
+      "engineering": true,
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "office0_ENG_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "variant": "ENG",
+      "engineering": true,
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "office0_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "variant": "BASE",
+      "engineering": false,
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "office0_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "variant": "BASE",
+      "engineering": false,
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "office0_ENG_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "variant": "ENG",
+      "engineering": true,
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    }
+  ]
+}

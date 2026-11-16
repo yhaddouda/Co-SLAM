@@ -48,12 +48,21 @@ tracking_bucket:
   debug_log: False
 
 tracking_naive_pruning:
-  enabled: True
+  enabled: False
   morton_sort: False
   debug_log: False
   collect_stats: False
 
+tracking_depth_spatial:
+  mode: balanced_dense  # spatial coverage without a shallow-depth selection bias
+  enabled: True  # select one fixed spatially distributed batch per frame
+  pool_factor: 4  # candidate pool size = pool_factor * tracking.sample
+  grid_h: 8
+  grid_w: 8
+  min_coverage: 0.75  # minimum fraction of grid cells containing eligible rays
+
 ba_bucket:
+  mode: stable  # preserve dense supervision and optimize batch/pose handling
   enabled: True
   pool_factor: 10
   shuffle_bucket_order: True

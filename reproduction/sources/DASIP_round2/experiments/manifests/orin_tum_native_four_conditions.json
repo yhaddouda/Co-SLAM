@@ -1,0 +1,77 @@
+{
+  "purpose": "Full-sequence timing-only paper candidate measurements; seed-paired, native public settings except explicit condition/capacity; manual mode selection",
+  "jobs": [
+    {
+      "id": "Tum_fr1_desk_BASE_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_MC_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "MC",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "DP",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_MC_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "MC_DP",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_MC_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "MC_DP",
+      "seed": 1,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "DP",
+      "seed": 1,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_MC_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "MC",
+      "seed": 1,
+      "quality": false
+    },
+    {
+      "id": "Tum_fr1_desk_BASE_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": false
+    }
+  ]
+}

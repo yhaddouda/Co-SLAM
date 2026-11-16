@@ -8,7 +8,7 @@ grid:
   hash_size: 14 # 0.48
 
 data:
-  datadir: ./data/scannet/scene0106_00
+  datadir: ../datasets/data/scans/scene0106_00
   trainskip: 1
   output: output/scannet/scene0106_00
   exp_name: demo

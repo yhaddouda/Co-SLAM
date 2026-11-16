@@ -1,0 +1,71 @@
+{
+  "purpose": "Explicit office0 capacity-19 sensitivity; pair with native capacity16 BASE/MC",
+  "jobs": [
+    {
+      "id": "Replica_office0_BASE_H19_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true,
+      "hash_size": 19
+    },
+    {
+      "id": "Replica_office0_MC_H19_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true,
+      "hash_size": 19
+    },
+    {
+      "id": "Replica_office0_MC_H19_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true,
+      "hash_size": 19
+    },
+    {
+      "id": "Replica_office0_BASE_H19_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true,
+      "hash_size": 19
+    },
+    {
+      "id": "Replica_office0_BASE_H19_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true,
+      "hash_size": 19
+    },
+    {
+      "id": "Replica_office0_MC_H19_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true,
+      "hash_size": 19
+    }
+  ]
+}

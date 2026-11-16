@@ -1,0 +1,158 @@
+{
+  "author_scope": "All configured benchmark scenes, explicitly confirmed 18 October",
+  "scenes": [
+    {
+      "dataset": "Synthetic",
+      "scene": "br",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "frames": 1167,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "745c0155f1b32fb7da30b678c78189c9ac949c2fb3bccdfa0982c19c7e3ae643"
+    },
+    {
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "frames": 1211,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "258ba75ea705ee8bc2dd3e116902043f0859749de7d3fb06c08aefed062ecc86"
+    },
+    {
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "frames": 1442,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "c357aad01888e57205b871b49066b273346509101f55d37d68747f89b7bbf3d0"
+    },
+    {
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "frames": 1493,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "33f354580fbcf36268de2d809d78ff23362b25117926cd303c51087367ef8972"
+    },
+    {
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "frames": 920,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "1de33928530c4415df868ca4f607fc4b7b85e13a45362c444484c49045314268",
+      "path_override_reason": "Public ma.yaml repeats gwr data path; explicitly use morning_apartment data, retain all other native ma settings and bounds"
+    },
+    {
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "frames": 395,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "e0a0837edabe508e5537fc7a13aae42eb2a0430917e58977fbddd317176760de"
+    },
+    {
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "frames": 1676,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "9a582a51d72450ccd7e41cdd54c7c2498a4db69260a9141cfea3ab0ec233f90a"
+    },
+    {
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "frames": 592,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "365f768dee16e1d31860438c53a929355f48192e37032a1490e58731a75ff370"
+    },
+    {
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "frames": 3397,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "392b22eb6866e07fde2261b20480eeee7b1a35d3ed9603a2e96c69455ad68a51"
+    },
+    {
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "frames": 2515,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "4ffb5eaf945e07721f8b481307ef5ad717517916ace68d7120311d474a2977aa"
+    },
+    {
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "frames": 5578,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281"
+    },
+    {
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "frames": 1807,
+      "native_hash_size": 12,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad"
+    },
+    {
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "frames": 2324,
+      "native_hash_size": 14,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5"
+    },
+    {
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "frames": 2034,
+      "native_hash_size": 16,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc"
+    },
+    {
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "frames": 2349,
+      "native_hash_size": 14,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7"
+    },
+    {
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "frames": 1988,
+      "native_hash_size": 14,
+      "first_middle_last_rgb_depth_checked": true,
+      "scene_config_sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf"
+    }
+  ],
+  "excluded_unconfigured_folders": [
+    "Synthetic/kitchen",
+    "Synthetic/staircase",
+    "ScanNet/scene0000_01",
+    "ScanNet/scene0191_00",
+    "ScanNet/scene0191_01",
+    "ScanNet/scene0191_02"
+  ]
+}

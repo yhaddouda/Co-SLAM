@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "file": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/component_profile_rtx_v2/series_complete.json",
+      "checks": [
+        {
+          "pointer": "/status",
+          "equals": "COMPLETE"
+        },
+        {
+          "pointer": "/completed",
+          "equals": 9
+        },
+        {
+          "pointer": "/failed",
+          "equals": 0
+        }
+      ]
+    }
+  ],
+  "failure_files": [
+    "/home/yh279050/work/Co-SLAM/DASIP_round2/results/component_profile_rtx_v2/series_failure.json"
+  ]
+}

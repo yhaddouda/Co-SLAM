@@ -1,0 +1,31 @@
+{
+  "purpose": "19 October author clarification: Co-SLAM ENG only; EC ENG excluded from scope on both RTX and Orin; preserve native BASE/MC comparisons.",
+  "data_paths": "Hints only: verify actual local contents and materialize resolved manifests",
+  "warmup_frames": 20,
+  "seeds": [
+    0,
+    1
+  ],
+  "jobs": [
+    {
+      "id": "Co-SLAM_office0_ENG_H16_seed0",
+      "system": "Co-SLAM",
+      "dataset": "Replica",
+      "scene": "office0",
+      "condition": "ENG",
+      "hash_size": 16,
+      "seed": 0,
+      "requires": "Validated isolated engineering implementation and equivalent two-seed BASE controls; do not send ENG to Co scientific runner"
+    },
+    {
+      "id": "Co-SLAM_office0_ENG_H16_seed1",
+      "system": "Co-SLAM",
+      "dataset": "Replica",
+      "scene": "office0",
+      "condition": "ENG",
+      "hash_size": 16,
+      "seed": 1,
+      "requires": "Validated isolated engineering implementation and equivalent two-seed BASE controls; do not send ENG to Co scientific runner"
+    }
+  ]
+}

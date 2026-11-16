@@ -1,0 +1,60 @@
+inherit_from: configs/Tum/fr3_office.yaml
+tracking_bucket:
+  enabled: false
+tracking_naive_pruning:
+  enabled: false
+tracking_depth_spatial:
+  enabled: false
+  mode: pruned
+  collect_sample_count_stats: false
+  collect_fallback_stats: false
+  stats_only: false
+ba_bucket:
+  enabled: false
+  mode: legacy
+  debug_log: false
+  morton_inside_bucket: false
+  depth_margin: 0.0
+ba_experiment:
+  variant: baseline
+  margin: 0.0
+  collect_samples: true
+tracking_experiment:
+  variant: baseline
+sample_pruning:
+  enabled: true
+  policy: ray_cohort
+  cohort_count: 4
+  recent_keyframes: 2
+  cohort_transition_keyframes: 2
+  cohort_weighting: population
+  cohort_tracking: ray_cycle
+  tracking_cycle_groups: 2
+  tracking_anchor_every: 3
+  tracking_pose_selection: dense_anchors
+  cohort_keep_empty_pose_blocks: false
+  tv_fraction: 0.125
+  stages:
+  - Tracking
+  - Bundle_Adjustment
+  pixel_strategy: random
+  seed: 0
+training:
+  uniform_samples_until_depth: false
+grid:
+  hash: CoherentPrime
+  morton_sort: false
+mapping:
+  first_mesh: false
+timing:
+  mode: none
+  max_frames: null
+  disable_eval: false
+profiling:
+  enabled: false
+mesh:
+  visualisation: false
+  vis: 1000000000
+data:
+  output: output/pruning_joint8/Tum
+  exp_name: fr3_office

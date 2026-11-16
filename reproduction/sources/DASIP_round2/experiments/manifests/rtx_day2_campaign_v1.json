@@ -1,0 +1,43 @@
+{
+  "runtime": "experiments/coslam_reference_runtime_v1",
+  "phases": [
+    {
+      "id": "R1",
+      "label": "Original BASE/DP core",
+      "manifest": "experiments/manifests/rtx_support_core.json",
+      "output": "results/support_reference_v1",
+      "existing": true
+    },
+    {
+      "id": "R2",
+      "label": "Native MC core",
+      "manifest": "experiments/manifests/rtx_morton_core.json",
+      "output": "results/morton_core_v1",
+      "existing": true,
+      "report": "results/backlog_reuse_audit_R2"
+    },
+    {
+      "id": "R3",
+      "label": "Native Replica extension",
+      "manifest": "experiments/manifests/rtx_replica_native_extension.json",
+      "output": "results/replica_native_extension_v1",
+      "existing": true,
+      "report": "results/backlog_reuse_audit_R3"
+    },
+    {
+      "id": "R4",
+      "label": "office0 H19",
+      "manifest": "experiments/manifests/rtx_capacity_office0_h19.json",
+      "output": "results/capacity_office0_h19_v1",
+      "existing": true,
+      "report": "results/backlog_reuse_audit_R4"
+    },
+    {
+      "id": "R5",
+      "label": "Remaining Replica H19 BASE/MC",
+      "manifest": "experiments/manifests/rtx_replica_h19_extension.json",
+      "output": "results/replica_h19_extension_v1",
+      "report": "results/morton_all_capacities_v1_analysis"
+    }
+  ]
+}

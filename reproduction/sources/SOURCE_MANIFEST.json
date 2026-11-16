@@ -1,0 +1,3891 @@
+{
+  "schema": 1,
+  "note": "Exact paper reproduction source copies; paper text, measurements and datasets stay local.",
+  "files": [
+    {
+      "path": "DASIP_round2/experiments/ALL_CONFIGURED_NONREPLICA_INVENTORY.json",
+      "sha256": "fb02e0c4cbc6c7a75536c3f540a94b2103e23e25d68a4ec2ff1ed1a7a626d8eb",
+      "size": 6016
+    },
+    {
+      "path": "DASIP_round2/experiments/analyze_dp_phase_timing.py",
+      "sha256": "7c755a2d38dc026e89e811f537f3b85de2d51bd906e03762ab9cae97bc8bb907",
+      "size": 13251
+    },
+    {
+      "path": "DASIP_round2/experiments/audit_reference_configs.py",
+      "sha256": "b814f72fbf5cbad0711647d9dee40d635ee52f055fc61c59b69b10c471e6229b",
+      "size": 4272
+    },
+    {
+      "path": "DASIP_round2/experiments/build_component_profile_handoff.py",
+      "sha256": "fbf7fa9d7e7fca5629daaaac7bec34db3a28fdae5668514821ba462ba3ed5ade",
+      "size": 4503
+    },
+    {
+      "path": "DASIP_round2/experiments/build_component_profile_protocol.py",
+      "sha256": "7cb1ca948f7e1e4c60c9e0a753a405d1e6cc3f69c94af89d0cfc1ba3ca9395bb",
+      "size": 5817
+    },
+    {
+      "path": "DASIP_round2/experiments/build_component_profile_runtime.py",
+      "sha256": "836fe43db836533eb3dd7305573b9b7aa30b93b3a5d481a1c3b0c10eece243e2",
+      "size": 6479
+    },
+    {
+      "path": "DASIP_round2/experiments/build_continuous_orin_bundle.py",
+      "sha256": "2bedac1c6bb80c10dac17e0a3ef9438f4c0f564ffd84b422585049768745b2f4",
+      "size": 6478
+    },
+    {
+      "path": "DASIP_round2/experiments/build_coslam_runtime.py",
+      "sha256": "7d726a905a99b3965c26464f1e63160a67d46aab8a7a63f3c5aaf9caf8456cf3",
+      "size": 6687
+    },
+    {
+      "path": "DASIP_round2/experiments/build_ec_component_profile_handoff.py",
+      "sha256": "3b42651866136fe503d556649aa0c4ccaf2d42e74883eb54989ee007b09e0bca",
+      "size": 4748
+    },
+    {
+      "path": "DASIP_round2/experiments/build_ec_component_profile_runtime.py",
+      "sha256": "4c07b6e1861bc14ebdbec7bb62bf78ebca157d31bce9f8c20fdec97f10584e21",
+      "size": 9627
+    },
+    {
+      "path": "DASIP_round2/experiments/build_ec_quality_runtime.py",
+      "sha256": "e98640a9df6d312252ac882ffa49f4d620a59f9ea79d8c247bdf2289d6f144ec",
+      "size": 2082
+    },
+    {
+      "path": "DASIP_round2/experiments/build_ec_timing_runtime.py",
+      "sha256": "35e5b08a155abb00eae090159c040e230f5ef21c0e2d72d67b7f5ac48e7d953e",
+      "size": 6448
+    },
+    {
+      "path": "DASIP_round2/experiments/build_engineering_runtime.py",
+      "sha256": "2288a0e97f9cc802265828c922b6a8ea9b9f8bc8a9270119e12db53086307f03",
+      "size": 3086
+    },
+    {
+      "path": "DASIP_round2/experiments/build_orin_15w_priority_plan.py",
+      "sha256": "246bd837453d7e19ed002cc5ab01dbe32124d4844a2248b264931804a3c882ae",
+      "size": 10657
+    },
+    {
+      "path": "DASIP_round2/experiments/build_orin_after_v4_bundle.py",
+      "sha256": "03f87c45319cb7af8ef26769c4084af3b3c79ec8c310a6da20acf7c67751ca7d",
+      "size": 4965
+    },
+    {
+      "path": "DASIP_round2/experiments/build_orin_dp_completion_bundle.py",
+      "sha256": "01d506a5a4b90b67ad85c5c55c438caa673f63dfc1acb26c81d910c766790a1e",
+      "size": 8331
+    },
+    {
+      "path": "DASIP_round2/experiments/build_orin_paper_night_bundle.py",
+      "sha256": "811fff4fba73bde26ed05ca2a27becd04124a5b2aadaef77e0952a1b51a0efa1",
+      "size": 4126
+    },
+    {
+      "path": "DASIP_round2/experiments/build_orin_runtime_bundle.py",
+      "sha256": "aa912d16b2c869fd2f765e244cb490aeac18a03298e8cdd18aa7c7caa3b2f75d",
+      "size": 2473
+    },
+    {
+      "path": "DASIP_round2/experiments/build_reconstruction_campaign.py",
+      "sha256": "d7cc2d6b0c1a6e722e02d31daa1726e3770883326db8e2e833b2f85100e21fc1",
+      "size": 7063
+    },
+    {
+      "path": "DASIP_round2/experiments/build_round2_documents.py",
+      "sha256": "404692ac6e404b9a6f79487906ad7866f1bdc5c354b495ab6bd62c79ef3ae771",
+      "size": 2559
+    },
+    {
+      "path": "DASIP_round2/experiments/build_rtx_composition_campaign.py",
+      "sha256": "334c5be0cca6c1f07fa6784f133ce185d498c9d21cef01d6ca31d015d7865834",
+      "size": 4886
+    },
+    {
+      "path": "DASIP_round2/experiments/check_native_encoder_precision.py",
+      "sha256": "3faf4a1e61c12e2f051702d585a3ab741090169b0284bcbf68313602dcb77fcc",
+      "size": 2639
+    },
+    {
+      "path": "DASIP_round2/experiments/checked_reconstruction.py",
+      "sha256": "abaa001849be13989bed91f384f5afc743ac07d6823d0aac9a0fefb2ffb4c862",
+      "size": 11867
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "12dbad2924f045a9cdeb1b85e524c86ea025f4a7d0b7a89922b75f50df4efb5c",
+      "size": 6895
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/component_profile_timer.py",
+      "sha256": "4fc198db1c39086aba465a903dd889d9e52e0e8ce3a4fd94b443992bc1bebe78",
+      "size": 8042
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/config.py",
+      "sha256": "d1cf867cb0cd5c8e54770a920f8c5c6f50f546c66c2108eab288e4b2dd4453b7",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Azure/apartment.yaml",
+      "sha256": "ae3a73af14137a3aeeceea1e176e96715cc3f32547c09595e0b80bc9cc6f49b3",
+      "size": 240
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Azure/azure.yaml",
+      "sha256": "6b6a0b50cd1e645a55df9e319aa6ba9efc382873cc5e468ae7c9f574f198f0ab",
+      "size": 1586
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/office0.yaml",
+      "sha256": "540554ff07b754ca48a706da3a700b4cff6e09ed07f56a474308dbae6df37715",
+      "size": 254
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/office1.yaml",
+      "sha256": "ee3230d3bf98026dd67cccb32eb0484b4894f7e41c6b198b75ce35cc1dd5dfea",
+      "size": 260
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/office2.yaml",
+      "sha256": "acf7b62a6a02b0d2671c8c51aa5ce8e1441a36da34c8ed704757a6a0fc73d24b",
+      "size": 261
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/office3.yaml",
+      "sha256": "02d5f0570fa51dd063af25270015c40c36a20c72aeace85a5e4d66bf157d9bda",
+      "size": 262
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/office4.yaml",
+      "sha256": "4a53e037a3de473445df020f85ffd22841abe4502c6a6bd3fb26162d3134837b",
+      "size": 259
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/replica.yaml",
+      "sha256": "39fcff70d16472ffb2cf206bb8a3344949d1d40dd276535f3fea484c2206d373",
+      "size": 1536
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/room0.yaml",
+      "sha256": "82fd84c673557ccc3f1ef237d13a4527279ab51fba7f6cda28ed9a1fc2ce1eda",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/room1.yaml",
+      "sha256": "0e7029353e7a167816135a869c6cc69ca80eb3bfb39ddb584c4926297b911d24",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Replica/room2.yaml",
+      "sha256": "c0a8dd0014f18e5a63a600d63357eb681e5d3939409f523abd0693a05c9c713f",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scannet.yaml",
+      "sha256": "16aab31b95a7c35ce0f81e5fb5d8704ea830565d51e79a53af1461853d403c37",
+      "size": 1523
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scene0000.yaml",
+      "sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281",
+      "size": 330
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scene0059.yaml",
+      "sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad",
+      "size": 297
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scene0106.yaml",
+      "sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5",
+      "size": 456
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scene0169.yaml",
+      "sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc",
+      "size": 459
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scene0181.yaml",
+      "sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7",
+      "size": 460
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/ScanNet/scene0207.yaml",
+      "sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf",
+      "size": 454
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/br.yaml",
+      "sha256": "745c0155f1b32fb7da30b678c78189c9ac949c2fb3bccdfa0982c19c7e3ae643",
+      "size": 307
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/ck.yaml",
+      "sha256": "258ba75ea705ee8bc2dd3e116902043f0859749de7d3fb06c08aefed062ecc86",
+      "size": 311
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/gr.yaml",
+      "sha256": "c357aad01888e57205b871b49066b273346509101f55d37d68747f89b7bbf3d0",
+      "size": 303
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/gwr.yaml",
+      "sha256": "33f354580fbcf36268de2d809d78ff23362b25117926cd303c51087367ef8972",
+      "size": 366
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/ma.yaml",
+      "sha256": "1de33928530c4415df868ca4f607fc4b7b85e13a45362c444484c49045314268",
+      "size": 391
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/synthetic.yaml",
+      "sha256": "6b2c455b2998d78cd06fcbe61363e217ebbb6381bc9df81bd73feed15d8d1303",
+      "size": 1556
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/tg.yaml",
+      "sha256": "e0a0837edabe508e5537fc7a13aae42eb2a0430917e58977fbddd317176760de",
+      "size": 306
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Synthetic/wr.yaml",
+      "sha256": "9a582a51d72450ccd7e41cdd54c7c2498a4db69260a9141cfea3ab0ec233f90a",
+      "size": 302
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum/fr1_desk.yaml",
+      "sha256": "365f768dee16e1d31860438c53a929355f48192e37032a1490e58731a75ff370",
+      "size": 452
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum/fr2_xyz.yaml",
+      "sha256": "392b22eb6866e07fde2261b20480eeee7b1a35d3ed9603a2e96c69455ad68a51",
+      "size": 567
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum/fr3_office.yaml",
+      "sha256": "4ffb5eaf945e07721f8b481307ef5ad717517916ace68d7120311d474a2977aa",
+      "size": 538
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum/tum.yaml",
+      "sha256": "e7b9f36fd732fd3134f0494c3a012e5bb60f1e4abc03296c63c7627b138958bb",
+      "size": 1623
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum_dagger/fr1_desk.yaml",
+      "sha256": "5072c49e8bcfd9c48e2ca06711cf0c2f493d80e57e34cbe1d45a51adae749228",
+      "size": 466
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum_dagger/fr2_xyz.yaml",
+      "sha256": "36df033127b4e9da0320e03afb600e79c966236f02f555d408cfd060608601e3",
+      "size": 581
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum_dagger/fr3_office.yaml",
+      "sha256": "1ece16393a2223469ffd1706d9da8c6faf5b50681114f9688014a7afb291dc86",
+      "size": 552
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/configs/Tum_dagger/tum.yaml",
+      "sha256": "f272c843d58aaef01731d0201b8b9eda4a427372133ac57203b6cdd3f527b71d",
+      "size": 1622
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/coslam.py",
+      "sha256": "31a50bf0974a930b677f46fe4f7b750783d6cba2ff86a962ac101fcae72157dd",
+      "size": 30667
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/coslam_mp.py",
+      "sha256": "99e6da3b579a26629d2460aee6cc081aab5c3b687e1ea21533c88593984e76ce",
+      "size": 12989
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/datasets/dataset.py",
+      "sha256": "8bf3b55b9cabf06f1cc5570c526c874bd1cdcbaf402ca568cf25871764a1f1b2",
+      "size": 33897
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/datasets/utils.py",
+      "sha256": "b95055d4d64421070709ba9959e82f998bf878db7ed0c90143a07a9ca08347e4",
+      "size": 1436
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/external/NumpyMarchingCubes/marching_cubes/__init__.py",
+      "sha256": "3c415f36883cfc4b8ba5fa65fffda2367e8e29961209b4b86b57e65cd6efbcd4",
+      "size": 36
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/external/NumpyMarchingCubes/setup.py",
+      "sha256": "6722ad3f1dd57a1ebf592969478e9a943b8178bf0965847a7e08cd9f22429100",
+      "size": 2446
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/model/decoder.py",
+      "sha256": "746bda420736820016df257621de082c49cfd3022471abdfba404b195982f809",
+      "size": 6454
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/model/encodings.py",
+      "sha256": "b8ebc8c8db2a7140c58fea615fc2f7a64500ef4d247bbfcff28894be9c0b5e3b",
+      "size": 3241
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/model/keyframe.py",
+      "sha256": "51ac9858f660d524a8cfc1fea765a6aad43d3c8e228539f1aaa177fd828a4a3b",
+      "size": 6804
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/model/round2_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/model/scene_rep.py",
+      "sha256": "0222dd384ae7874606d75ee89fc4ce9ccb1b61ad6e795bbc4cc94fe044465ab2",
+      "size": 12145
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/model/utils.py",
+      "sha256": "11da087c301d43b88144833287451e2957ae3a587ea1846a270fcec7b30a9576",
+      "size": 5499
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/mp_slam/mapper.py",
+      "sha256": "ba673b3cfef3a15199828c846dfd1bfe7ab178ca8d9e8bcda8fda8f78cf8602a",
+      "size": 10965
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/mp_slam/tracker.py",
+      "sha256": "e8221a4d77ab34f813fc28ca871ecf201b083d6dbdd2987c8b3ceab821966308",
+      "size": 7069
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/optimization/frame_align.py",
+      "sha256": "2872358561edab7ae38bb4b9895cc90fd7c4932ea982cf1a664fe523ec55a5d4",
+      "size": 520
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/optimization/pose_array.py",
+      "sha256": "60cd262669815c6541328d9941c9eef7bfb4a9f79051766c027310b48fa3675b",
+      "size": 3169
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/optimization/utils.py",
+      "sha256": "af848fcdb8847f4bf0a8f0d08c311b396c16c532ec2f028131945f756591b467",
+      "size": 2067
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/reference/coslam.py",
+      "sha256": "c3d29e98551cab1d05db358cfb4d613458f858ee0a840be9dc17fae413a16d5e",
+      "size": 27426
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/reference/model/scene_rep.py",
+      "sha256": "a8b800d25cd0c35668f754c5ea059a5ac31e8accfca51fb65505eb4f476bf1cd",
+      "size": 12564
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/round2_sampling.py",
+      "sha256": "9118e0f80cb8122ee21193bce9169c12948654c13184eec265f2de2737a00484",
+      "size": 5874
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/round2_timing.py",
+      "sha256": "3a47ce2f1dfe221fbd7c47592f918e417f31a3fdcb674893eb8406c6961144ea",
+      "size": 15232
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/run_component_profile.py",
+      "sha256": "95c0c2dd9a40e4ac84f805f02dce743c2a081d825314e2a8f947fc3dacfcd4b5",
+      "size": 9429
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/run_coslam_round2.py",
+      "sha256": "77957004066675b73428b89e761f7f91dede771c840c0a4d5a7b882821c3b8a9",
+      "size": 11355
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/tools/eval_ate.py",
+      "sha256": "43c679b64ecadba71223142a11bd501b9c4b6a0a5a02b506de87f38edc7271bd",
+      "size": 11245
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/utils.py",
+      "sha256": "a652d59cd1062aa0c70dd9b09bf941fef39c0ec4914544714fadf00718a7fa23",
+      "size": 6696
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v1/validate_component_profile.py",
+      "sha256": "f8c8cba3a2e9ab067eafec63740ab8645c5a68740726cd18a4fbadedf2383a99",
+      "size": 6328
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/RUNTIME_MANIFEST.json",
+      "sha256": "a20d0911f6f9f29a1f983c04b4299e263575807570e1e7b3615fc127ad84efc5",
+      "size": 6895
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/component_profile_timer.py",
+      "sha256": "4fc198db1c39086aba465a903dd889d9e52e0e8ce3a4fd94b443992bc1bebe78",
+      "size": 8042
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/config.py",
+      "sha256": "d1cf867cb0cd5c8e54770a920f8c5c6f50f546c66c2108eab288e4b2dd4453b7",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Azure/apartment.yaml",
+      "sha256": "ae3a73af14137a3aeeceea1e176e96715cc3f32547c09595e0b80bc9cc6f49b3",
+      "size": 240
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Azure/azure.yaml",
+      "sha256": "6b6a0b50cd1e645a55df9e319aa6ba9efc382873cc5e468ae7c9f574f198f0ab",
+      "size": 1586
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/office0.yaml",
+      "sha256": "540554ff07b754ca48a706da3a700b4cff6e09ed07f56a474308dbae6df37715",
+      "size": 254
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/office1.yaml",
+      "sha256": "ee3230d3bf98026dd67cccb32eb0484b4894f7e41c6b198b75ce35cc1dd5dfea",
+      "size": 260
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/office2.yaml",
+      "sha256": "acf7b62a6a02b0d2671c8c51aa5ce8e1441a36da34c8ed704757a6a0fc73d24b",
+      "size": 261
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/office3.yaml",
+      "sha256": "02d5f0570fa51dd063af25270015c40c36a20c72aeace85a5e4d66bf157d9bda",
+      "size": 262
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/office4.yaml",
+      "sha256": "4a53e037a3de473445df020f85ffd22841abe4502c6a6bd3fb26162d3134837b",
+      "size": 259
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/replica.yaml",
+      "sha256": "39fcff70d16472ffb2cf206bb8a3344949d1d40dd276535f3fea484c2206d373",
+      "size": 1536
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/room0.yaml",
+      "sha256": "82fd84c673557ccc3f1ef237d13a4527279ab51fba7f6cda28ed9a1fc2ce1eda",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/room1.yaml",
+      "sha256": "0e7029353e7a167816135a869c6cc69ca80eb3bfb39ddb584c4926297b911d24",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Replica/room2.yaml",
+      "sha256": "c0a8dd0014f18e5a63a600d63357eb681e5d3939409f523abd0693a05c9c713f",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scannet.yaml",
+      "sha256": "16aab31b95a7c35ce0f81e5fb5d8704ea830565d51e79a53af1461853d403c37",
+      "size": 1523
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scene0000.yaml",
+      "sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281",
+      "size": 330
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scene0059.yaml",
+      "sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad",
+      "size": 297
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scene0106.yaml",
+      "sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5",
+      "size": 456
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scene0169.yaml",
+      "sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc",
+      "size": 459
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scene0181.yaml",
+      "sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7",
+      "size": 460
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/ScanNet/scene0207.yaml",
+      "sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf",
+      "size": 454
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/br.yaml",
+      "sha256": "745c0155f1b32fb7da30b678c78189c9ac949c2fb3bccdfa0982c19c7e3ae643",
+      "size": 307
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/ck.yaml",
+      "sha256": "258ba75ea705ee8bc2dd3e116902043f0859749de7d3fb06c08aefed062ecc86",
+      "size": 311
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/gr.yaml",
+      "sha256": "c357aad01888e57205b871b49066b273346509101f55d37d68747f89b7bbf3d0",
+      "size": 303
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/gwr.yaml",
+      "sha256": "33f354580fbcf36268de2d809d78ff23362b25117926cd303c51087367ef8972",
+      "size": 366
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/ma.yaml",
+      "sha256": "1de33928530c4415df868ca4f607fc4b7b85e13a45362c444484c49045314268",
+      "size": 391
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/synthetic.yaml",
+      "sha256": "6b2c455b2998d78cd06fcbe61363e217ebbb6381bc9df81bd73feed15d8d1303",
+      "size": 1556
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/tg.yaml",
+      "sha256": "e0a0837edabe508e5537fc7a13aae42eb2a0430917e58977fbddd317176760de",
+      "size": 306
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Synthetic/wr.yaml",
+      "sha256": "9a582a51d72450ccd7e41cdd54c7c2498a4db69260a9141cfea3ab0ec233f90a",
+      "size": 302
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum/fr1_desk.yaml",
+      "sha256": "365f768dee16e1d31860438c53a929355f48192e37032a1490e58731a75ff370",
+      "size": 452
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum/fr2_xyz.yaml",
+      "sha256": "392b22eb6866e07fde2261b20480eeee7b1a35d3ed9603a2e96c69455ad68a51",
+      "size": 567
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum/fr3_office.yaml",
+      "sha256": "4ffb5eaf945e07721f8b481307ef5ad717517916ace68d7120311d474a2977aa",
+      "size": 538
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum/tum.yaml",
+      "sha256": "e7b9f36fd732fd3134f0494c3a012e5bb60f1e4abc03296c63c7627b138958bb",
+      "size": 1623
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum_dagger/fr1_desk.yaml",
+      "sha256": "5072c49e8bcfd9c48e2ca06711cf0c2f493d80e57e34cbe1d45a51adae749228",
+      "size": 466
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum_dagger/fr2_xyz.yaml",
+      "sha256": "36df033127b4e9da0320e03afb600e79c966236f02f555d408cfd060608601e3",
+      "size": 581
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum_dagger/fr3_office.yaml",
+      "sha256": "1ece16393a2223469ffd1706d9da8c6faf5b50681114f9688014a7afb291dc86",
+      "size": 552
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/configs/Tum_dagger/tum.yaml",
+      "sha256": "f272c843d58aaef01731d0201b8b9eda4a427372133ac57203b6cdd3f527b71d",
+      "size": 1622
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/coslam.py",
+      "sha256": "31a50bf0974a930b677f46fe4f7b750783d6cba2ff86a962ac101fcae72157dd",
+      "size": 30667
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/coslam_mp.py",
+      "sha256": "99e6da3b579a26629d2460aee6cc081aab5c3b687e1ea21533c88593984e76ce",
+      "size": 12989
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/datasets/dataset.py",
+      "sha256": "8bf3b55b9cabf06f1cc5570c526c874bd1cdcbaf402ca568cf25871764a1f1b2",
+      "size": 33897
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/datasets/utils.py",
+      "sha256": "b95055d4d64421070709ba9959e82f998bf878db7ed0c90143a07a9ca08347e4",
+      "size": 1436
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/external/NumpyMarchingCubes/marching_cubes/__init__.py",
+      "sha256": "3c415f36883cfc4b8ba5fa65fffda2367e8e29961209b4b86b57e65cd6efbcd4",
+      "size": 36
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/external/NumpyMarchingCubes/setup.py",
+      "sha256": "6722ad3f1dd57a1ebf592969478e9a943b8178bf0965847a7e08cd9f22429100",
+      "size": 2446
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/model/decoder.py",
+      "sha256": "746bda420736820016df257621de082c49cfd3022471abdfba404b195982f809",
+      "size": 6454
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/model/encodings.py",
+      "sha256": "b8ebc8c8db2a7140c58fea615fc2f7a64500ef4d247bbfcff28894be9c0b5e3b",
+      "size": 3241
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/model/keyframe.py",
+      "sha256": "51ac9858f660d524a8cfc1fea765a6aad43d3c8e228539f1aaa177fd828a4a3b",
+      "size": 6804
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/model/round2_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/model/scene_rep.py",
+      "sha256": "0222dd384ae7874606d75ee89fc4ce9ccb1b61ad6e795bbc4cc94fe044465ab2",
+      "size": 12145
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/model/utils.py",
+      "sha256": "11da087c301d43b88144833287451e2957ae3a587ea1846a270fcec7b30a9576",
+      "size": 5499
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/mp_slam/mapper.py",
+      "sha256": "ba673b3cfef3a15199828c846dfd1bfe7ab178ca8d9e8bcda8fda8f78cf8602a",
+      "size": 10965
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/mp_slam/tracker.py",
+      "sha256": "e8221a4d77ab34f813fc28ca871ecf201b083d6dbdd2987c8b3ceab821966308",
+      "size": 7069
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/optimization/frame_align.py",
+      "sha256": "2872358561edab7ae38bb4b9895cc90fd7c4932ea982cf1a664fe523ec55a5d4",
+      "size": 520
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/optimization/pose_array.py",
+      "sha256": "60cd262669815c6541328d9941c9eef7bfb4a9f79051766c027310b48fa3675b",
+      "size": 3169
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/optimization/utils.py",
+      "sha256": "af848fcdb8847f4bf0a8f0d08c311b396c16c532ec2f028131945f756591b467",
+      "size": 2067
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/reference/coslam.py",
+      "sha256": "c3d29e98551cab1d05db358cfb4d613458f858ee0a840be9dc17fae413a16d5e",
+      "size": 27426
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/reference/model/scene_rep.py",
+      "sha256": "a8b800d25cd0c35668f754c5ea059a5ac31e8accfca51fb65505eb4f476bf1cd",
+      "size": 12564
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/round2_sampling.py",
+      "sha256": "9118e0f80cb8122ee21193bce9169c12948654c13184eec265f2de2737a00484",
+      "size": 5874
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/round2_timing.py",
+      "sha256": "3a47ce2f1dfe221fbd7c47592f918e417f31a3fdcb674893eb8406c6961144ea",
+      "size": 15232
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/run_component_profile.py",
+      "sha256": "95c0c2dd9a40e4ac84f805f02dce743c2a081d825314e2a8f947fc3dacfcd4b5",
+      "size": 9429
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/run_coslam_round2.py",
+      "sha256": "77957004066675b73428b89e761f7f91dede771c840c0a4d5a7b882821c3b8a9",
+      "size": 11355
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/tools/eval_ate.py",
+      "sha256": "43c679b64ecadba71223142a11bd501b9c4b6a0a5a02b506de87f38edc7271bd",
+      "size": 11245
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/utils.py",
+      "sha256": "a652d59cd1062aa0c70dd9b09bf941fef39c0ec4914544714fadf00718a7fa23",
+      "size": 6696
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_runtime_v2/validate_component_profile.py",
+      "sha256": "e5ce3f1c8179caf5817d219397a024475c27de6c2d6af81458c21b64ed309c30",
+      "size": 6434
+    },
+    {
+      "path": "DASIP_round2/experiments/component_profile_timer.py",
+      "sha256": "4fc198db1c39086aba465a903dd889d9e52e0e8ce3a4fd94b443992bc1bebe78",
+      "size": 8042
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "a3307d6929cd26808df9a8d8cf75ea5a862e7ae32239320ceb1b3e39e7f04f8b",
+      "size": 12133
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/config.py",
+      "sha256": "d1cf867cb0cd5c8e54770a920f8c5c6f50f546c66c2108eab288e4b2dd4453b7",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Azure/apartment.yaml",
+      "sha256": "ae3a73af14137a3aeeceea1e176e96715cc3f32547c09595e0b80bc9cc6f49b3",
+      "size": 240
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Azure/azure.yaml",
+      "sha256": "6b6a0b50cd1e645a55df9e319aa6ba9efc382873cc5e468ae7c9f574f198f0ab",
+      "size": 1586
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/office0.yaml",
+      "sha256": "540554ff07b754ca48a706da3a700b4cff6e09ed07f56a474308dbae6df37715",
+      "size": 254
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/office1.yaml",
+      "sha256": "ee3230d3bf98026dd67cccb32eb0484b4894f7e41c6b198b75ce35cc1dd5dfea",
+      "size": 260
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/office2.yaml",
+      "sha256": "acf7b62a6a02b0d2671c8c51aa5ce8e1441a36da34c8ed704757a6a0fc73d24b",
+      "size": 261
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/office3.yaml",
+      "sha256": "02d5f0570fa51dd063af25270015c40c36a20c72aeace85a5e4d66bf157d9bda",
+      "size": 262
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/office4.yaml",
+      "sha256": "4a53e037a3de473445df020f85ffd22841abe4502c6a6bd3fb26162d3134837b",
+      "size": 259
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/replica.yaml",
+      "sha256": "39fcff70d16472ffb2cf206bb8a3344949d1d40dd276535f3fea484c2206d373",
+      "size": 1536
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/room0.yaml",
+      "sha256": "82fd84c673557ccc3f1ef237d13a4527279ab51fba7f6cda28ed9a1fc2ce1eda",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/room1.yaml",
+      "sha256": "0e7029353e7a167816135a869c6cc69ca80eb3bfb39ddb584c4926297b911d24",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Replica/room2.yaml",
+      "sha256": "c0a8dd0014f18e5a63a600d63357eb681e5d3939409f523abd0693a05c9c713f",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scannet.yaml",
+      "sha256": "16aab31b95a7c35ce0f81e5fb5d8704ea830565d51e79a53af1461853d403c37",
+      "size": 1523
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scene0000.yaml",
+      "sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281",
+      "size": 330
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scene0059.yaml",
+      "sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad",
+      "size": 297
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scene0106.yaml",
+      "sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5",
+      "size": 456
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scene0169.yaml",
+      "sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc",
+      "size": 459
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scene0181.yaml",
+      "sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7",
+      "size": 460
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/ScanNet/scene0207.yaml",
+      "sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf",
+      "size": 454
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/br.yaml",
+      "sha256": "745c0155f1b32fb7da30b678c78189c9ac949c2fb3bccdfa0982c19c7e3ae643",
+      "size": 307
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/ck.yaml",
+      "sha256": "258ba75ea705ee8bc2dd3e116902043f0859749de7d3fb06c08aefed062ecc86",
+      "size": 311
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/gr.yaml",
+      "sha256": "c357aad01888e57205b871b49066b273346509101f55d37d68747f89b7bbf3d0",
+      "size": 303
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/gwr.yaml",
+      "sha256": "33f354580fbcf36268de2d809d78ff23362b25117926cd303c51087367ef8972",
+      "size": 366
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/ma.yaml",
+      "sha256": "1de33928530c4415df868ca4f607fc4b7b85e13a45362c444484c49045314268",
+      "size": 391
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/synthetic.yaml",
+      "sha256": "6b2c455b2998d78cd06fcbe61363e217ebbb6381bc9df81bd73feed15d8d1303",
+      "size": 1556
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/tg.yaml",
+      "sha256": "e0a0837edabe508e5537fc7a13aae42eb2a0430917e58977fbddd317176760de",
+      "size": 306
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Synthetic/wr.yaml",
+      "sha256": "9a582a51d72450ccd7e41cdd54c7c2498a4db69260a9141cfea3ab0ec233f90a",
+      "size": 302
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum/fr1_desk.yaml",
+      "sha256": "365f768dee16e1d31860438c53a929355f48192e37032a1490e58731a75ff370",
+      "size": 452
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum/fr2_xyz.yaml",
+      "sha256": "392b22eb6866e07fde2261b20480eeee7b1a35d3ed9603a2e96c69455ad68a51",
+      "size": 567
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum/fr3_office.yaml",
+      "sha256": "4ffb5eaf945e07721f8b481307ef5ad717517916ace68d7120311d474a2977aa",
+      "size": 538
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum/tum.yaml",
+      "sha256": "e7b9f36fd732fd3134f0494c3a012e5bb60f1e4abc03296c63c7627b138958bb",
+      "size": 1623
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum_dagger/fr1_desk.yaml",
+      "sha256": "5072c49e8bcfd9c48e2ca06711cf0c2f493d80e57e34cbe1d45a51adae749228",
+      "size": 466
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum_dagger/fr2_xyz.yaml",
+      "sha256": "36df033127b4e9da0320e03afb600e79c966236f02f555d408cfd060608601e3",
+      "size": 581
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum_dagger/fr3_office.yaml",
+      "sha256": "1ece16393a2223469ffd1706d9da8c6faf5b50681114f9688014a7afb291dc86",
+      "size": 552
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/configs/Tum_dagger/tum.yaml",
+      "sha256": "f272c843d58aaef01731d0201b8b9eda4a427372133ac57203b6cdd3f527b71d",
+      "size": 1622
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/coslam.py",
+      "sha256": "c3d29e98551cab1d05db358cfb4d613458f858ee0a840be9dc17fae413a16d5e",
+      "size": 27426
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/coslam_mp.py",
+      "sha256": "99e6da3b579a26629d2460aee6cc081aab5c3b687e1ea21533c88593984e76ce",
+      "size": 12989
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/datasets/dataset.py",
+      "sha256": "8bf3b55b9cabf06f1cc5570c526c874bd1cdcbaf402ca568cf25871764a1f1b2",
+      "size": 33897
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/datasets/utils.py",
+      "sha256": "b95055d4d64421070709ba9959e82f998bf878db7ed0c90143a07a9ca08347e4",
+      "size": 1436
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/external/NumpyMarchingCubes/marching_cubes/__init__.py",
+      "sha256": "3c415f36883cfc4b8ba5fa65fffda2367e8e29961209b4b86b57e65cd6efbcd4",
+      "size": 36
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/external/NumpyMarchingCubes/setup.py",
+      "sha256": "6722ad3f1dd57a1ebf592969478e9a943b8178bf0965847a7e08cd9f22429100",
+      "size": 2446
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/model/decoder.py",
+      "sha256": "746bda420736820016df257621de082c49cfd3022471abdfba404b195982f809",
+      "size": 6454
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/model/encodings.py",
+      "sha256": "b8ebc8c8db2a7140c58fea615fc2f7a64500ef4d247bbfcff28894be9c0b5e3b",
+      "size": 3241
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/model/keyframe.py",
+      "sha256": "51ac9858f660d524a8cfc1fea765a6aad43d3c8e228539f1aaa177fd828a4a3b",
+      "size": 6804
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/model/round2_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/model/scene_rep.py",
+      "sha256": "a8b800d25cd0c35668f754c5ea059a5ac31e8accfca51fb65505eb4f476bf1cd",
+      "size": 12564
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/model/utils.py",
+      "sha256": "11da087c301d43b88144833287451e2957ae3a587ea1846a270fcec7b30a9576",
+      "size": 5499
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/mp_slam/mapper.py",
+      "sha256": "ba673b3cfef3a15199828c846dfd1bfe7ab178ca8d9e8bcda8fda8f78cf8602a",
+      "size": 10965
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/mp_slam/tracker.py",
+      "sha256": "e8221a4d77ab34f813fc28ca871ecf201b083d6dbdd2987c8b3ceab821966308",
+      "size": 7069
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/optimization/frame_align.py",
+      "sha256": "2872358561edab7ae38bb4b9895cc90fd7c4932ea982cf1a664fe523ec55a5d4",
+      "size": 520
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/optimization/pose_array.py",
+      "sha256": "60cd262669815c6541328d9941c9eef7bfb4a9f79051766c027310b48fa3675b",
+      "size": 3169
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/optimization/utils.py",
+      "sha256": "af848fcdb8847f4bf0a8f0d08c311b396c16c532ec2f028131945f756591b467",
+      "size": 2067
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/round2_engineering.py",
+      "sha256": "fcd46a239408f7ab6b31535fccc6790db999cf0be51796ffaf27cf7a6e20a412",
+      "size": 5052
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/round2_sampling.py",
+      "sha256": "9118e0f80cb8122ee21193bce9169c12948654c13184eec265f2de2737a00484",
+      "size": 5874
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/round2_timing.py",
+      "sha256": "3a47ce2f1dfe221fbd7c47592f918e417f31a3fdcb674893eb8406c6961144ea",
+      "size": 15232
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/run_coslam_round2.py",
+      "sha256": "8d5bcfd9299fa331976627f8b8b79f5280328d2a41f81d4e747999bd3b771f6d",
+      "size": 11801
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/tools/eval_ate.py",
+      "sha256": "43c679b64ecadba71223142a11bd501b9c4b6a0a5a02b506de87f38edc7271bd",
+      "size": 11245
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_engineering_runtime_v1/utils.py",
+      "sha256": "a652d59cd1062aa0c70dd9b09bf941fef39c0ec4914544714fadf00718a7fa23",
+      "size": 6696
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "9786e843d6856dcc443fb08ebb9646a5d759384e19ab3456552b51e2281e616d",
+      "size": 11761
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/config.py",
+      "sha256": "d1cf867cb0cd5c8e54770a920f8c5c6f50f546c66c2108eab288e4b2dd4453b7",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Azure/apartment.yaml",
+      "sha256": "ae3a73af14137a3aeeceea1e176e96715cc3f32547c09595e0b80bc9cc6f49b3",
+      "size": 240
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Azure/azure.yaml",
+      "sha256": "6b6a0b50cd1e645a55df9e319aa6ba9efc382873cc5e468ae7c9f574f198f0ab",
+      "size": 1586
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/office0.yaml",
+      "sha256": "540554ff07b754ca48a706da3a700b4cff6e09ed07f56a474308dbae6df37715",
+      "size": 254
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/office1.yaml",
+      "sha256": "ee3230d3bf98026dd67cccb32eb0484b4894f7e41c6b198b75ce35cc1dd5dfea",
+      "size": 260
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/office2.yaml",
+      "sha256": "acf7b62a6a02b0d2671c8c51aa5ce8e1441a36da34c8ed704757a6a0fc73d24b",
+      "size": 261
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/office3.yaml",
+      "sha256": "02d5f0570fa51dd063af25270015c40c36a20c72aeace85a5e4d66bf157d9bda",
+      "size": 262
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/office4.yaml",
+      "sha256": "4a53e037a3de473445df020f85ffd22841abe4502c6a6bd3fb26162d3134837b",
+      "size": 259
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/replica.yaml",
+      "sha256": "39fcff70d16472ffb2cf206bb8a3344949d1d40dd276535f3fea484c2206d373",
+      "size": 1536
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/room0.yaml",
+      "sha256": "82fd84c673557ccc3f1ef237d13a4527279ab51fba7f6cda28ed9a1fc2ce1eda",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/room1.yaml",
+      "sha256": "0e7029353e7a167816135a869c6cc69ca80eb3bfb39ddb584c4926297b911d24",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Replica/room2.yaml",
+      "sha256": "c0a8dd0014f18e5a63a600d63357eb681e5d3939409f523abd0693a05c9c713f",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scannet.yaml",
+      "sha256": "16aab31b95a7c35ce0f81e5fb5d8704ea830565d51e79a53af1461853d403c37",
+      "size": 1523
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scene0000.yaml",
+      "sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281",
+      "size": 330
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scene0059.yaml",
+      "sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad",
+      "size": 297
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scene0106.yaml",
+      "sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5",
+      "size": 456
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scene0169.yaml",
+      "sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc",
+      "size": 459
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scene0181.yaml",
+      "sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7",
+      "size": 460
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/ScanNet/scene0207.yaml",
+      "sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf",
+      "size": 454
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/br.yaml",
+      "sha256": "745c0155f1b32fb7da30b678c78189c9ac949c2fb3bccdfa0982c19c7e3ae643",
+      "size": 307
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/ck.yaml",
+      "sha256": "258ba75ea705ee8bc2dd3e116902043f0859749de7d3fb06c08aefed062ecc86",
+      "size": 311
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/gr.yaml",
+      "sha256": "c357aad01888e57205b871b49066b273346509101f55d37d68747f89b7bbf3d0",
+      "size": 303
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/gwr.yaml",
+      "sha256": "33f354580fbcf36268de2d809d78ff23362b25117926cd303c51087367ef8972",
+      "size": 366
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/ma.yaml",
+      "sha256": "1de33928530c4415df868ca4f607fc4b7b85e13a45362c444484c49045314268",
+      "size": 391
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/synthetic.yaml",
+      "sha256": "6b2c455b2998d78cd06fcbe61363e217ebbb6381bc9df81bd73feed15d8d1303",
+      "size": 1556
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/tg.yaml",
+      "sha256": "e0a0837edabe508e5537fc7a13aae42eb2a0430917e58977fbddd317176760de",
+      "size": 306
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Synthetic/wr.yaml",
+      "sha256": "9a582a51d72450ccd7e41cdd54c7c2498a4db69260a9141cfea3ab0ec233f90a",
+      "size": 302
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum/fr1_desk.yaml",
+      "sha256": "365f768dee16e1d31860438c53a929355f48192e37032a1490e58731a75ff370",
+      "size": 452
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum/fr2_xyz.yaml",
+      "sha256": "392b22eb6866e07fde2261b20480eeee7b1a35d3ed9603a2e96c69455ad68a51",
+      "size": 567
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum/fr3_office.yaml",
+      "sha256": "4ffb5eaf945e07721f8b481307ef5ad717517916ace68d7120311d474a2977aa",
+      "size": 538
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum/tum.yaml",
+      "sha256": "e7b9f36fd732fd3134f0494c3a012e5bb60f1e4abc03296c63c7627b138958bb",
+      "size": 1623
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum_dagger/fr1_desk.yaml",
+      "sha256": "5072c49e8bcfd9c48e2ca06711cf0c2f493d80e57e34cbe1d45a51adae749228",
+      "size": 466
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum_dagger/fr2_xyz.yaml",
+      "sha256": "36df033127b4e9da0320e03afb600e79c966236f02f555d408cfd060608601e3",
+      "size": 581
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum_dagger/fr3_office.yaml",
+      "sha256": "1ece16393a2223469ffd1706d9da8c6faf5b50681114f9688014a7afb291dc86",
+      "size": 552
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/configs/Tum_dagger/tum.yaml",
+      "sha256": "f272c843d58aaef01731d0201b8b9eda4a427372133ac57203b6cdd3f527b71d",
+      "size": 1622
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/coslam.py",
+      "sha256": "c3d29e98551cab1d05db358cfb4d613458f858ee0a840be9dc17fae413a16d5e",
+      "size": 27426
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/coslam_mp.py",
+      "sha256": "99e6da3b579a26629d2460aee6cc081aab5c3b687e1ea21533c88593984e76ce",
+      "size": 12989
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/datasets/dataset.py",
+      "sha256": "8bf3b55b9cabf06f1cc5570c526c874bd1cdcbaf402ca568cf25871764a1f1b2",
+      "size": 33897
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/datasets/utils.py",
+      "sha256": "b95055d4d64421070709ba9959e82f998bf878db7ed0c90143a07a9ca08347e4",
+      "size": 1436
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/external/NumpyMarchingCubes/marching_cubes/__init__.py",
+      "sha256": "3c415f36883cfc4b8ba5fa65fffda2367e8e29961209b4b86b57e65cd6efbcd4",
+      "size": 36
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/external/NumpyMarchingCubes/setup.py",
+      "sha256": "6722ad3f1dd57a1ebf592969478e9a943b8178bf0965847a7e08cd9f22429100",
+      "size": 2446
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/model/decoder.py",
+      "sha256": "746bda420736820016df257621de082c49cfd3022471abdfba404b195982f809",
+      "size": 6454
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/model/encodings.py",
+      "sha256": "b8ebc8c8db2a7140c58fea615fc2f7a64500ef4d247bbfcff28894be9c0b5e3b",
+      "size": 3241
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/model/keyframe.py",
+      "sha256": "51ac9858f660d524a8cfc1fea765a6aad43d3c8e228539f1aaa177fd828a4a3b",
+      "size": 6804
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/model/round2_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/model/scene_rep.py",
+      "sha256": "a8b800d25cd0c35668f754c5ea059a5ac31e8accfca51fb65505eb4f476bf1cd",
+      "size": 12564
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/model/utils.py",
+      "sha256": "11da087c301d43b88144833287451e2957ae3a587ea1846a270fcec7b30a9576",
+      "size": 5499
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/mp_slam/mapper.py",
+      "sha256": "ba673b3cfef3a15199828c846dfd1bfe7ab178ca8d9e8bcda8fda8f78cf8602a",
+      "size": 10965
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/mp_slam/tracker.py",
+      "sha256": "e8221a4d77ab34f813fc28ca871ecf201b083d6dbdd2987c8b3ceab821966308",
+      "size": 7069
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/optimization/frame_align.py",
+      "sha256": "2872358561edab7ae38bb4b9895cc90fd7c4932ea982cf1a664fe523ec55a5d4",
+      "size": 520
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/optimization/pose_array.py",
+      "sha256": "60cd262669815c6541328d9941c9eef7bfb4a9f79051766c027310b48fa3675b",
+      "size": 3169
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/optimization/utils.py",
+      "sha256": "af848fcdb8847f4bf0a8f0d08c311b396c16c532ec2f028131945f756591b467",
+      "size": 2067
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/round2_sampling.py",
+      "sha256": "9118e0f80cb8122ee21193bce9169c12948654c13184eec265f2de2737a00484",
+      "size": 5874
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/round2_timing.py",
+      "sha256": "3a47ce2f1dfe221fbd7c47592f918e417f31a3fdcb674893eb8406c6961144ea",
+      "size": 15232
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/run_coslam_round2.py",
+      "sha256": "77957004066675b73428b89e761f7f91dede771c840c0a4d5a7b882821c3b8a9",
+      "size": 11355
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/tools/eval_ate.py",
+      "sha256": "43c679b64ecadba71223142a11bd501b9c4b6a0a5a02b506de87f38edc7271bd",
+      "size": 11245
+    },
+    {
+      "path": "DASIP_round2/experiments/coslam_reference_runtime_v1/utils.py",
+      "sha256": "a652d59cd1062aa0c70dd9b09bf941fef39c0ec4914544714fadf00718a7fa23",
+      "size": 6696
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "a5cf2a15a6230dccb0d13d511cbd3ca4cd7a1d6d6f9375d7562878e6b98594e0",
+      "size": 3939
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/component_profile_timer.py",
+      "sha256": "4fc198db1c39086aba465a903dd889d9e52e0e8ce3a4fd94b443992bc1bebe78",
+      "size": 8042
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/EC_SLAM.yaml",
+      "sha256": "53f916549173a55b37c540cb735bcb24d01a86b3a228a8e51881ede4e5771cbb",
+      "size": 3727
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/office0.yaml",
+      "sha256": "9f569c31c5df2aab8cdb2af72e44ae74a4d6caddb9a9069eb3fde118a6ea064a",
+      "size": 395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/office1.yaml",
+      "sha256": "e38aab6b8185d53080a365ed8762f823f69db382232a3e30b4a7f1b63e794fc9",
+      "size": 272
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/office2.yaml",
+      "sha256": "fe91fdc3dd698a0214d0fa491a460a05a1af8ec2a0b0f550f7a70abc0c136668",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/office3.yaml",
+      "sha256": "4a220e94cf7762e0c141efe6ee5eebe29a915439d40ccadd6f5d83696ff39aa3",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/office4.yaml",
+      "sha256": "bce35f309e69762cfb8eea4bf60b2f6a2f7a5447fc3dc84e3c3c51a007516ade",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/replica.yaml",
+      "sha256": "8cfd94a8bccb979f79f26ca8791c9e46693e4970735f5138ebc99b7a8aa717c2",
+      "size": 1485
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/room0.yaml",
+      "sha256": "c488360b80f2e8b9f503f9d2f18ce2d2997a036f61c166b4ad056fc910e0da00",
+      "size": 286
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/room1.yaml",
+      "sha256": "5ec3a32e6549331cc0ba8397c67e9cfe4da75991766bd4ffa791f17411f99f34",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Replica/room2.yaml",
+      "sha256": "925db0067263782ebabcd7eb950796ff58102fa575ffe506fe6e166261da8eb6",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/ec_component_profile_timer.py",
+      "sha256": "d663418808b14334435be86162fb8a9b82dd33cfadbe39c509aecceb50988f54",
+      "size": 4387
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/reference/src/Mapper.py",
+      "sha256": "e9b04ff5cbdf9ff457733712de07810523ac3c87f848387002f11df11a4cbc33",
+      "size": 14028
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/reference/src/Model.py",
+      "sha256": "58589299b60cde148ec32422dcdd3a2689f405a1c673a089224b5df8e579b0ff",
+      "size": 20509
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/reference/src/Tracker.py",
+      "sha256": "ecc5aa9d9457fde432ef808fa2499f81513c6a9d04a97fc233403302d4f6cdbd",
+      "size": 8085
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/run_ec_component_profile.py",
+      "sha256": "5d1459f1014660f9527871a02d84808413288e07a400e37481886865976b900e",
+      "size": 7605
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/run_ec_quality_round2.py",
+      "sha256": "8ddd69923e5373871c1d2358befe199cc44c9b4b40389f38d2284db759125a71",
+      "size": 9843
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/Datasets.py",
+      "sha256": "a6f556abd934d2b7715cd6b9b318d69a5ac09fe72e5855986235760529b29e63",
+      "size": 3877
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/Mapper.py",
+      "sha256": "63757524edeb1df47c9dcbbb2aee38312b921d366fe29bc66c5430032a760734",
+      "size": 16004
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/Model.py",
+      "sha256": "2cde2dc47bf00dd16bc563143ada8418fd1f0b66fc9c79269b2eccd17aef434c",
+      "size": 18738
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/Scene.py",
+      "sha256": "8fa9b10d2e133fcfd7af904928609272920c92d3d73736cb8393e11e14f5a82d",
+      "size": 5500
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/Tracker.py",
+      "sha256": "cf3c51bc7f8f91dda256ed110a3dd98d89b2702036eaed37f2286af959584255",
+      "size": 9562
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/system.py",
+      "sha256": "57d64627be1f283f6434cfdc112ff71eea8953aa3902a8c8bc9abc2c4f88bc6f",
+      "size": 3744
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v1/validate_ec_component_profile.py",
+      "sha256": "f8f05eac6bdcf5b8c7f899f08eb5f078467996d636bc5101046db8fee7ca0712",
+      "size": 6272
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/RUNTIME_MANIFEST.json",
+      "sha256": "7a061503e4fc227b1796a77d1f4b8ddebbb4b3c9d8f4ff9d327904e76b8f4cfb",
+      "size": 3939
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/component_profile_timer.py",
+      "sha256": "4fc198db1c39086aba465a903dd889d9e52e0e8ce3a4fd94b443992bc1bebe78",
+      "size": 8042
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/EC_SLAM.yaml",
+      "sha256": "53f916549173a55b37c540cb735bcb24d01a86b3a228a8e51881ede4e5771cbb",
+      "size": 3727
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/office0.yaml",
+      "sha256": "9f569c31c5df2aab8cdb2af72e44ae74a4d6caddb9a9069eb3fde118a6ea064a",
+      "size": 395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/office1.yaml",
+      "sha256": "e38aab6b8185d53080a365ed8762f823f69db382232a3e30b4a7f1b63e794fc9",
+      "size": 272
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/office2.yaml",
+      "sha256": "fe91fdc3dd698a0214d0fa491a460a05a1af8ec2a0b0f550f7a70abc0c136668",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/office3.yaml",
+      "sha256": "4a220e94cf7762e0c141efe6ee5eebe29a915439d40ccadd6f5d83696ff39aa3",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/office4.yaml",
+      "sha256": "bce35f309e69762cfb8eea4bf60b2f6a2f7a5447fc3dc84e3c3c51a007516ade",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/replica.yaml",
+      "sha256": "8cfd94a8bccb979f79f26ca8791c9e46693e4970735f5138ebc99b7a8aa717c2",
+      "size": 1485
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/room0.yaml",
+      "sha256": "c488360b80f2e8b9f503f9d2f18ce2d2997a036f61c166b4ad056fc910e0da00",
+      "size": 286
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/room1.yaml",
+      "sha256": "5ec3a32e6549331cc0ba8397c67e9cfe4da75991766bd4ffa791f17411f99f34",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Replica/room2.yaml",
+      "sha256": "925db0067263782ebabcd7eb950796ff58102fa575ffe506fe6e166261da8eb6",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/ec_component_profile_timer.py",
+      "sha256": "d663418808b14334435be86162fb8a9b82dd33cfadbe39c509aecceb50988f54",
+      "size": 4387
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/reference/src/Mapper.py",
+      "sha256": "e9b04ff5cbdf9ff457733712de07810523ac3c87f848387002f11df11a4cbc33",
+      "size": 14028
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/reference/src/Model.py",
+      "sha256": "58589299b60cde148ec32422dcdd3a2689f405a1c673a089224b5df8e579b0ff",
+      "size": 20509
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/reference/src/Tracker.py",
+      "sha256": "ecc5aa9d9457fde432ef808fa2499f81513c6a9d04a97fc233403302d4f6cdbd",
+      "size": 8085
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/run_ec_component_profile.py",
+      "sha256": "5d1459f1014660f9527871a02d84808413288e07a400e37481886865976b900e",
+      "size": 7605
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/run_ec_quality_round2.py",
+      "sha256": "8ddd69923e5373871c1d2358befe199cc44c9b4b40389f38d2284db759125a71",
+      "size": 9843
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/Datasets.py",
+      "sha256": "a6f556abd934d2b7715cd6b9b318d69a5ac09fe72e5855986235760529b29e63",
+      "size": 3877
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/Mapper.py",
+      "sha256": "63757524edeb1df47c9dcbbb2aee38312b921d366fe29bc66c5430032a760734",
+      "size": 16004
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/Model.py",
+      "sha256": "2cde2dc47bf00dd16bc563143ada8418fd1f0b66fc9c79269b2eccd17aef434c",
+      "size": 18738
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/Scene.py",
+      "sha256": "8fa9b10d2e133fcfd7af904928609272920c92d3d73736cb8393e11e14f5a82d",
+      "size": 5500
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/Tracker.py",
+      "sha256": "cf3c51bc7f8f91dda256ed110a3dd98d89b2702036eaed37f2286af959584255",
+      "size": 9562
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/system.py",
+      "sha256": "57d64627be1f283f6434cfdc112ff71eea8953aa3902a8c8bc9abc2c4f88bc6f",
+      "size": 3744
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_runtime_v2/validate_ec_component_profile.py",
+      "sha256": "bad88a968af933b6f9d5c35cf7875eb350befcf67f25ae4362103c450b452e6f",
+      "size": 6432
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_component_profile_timer.py",
+      "sha256": "d663418808b14334435be86162fb8a9b82dd33cfadbe39c509aecceb50988f54",
+      "size": 4387
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/EC_SLAM.yaml",
+      "sha256": "53f916549173a55b37c540cb735bcb24d01a86b3a228a8e51881ede4e5771cbb",
+      "size": 3727
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/office0.yaml",
+      "sha256": "9f569c31c5df2aab8cdb2af72e44ae74a4d6caddb9a9069eb3fde118a6ea064a",
+      "size": 395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/office1.yaml",
+      "sha256": "e38aab6b8185d53080a365ed8762f823f69db382232a3e30b4a7f1b63e794fc9",
+      "size": 272
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/office2.yaml",
+      "sha256": "fe91fdc3dd698a0214d0fa491a460a05a1af8ec2a0b0f550f7a70abc0c136668",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/office3.yaml",
+      "sha256": "4a220e94cf7762e0c141efe6ee5eebe29a915439d40ccadd6f5d83696ff39aa3",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/office4.yaml",
+      "sha256": "bce35f309e69762cfb8eea4bf60b2f6a2f7a5447fc3dc84e3c3c51a007516ade",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/replica.yaml",
+      "sha256": "8cfd94a8bccb979f79f26ca8791c9e46693e4970735f5138ebc99b7a8aa717c2",
+      "size": 1485
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/room0.yaml",
+      "sha256": "c488360b80f2e8b9f503f9d2f18ce2d2997a036f61c166b4ad056fc910e0da00",
+      "size": 286
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/room1.yaml",
+      "sha256": "5ec3a32e6549331cc0ba8397c67e9cfe4da75991766bd4ffa791f17411f99f34",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Replica/room2.yaml",
+      "sha256": "925db0067263782ebabcd7eb950796ff58102fa575ffe506fe6e166261da8eb6",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/Datasets.py",
+      "sha256": "a6f556abd934d2b7715cd6b9b318d69a5ac09fe72e5855986235760529b29e63",
+      "size": 3877
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/Mapper.py",
+      "sha256": "e9b04ff5cbdf9ff457733712de07810523ac3c87f848387002f11df11a4cbc33",
+      "size": 14028
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/Model.py",
+      "sha256": "58589299b60cde148ec32422dcdd3a2689f405a1c673a089224b5df8e579b0ff",
+      "size": 20509
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/Scene.py",
+      "sha256": "8fa9b10d2e133fcfd7af904928609272920c92d3d73736cb8393e11e14f5a82d",
+      "size": 5500
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/Tracker.py",
+      "sha256": "ecc5aa9d9457fde432ef808fa2499f81513c6a9d04a97fc233403302d4f6cdbd",
+      "size": 8085
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/system.py",
+      "sha256": "57d64627be1f283f6434cfdc112ff71eea8953aa3902a8c8bc9abc2c4f88bc6f",
+      "size": 3744
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_public_reference_source_v1/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "bc71f2b428fa21b54859738d7e06f5522b017676ae7edf19f57af856e646233d",
+      "size": 3595
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/EC_SLAM.yaml",
+      "sha256": "53f916549173a55b37c540cb735bcb24d01a86b3a228a8e51881ede4e5771cbb",
+      "size": 3727
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/office0.yaml",
+      "sha256": "9f569c31c5df2aab8cdb2af72e44ae74a4d6caddb9a9069eb3fde118a6ea064a",
+      "size": 395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/office1.yaml",
+      "sha256": "e38aab6b8185d53080a365ed8762f823f69db382232a3e30b4a7f1b63e794fc9",
+      "size": 272
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/office2.yaml",
+      "sha256": "fe91fdc3dd698a0214d0fa491a460a05a1af8ec2a0b0f550f7a70abc0c136668",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/office3.yaml",
+      "sha256": "4a220e94cf7762e0c141efe6ee5eebe29a915439d40ccadd6f5d83696ff39aa3",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/office4.yaml",
+      "sha256": "bce35f309e69762cfb8eea4bf60b2f6a2f7a5447fc3dc84e3c3c51a007516ade",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/replica.yaml",
+      "sha256": "8cfd94a8bccb979f79f26ca8791c9e46693e4970735f5138ebc99b7a8aa717c2",
+      "size": 1485
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/room0.yaml",
+      "sha256": "c488360b80f2e8b9f503f9d2f18ce2d2997a036f61c166b4ad056fc910e0da00",
+      "size": 286
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/room1.yaml",
+      "sha256": "5ec3a32e6549331cc0ba8397c67e9cfe4da75991766bd4ffa791f17411f99f34",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Replica/room2.yaml",
+      "sha256": "925db0067263782ebabcd7eb950796ff58102fa575ffe506fe6e166261da8eb6",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/run_ec_quality_round2.py",
+      "sha256": "8ddd69923e5373871c1d2358befe199cc44c9b4b40389f38d2284db759125a71",
+      "size": 9843
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/Datasets.py",
+      "sha256": "a6f556abd934d2b7715cd6b9b318d69a5ac09fe72e5855986235760529b29e63",
+      "size": 3877
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/Mapper.py",
+      "sha256": "e9b04ff5cbdf9ff457733712de07810523ac3c87f848387002f11df11a4cbc33",
+      "size": 14028
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/Model.py",
+      "sha256": "58589299b60cde148ec32422dcdd3a2689f405a1c673a089224b5df8e579b0ff",
+      "size": 20509
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/Scene.py",
+      "sha256": "8fa9b10d2e133fcfd7af904928609272920c92d3d73736cb8393e11e14f5a82d",
+      "size": 5500
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/Tracker.py",
+      "sha256": "ecc5aa9d9457fde432ef808fa2499f81513c6a9d04a97fc233403302d4f6cdbd",
+      "size": 8085
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/system.py",
+      "sha256": "57d64627be1f283f6434cfdc112ff71eea8953aa3902a8c8bc9abc2c4f88bc6f",
+      "size": 3744
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_quality_runtime_v1/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "09c341ff74fec7c75ab9c6284b5f4fb03f58cc6fa045d071aaa4087dad9320a3",
+      "size": 4409
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/EC_SLAM.yaml",
+      "sha256": "53f916549173a55b37c540cb735bcb24d01a86b3a228a8e51881ede4e5771cbb",
+      "size": 3727
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/office0.yaml",
+      "sha256": "9f569c31c5df2aab8cdb2af72e44ae74a4d6caddb9a9069eb3fde118a6ea064a",
+      "size": 395
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/office1.yaml",
+      "sha256": "e38aab6b8185d53080a365ed8762f823f69db382232a3e30b4a7f1b63e794fc9",
+      "size": 272
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/office2.yaml",
+      "sha256": "fe91fdc3dd698a0214d0fa491a460a05a1af8ec2a0b0f550f7a70abc0c136668",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/office3.yaml",
+      "sha256": "4a220e94cf7762e0c141efe6ee5eebe29a915439d40ccadd6f5d83696ff39aa3",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/office4.yaml",
+      "sha256": "bce35f309e69762cfb8eea4bf60b2f6a2f7a5447fc3dc84e3c3c51a007516ade",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/replica.yaml",
+      "sha256": "8cfd94a8bccb979f79f26ca8791c9e46693e4970735f5138ebc99b7a8aa717c2",
+      "size": 1485
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/room0.yaml",
+      "sha256": "c488360b80f2e8b9f503f9d2f18ce2d2997a036f61c166b4ad056fc910e0da00",
+      "size": 286
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/room1.yaml",
+      "sha256": "5ec3a32e6549331cc0ba8397c67e9cfe4da75991766bd4ffa791f17411f99f34",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Replica/room2.yaml",
+      "sha256": "925db0067263782ebabcd7eb950796ff58102fa575ffe506fe6e166261da8eb6",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/round2_ec_timing.py",
+      "sha256": "5e3adbb4c46a98b6d79e00cf6f7de0666dabda24be8e7191dfe5ecb6734fc657",
+      "size": 3868
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/run_ec_quality_round2.py",
+      "sha256": "0a0cf1cc85501051ce0395466603cc8bba18787d8c831eec530806aacff9a683",
+      "size": 10492
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/Datasets.py",
+      "sha256": "a6f556abd934d2b7715cd6b9b318d69a5ac09fe72e5855986235760529b29e63",
+      "size": 3877
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/Mapper.py",
+      "sha256": "91ef99117da0dea6d9f314a6e6a2eb30cfedeba20fdfd680a1c4ab647501be57",
+      "size": 13724
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/Model.py",
+      "sha256": "58589299b60cde148ec32422dcdd3a2689f405a1c673a089224b5df8e579b0ff",
+      "size": 20509
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/Scene.py",
+      "sha256": "8fa9b10d2e133fcfd7af904928609272920c92d3d73736cb8393e11e14f5a82d",
+      "size": 5500
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/Tracker.py",
+      "sha256": "3067c1c78c03de5446b6b49737a98cadaab83c7cc3c0c0a7180d44773b68afd7",
+      "size": 8151
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/system.py",
+      "sha256": "57d64627be1f283f6434cfdc112ff71eea8953aa3902a8c8bc9abc2c4f88bc6f",
+      "size": 3744
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/ec_timing_runtime_v1/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/export_orin_sources.py",
+      "sha256": "e9b76dbdc8fae0508285adfc6d74c357b7d742360d745abd1ab808c44e6e2c28",
+      "size": 3449
+    },
+    {
+      "path": "DASIP_round2/experiments/handoff_inventory/inspect_machine.py",
+      "sha256": "3a9b918c4270b47b14aeb09bd6308d4433594a36f12941f15dc1d51492126e58",
+      "size": 5217
+    },
+    {
+      "path": "DASIP_round2/experiments/import_orin_15w_results.py",
+      "sha256": "be0b2109db2a698119da229adfd8d0dcf55760fe220303a83f5daaff72575d67",
+      "size": 21590
+    },
+    {
+      "path": "DASIP_round2/experiments/import_orin_maxn_increment.py",
+      "sha256": "2e8419945fc38573cd535abfd937313603f5827ff0547780847ec1f5ec931670",
+      "size": 16455
+    },
+    {
+      "path": "DASIP_round2/experiments/import_orin_maxn_results.py",
+      "sha256": "acd951a67a27bd82f4bd680781d9a35df8c0e1a38f6f8df69459f4cb4505fdcc",
+      "size": 15219
+    },
+    {
+      "path": "DASIP_round2/experiments/launch_rtx_support_v1.sh",
+      "sha256": "115a699eb2833e48a463d17096825f533e0b9fad150a003016ac78948ec4df49",
+      "size": 574
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/component_profile_protocol_v1.json",
+      "sha256": "f9b44ebaaa01b3a116b5fc30dbea92c755d1b14f03e6687cac4b325e73772b02",
+      "size": 28701
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_component_profile_15w_single_seed_v1.json",
+      "sha256": "d8e1d3adff90ff79d734e0ffafb4548417b7f4bafd9393be7f7bec564221d7da",
+      "size": 1069
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_component_profile_15w_v1.json",
+      "sha256": "96a8d172fec13f1aee43aaf0eb20b3d1814fd110e7b406784c607ca812aaeebe",
+      "size": 1648
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_component_profile_maxn_single_seed_v1.json",
+      "sha256": "1f02e54579579b07a0a987222fe59cfea8706430ad98089d11dcfa94fdb912ba",
+      "size": 1072
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_component_profile_maxn_v1.json",
+      "sha256": "f34722653d833c7a83eb4d9eb5260fbb67a78f9cd0676de6c06bfb44c2549e68",
+      "size": 1651
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_continuous_coslam.json",
+      "sha256": "797b8bc43675ccdc116a8f3861ebfabce1dd15a4d2f6ec2a4c343b25db04f9f2",
+      "size": 42776
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_continuous_ec.json",
+      "sha256": "5dae748792da312a8eb7f5f2533ef8ef03f9ec45be19f771288493d8da8fec13",
+      "size": 23020
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_coslam_diagnostic.json",
+      "sha256": "41d0b853d12e40239249e623de3a1857f0817ab2558f9178756c83f9e74f77fa",
+      "size": 1208
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_coslam_first_full.json",
+      "sha256": "d07b3ea1801234c095e5e37cabfa0bf901adc09adf4ad2b0d2da6d6c01dc71ed",
+      "size": 1124
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_ec_component_profile_15w_single_seed_v1.json",
+      "sha256": "03cfa60dc2af754e98b4246bfcbaae7e8865f88fb4abcd7f4cf116fb7dbc3d0b",
+      "size": 859
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_ec_component_profile_maxn_single_seed_v1.json",
+      "sha256": "f600c436ddfded45f7847d97c3c47e5eb634253ae887741bfdd27a2fb737ca05",
+      "size": 862
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_office0_capacity19.json",
+      "sha256": "5d0a2d16bdfeb4628eb0fcf04bc17daa5d478f7410bd6fde3bba30785b394e3b",
+      "size": 1233
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_office0_mc_additional.json",
+      "sha256": "94997e54e928f71697cf5f3cbe9e389dd70110dd17a6e6f42344d9ac0a9cb53c",
+      "size": 1129
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_pending_engineering.json",
+      "sha256": "2a1913d37ac2bf7df4e8ebe4207f2b2392c53c1f2a1089f5e092a1f12fb414d9",
+      "size": 1716
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_pending_engineering_coslam_only.json",
+      "sha256": "51f52863892e8f42ca457e5677991220c3c4cf5f654ab6a7cebbb595b74e348d",
+      "size": 1021
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/orin_tum_native_four_conditions.json",
+      "sha256": "ac341dd085d8bad3658aa0354847f49ebc69d962a44e94030d6488876268bccc",
+      "size": 2149
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_all_nonreplica_extension.json",
+      "sha256": "90a29a6dc0aca79a16baa4a3a8dbc78c7508efbf99205528269ff3c75f18d6ee",
+      "size": 16942
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_all_scenes_campaign_v1.json",
+      "sha256": "8d8d6e18ed85698b9f721a09904b35a55d57275fcb9f72cc9eec0cde1ccec39e",
+      "size": 1638
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_capacity_office0_h19.json",
+      "sha256": "34a4e9f39b81e75ec4f98ab684ff0209469c0ee9295ba7ac7db2d275d2042ad9",
+      "size": 1895
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_component_profile_v1.json",
+      "sha256": "fecc521f665771cc3758a602a8fc108b54ac9b7da6b3eb565e4431da72f229b1",
+      "size": 2400
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_composition_all_scenes.json",
+      "sha256": "3826bafef6f99c1d9555cb23ee7ec6f271bf0c2a503a0df5d0e7e9885985df29",
+      "size": 53295
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_day2_campaign_v1.json",
+      "sha256": "982ff3876316d1c1c2a7c048a4e757dd50e9946b25c9d3a3002e15badec9fbe3",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_dp_missing_scenes.json",
+      "sha256": "a72e925bf4efc4c2f6058bdfb97074355bba4d20d3dad1fa199c14e25a38e7b7",
+      "size": 28506
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_ec_complete_call_timing.json",
+      "sha256": "32984ce5d2deb5d9aeaef3b39973e66f5be446d0992a4e944b806307f8bdff64",
+      "size": 22252
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_ec_component_profile_gate_v1.json",
+      "sha256": "eb19b73476fffe4e0a6a9b96fe538671e5c9c465159be1b20673ef4a88f5d662",
+      "size": 538
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_ec_component_profile_v1.json",
+      "sha256": "df4616d3112c49e1b6e481fb3734b3bcc93f4d8ff365f53f42962944aa449ee9",
+      "size": 1688
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_ec_quality_all_replica.json",
+      "sha256": "f4d862a207391142e66adfaedd86a465564670dcc3199507b0ce6d70dd76c300",
+      "size": 22160
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_engineering_office0.json",
+      "sha256": "e5cc36953368d971e1fc89e12ca7b028cc55ecc478aa5cfa329661e8e000d082",
+      "size": 2075
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_morton_core.json",
+      "sha256": "fc88b5cc4a667c5e30ee7d04e6825197b9acc49e7a849e3479584d92f29ab413",
+      "size": 6748
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_night_campaign_v1.json",
+      "sha256": "5a115a8310b56854cfac888cfba5f866db37edb653342fa3b3cb94da1ec458ee",
+      "size": 1006
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_reconstruction_all.json",
+      "sha256": "32d54f2786067c488a14a3adf4b2c2a03347db879aac6cbb58ed5b43be0ff37b",
+      "size": 262027
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_reconstruction_composition.json",
+      "sha256": "bf0c5adb8e97f4b7e4934478902b93879183d1d336311a8e44551fa37d70655f",
+      "size": 47001
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_reconstruction_dp_extension.json",
+      "sha256": "545844d4cb4f6c732b58cb54f31f1c4e0539d29255c030f89ad5d70c18f933c9",
+      "size": 35550
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_replica_h19_extension.json",
+      "sha256": "6e665b0fa3e1a87f072d7bf285fbcb88eeef5770da55238353a3c71e821c10eb",
+      "size": 12527
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_replica_native_extension.json",
+      "sha256": "6647d0228bbee8edc11631a713169a6786ef548a85c0a0171e7f32dc5d5b1a10",
+      "size": 9750
+    },
+    {
+      "path": "DASIP_round2/experiments/manifests/rtx_support_core.json",
+      "sha256": "5a281d63b687bb30e9b715c954537b630c81e2406871b8a8782101aa43ba551e",
+      "size": 13585
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/ALL_15W_TARGETS.json",
+      "sha256": "1d8a75829859dc5d7d780f54b371542bdb60921f8dd3c2887885f02179f2afb4",
+      "size": 209687
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S0_P1_DP_ALL_DATASETS.json",
+      "sha256": "8fe2fa65d61fed5cffe7623c7db6432b00204f13d0a7f2fcb92e20d38f58e50e",
+      "size": 33826
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S0_P2_MC_ALL_REQUIRED.json",
+      "sha256": "21a280f5b605141a40c9373698b42ffb42163c4f03bbd6eb194ba3f6f0a931a3",
+      "size": 49451
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S0_P3_COMPOSITION_AND_CO_BA_ENGINEERING.json",
+      "sha256": "d32695bb5244bffaa7a4a2726c727a61ed5517b2436054519042485b2eb96bb7",
+      "size": 22890
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S0_P4_COMPONENT_PROFILES.json",
+      "sha256": "51d8194a7f76809427e979a4688ec136e4ce1d94ad8edaec966950ae8e38c631",
+      "size": 4967
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S1_P1_DP_ALL_DATASETS.json",
+      "sha256": "29a08888083d22e767199e6230d0914cdd0c1832ffbd7872d77648312308d6ee",
+      "size": 33883
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S1_P2_MC_ALL_REQUIRED.json",
+      "sha256": "e19cd29957a49e12b86954b51bc1318206d888a91b78f417129808a1280e53ed",
+      "size": 49502
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/manifests/S1_P3_COMPOSITION_AND_CO_BA_ENGINEERING.json",
+      "sha256": "04a13b4ad40897062520d5cbda607458d84ac24381e1726716d4ee33b5a6967c",
+      "size": 22890
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_priority_v1/validate_plan.py",
+      "sha256": "e5d2e337416c2aaeffbeff927aaf55a0a931f88da91db90a72792f0ad61c4cf0",
+      "size": 3832
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_single_seed_replica_mc_v1/manifests/ALL_15W_TARGETS.json",
+      "sha256": "69984e2db3f66638d7dfd52d49f39b1d43befe6ea5bf2885405fa8700e2433a2",
+      "size": 96878
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_single_seed_replica_mc_v1/manifests/S0_P1_DP_ALL_DATASETS.json",
+      "sha256": "e976a2a2173ddc69073a1333b29e9672538d9472c2f1af4b0d5aa9a1d7ef811a",
+      "size": 32542
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_single_seed_replica_mc_v1/manifests/S0_P2_MC_ALL_REQUIRED.json",
+      "sha256": "d3ab4557f5fe20ae06c37e81e58bd6b2a7449280f5e30ddfdc42463561ca3f2d",
+      "size": 36668
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_single_seed_replica_mc_v1/manifests/S0_P3_COMPOSITION_AND_CO_BA_ENGINEERING.json",
+      "sha256": "b928ebc4a1f6abb1225b3b5e72b133e2b25b90176aeec6fb9a3aa2d8eed1682a",
+      "size": 22598
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_single_seed_replica_mc_v1/manifests/S0_P4_COMPONENT_PROFILES.json",
+      "sha256": "12266566a6d3359674ea6379d678e5bf2a74065fdafc5aad8bea0c23f78bcc48",
+      "size": 3682
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_15w_single_seed_replica_mc_v1/validate_plan.py",
+      "sha256": "e110659b4e31411765c3250e647bd5c70e9c738ff3dce53ee029d6684a2645e8",
+      "size": 3586
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_dp_completion/manifests/orin_dp_mc_dp_all_targets.json",
+      "sha256": "f6266750548c92351783d956c5cc872fe288775c773fb5caa2c57fd6a6ced697",
+      "size": 46436
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_dp_completion/manifests/orin_dp_mc_dp_missing_maxn.json",
+      "sha256": "3a96775e0c35336e0bd35770c5a4c2b6c1f4628851c480d4fcd1c17e5948e1ab",
+      "size": 42624
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_dp_completion/run_manifest_queue.py",
+      "sha256": "d2e20e9116f0402b71ab239be9d578564b188c2642357783aec6dd67d65f62d8",
+      "size": 5274
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_dp_completion/validate_bundle.py",
+      "sha256": "cea61bdb93ff3ae41179b4e5b4e78d668c78146eafa857a8301c5dfe78d5e5bb",
+      "size": 2824
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/config.py",
+      "sha256": "d1cf867cb0cd5c8e54770a920f8c5c6f50f546c66c2108eab288e4b2dd4453b7",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Azure/apartment.yaml",
+      "sha256": "ae3a73af14137a3aeeceea1e176e96715cc3f32547c09595e0b80bc9cc6f49b3",
+      "size": 240
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Azure/azure.yaml",
+      "sha256": "d2cec2868dbef5a57145ac751f03c799c68440b6a9ee5ef952abc303a0c53c43",
+      "size": 1629
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/IPhone/iphone.yaml",
+      "sha256": "000ab1b8d9648d090264397c7ce25622d23219827ba391cfe344401fa4b82d5c",
+      "size": 1600
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/IPhone/statue.yaml",
+      "sha256": "dcda6b3621eb70c3e30fed803ddd93d4e947042212b7ef75bbd8932e8215be6e",
+      "size": 268
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/office0.yaml",
+      "sha256": "7a8ca43e63ba7fe1089f2458ad8446d878baaa6ecda821d20bbe61887963b055",
+      "size": 901
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/office1.yaml",
+      "sha256": "4de8b498e285d4650b7f19e65ec6a4626df3584da04ae494e0734bc32babf2f2",
+      "size": 604
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/office2.yaml",
+      "sha256": "6c32383c2bfbdbd37c7b54045f5693b4ba7b63e6be0d1db9928f0d65caca663c",
+      "size": 605
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/office3.yaml",
+      "sha256": "0e2e15ba73107e9038665431c167ec01b90388fa680468055a5a05ca7515de29",
+      "size": 606
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/office4.yaml",
+      "sha256": "b7c733b8962766b5998723e70ce7496a2dd324652bc4693386cb1227f3d9f847",
+      "size": 603
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/replica.yaml",
+      "sha256": "70db27c271137e926904bcb58bdb28d61cd6cafa713acf5148a8cb5fe3fc4a69",
+      "size": 4544
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/room0.yaml",
+      "sha256": "e34bdffe1bcc73f0bccaf3c48c9465c0d51dcb53e118674703c81158fe52c412",
+      "size": 595
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/room1.yaml",
+      "sha256": "8f16c770b76b73c181dc1f0997a2711ed994d58579671d03c95ae57af78f6ce6",
+      "size": 595
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Replica/room2.yaml",
+      "sha256": "657ef4c3308dc5d9337c99c0dcae4953029ffbdbd7148aed0505135930be426f",
+      "size": 601
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scannet.yaml",
+      "sha256": "0487764fef6be506a315cb627775c67150e038e52ab72236879e06f0c288c945",
+      "size": 1566
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scene0000.yaml",
+      "sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281",
+      "size": 330
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scene0059.yaml",
+      "sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad",
+      "size": 297
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scene0106.yaml",
+      "sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5",
+      "size": 456
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scene0169.yaml",
+      "sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc",
+      "size": 459
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scene0181.yaml",
+      "sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7",
+      "size": 460
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/ScanNet/scene0207.yaml",
+      "sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf",
+      "size": 454
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/br.yaml",
+      "sha256": "ac85b59b47fa7f351e18e0ef4160b4dac7feec3979f16f5f2ac11e36c2a912e6",
+      "size": 756
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/ck.yaml",
+      "sha256": "bdf08c99d255041a97fc216059fbd2ed35e69fc2525f90e275e508e4e0fa03c8",
+      "size": 760
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/gr.yaml",
+      "sha256": "91069c26e6cf393323d7b036562f1b40a36ba5f01b089fc3475ccae7f1d35cda",
+      "size": 752
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/gwr.yaml",
+      "sha256": "17102c2376863105386a7d0bf935a74faac909ac61b437a87689f6b4412ba0f0",
+      "size": 818
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/ma.yaml",
+      "sha256": "fb7c522b48f773b8746c3bccaff8f56a1fead01a7c08b7ec67f55dc88b257a23",
+      "size": 736
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/synthetic.yaml",
+      "sha256": "60b464dee260d6e91dc6bdd062f7dec8f6642d45c14c4fd4e8f32d4f20495c62",
+      "size": 2336
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/tg.yaml",
+      "sha256": "29f85abac5a116ac90dc40b853737178ea9fc95c41ed2f336bb7c1535beb31f6",
+      "size": 755
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Synthetic/wr.yaml",
+      "sha256": "ced7f9dd53e0951c8f755f76d1c1dcec0e00209727c10b99a84f781c3812a101",
+      "size": 751
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum/fr1_desk.yaml",
+      "sha256": "c18dda41774db404f17853ef55d0b7184575da84ef75ab2205d30fb3ac72cb6a",
+      "size": 901
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum/fr2_xyz.yaml",
+      "sha256": "a2b67f195db7b7ebdab9dd35eb044e84d6930098a0633fa5c7a0cd0adf3244f3",
+      "size": 1013
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum/fr3_office.yaml",
+      "sha256": "42e951d273b5a6a448ee0102623b10e3c5e756d6a879ae79421054b73e75fefe",
+      "size": 993
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum/tum.yaml",
+      "sha256": "c999b1b0eaa60f47c415b09ff2b9dd4929380b622616604ba60f01b49cbc6297",
+      "size": 2954
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum_dagger/fr1_desk.yaml",
+      "sha256": "5072c49e8bcfd9c48e2ca06711cf0c2f493d80e57e34cbe1d45a51adae749228",
+      "size": 466
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum_dagger/fr2_xyz.yaml",
+      "sha256": "36df033127b4e9da0320e03afb600e79c966236f02f555d408cfd060608601e3",
+      "size": 581
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum_dagger/fr3_office.yaml",
+      "sha256": "1ece16393a2223469ffd1706d9da8c6faf5b50681114f9688014a7afb291dc86",
+      "size": 552
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/configs/Tum_dagger/tum.yaml",
+      "sha256": "4503be9ecf15da36bcbc98703d0efbbc72114627932f655c743b1abf0ea263fa",
+      "size": 1665
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/coslam.py",
+      "sha256": "fa53b002ae7a1f28bef292f8f4d056609ea1a29637dd5a1d003c80977eda51a1",
+      "size": 104907
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/datasets/dataset.py",
+      "sha256": "8bf3b55b9cabf06f1cc5570c526c874bd1cdcbaf402ca568cf25871764a1f1b2",
+      "size": 33897
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/decoder.py",
+      "sha256": "3e38265e4083e72859397740c479e897c1104cc5f00873caaa6d9304e3ace33c",
+      "size": 6654
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/encodings.py",
+      "sha256": "e47167ec95830c3209e88347577a7de3ce1cb87cc51bd5e7de33f6b03c86a8ea",
+      "size": 3412
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/fast_morton/__init__.py",
+      "sha256": "fabbd57d0db7054838b14b8e6f24c675380b8c75f996d277311d12591975175d",
+      "size": 76
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/fast_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/fast_morton/morton_ext.py",
+      "sha256": "a7221e80ee9db8b0b9d614703ee4eda55578fb14a02a6817bcb8322b550ce7d2",
+      "size": 697
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/keyframe.py",
+      "sha256": "51ac9858f660d524a8cfc1fea765a6aad43d3c8e228539f1aaa177fd828a4a3b",
+      "size": 6804
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/layer_timing.py",
+      "sha256": "3a47ce2f1dfe221fbd7c47592f918e417f31a3fdcb674893eb8406c6961144ea",
+      "size": 15232
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/morton_2D/__init__.py",
+      "sha256": "d49b1375936f52f6623b0463f9fb3eaf9a30102fab2d0a066597a92933926f5d",
+      "size": 117
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/morton_2D/morton_cuda.cu",
+      "sha256": "9168275e92686d8b7008a719e79a378dc2b24ce30a6d85d3b5f34b43b35902da",
+      "size": 4124
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/morton_2D/morton_ext.py",
+      "sha256": "6a191c5be9b6ad1fccdc3c6b216433fba4ff5f75d26a087b0b5c173e6d496f50",
+      "size": 1233
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/scene_rep.py",
+      "sha256": "7f21f4b8bdb1346cf8439095e5de7df571109a8b1a8b3689e751829f39d09720",
+      "size": 29494
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/model/utils.py",
+      "sha256": "7a4b4c558714a1bb3b095f5b3df9ed93ebf6142ed139a7557eba99d1a1ac5ffb",
+      "size": 6060
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/optimization/ba_experiments.py",
+      "sha256": "d9768c8896835aa686a55a13dcb0aa90b1205c96d0669d85ad0a8d286fb3eae0",
+      "size": 8886
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/optimization/frame_align.py",
+      "sha256": "2872358561edab7ae38bb4b9895cc90fd7c4932ea982cf1a664fe523ec55a5d4",
+      "size": 520
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/optimization/pose_array.py",
+      "sha256": "60cd262669815c6541328d9941c9eef7bfb4a9f79051766c027310b48fa3675b",
+      "size": 3169
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/optimization/tracking_experiments.py",
+      "sha256": "dcd6f0fbd4d4fd98ff806058dab7c6e92e3bb0cedfd329a16b40a38710ec411d",
+      "size": 6473
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/optimization/utils.py",
+      "sha256": "af848fcdb8847f4bf0a8f0d08c311b396c16c532ec2f028131945f756591b467",
+      "size": 2067
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/analyze_execution_trace.py",
+      "sha256": "10eaa37d0f8509c2d1a0bc322cfcf49496028f60bb0766df4afc15f5087bd4a1",
+      "size": 9154
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/audit_execution_results.py",
+      "sha256": "3002a5f000ee9da8034d4e53bf33cd0c6331bdd7d943853ae45474da013a21f4",
+      "size": 7270
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/benchmark_ec_replica_execution.py",
+      "sha256": "37444cc6fd29847aed6a0ca5e7c30aef7f2d85b7edcd81449f003c4b91d921a6",
+      "size": 11184
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/benchmark_replica_ba.py",
+      "sha256": "05bda9292884133eb530f50b708db72c7f809ea44ce997da37b6576f878abe0d",
+      "size": 10544
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/benchmark_replica_tracking.py",
+      "sha256": "3ec6ca6eed0bdab8cb76d223cb83672b7750aa14111e9a5337a7e80ab4316320",
+      "size": 7799
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/capture_execution_environment.py",
+      "sha256": "7080d2dca997d6b689d6667598204dd7f3a7603d09fb981833323b2331948f5f",
+      "size": 2633
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/capture_execution_hardware.py",
+      "sha256": "ebbd857e5a62a6214abcf6445760683d275bcad56e4f6732e1463a59045d58ff",
+      "size": 3732
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/check_ba_bucket.py",
+      "sha256": "1625bde1aa2a1eb034be44e689a57c100d1889355e2abaf8e43c654f0bd508e8",
+      "size": 2962
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/check_ba_lattice_gpu.py",
+      "sha256": "329ecf51ffac51116f630600ae247a26a8c57b48827414938431369c84bfc93a",
+      "size": 5670
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/check_ec_tracking_invocation_gpu.py",
+      "sha256": "b0f0b11a72e5f70b409fec95cd1d2412d8f3e77c02e88e66e9e308c77548681d",
+      "size": 7180
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/check_execution_gpu.py",
+      "sha256": "f468d3f80452c14a5461ba6c759441edcd99ad3edba3000d176760cbd091e724",
+      "size": 11824
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/check_tracking_depth_cache_gpu.py",
+      "sha256": "24458a5d2741731eb66e5ceab7c61b0a2294aacd161ab31bfc2261f19862eab8",
+      "size": 5240
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/compare_ba_bucket.py",
+      "sha256": "d46024a241be01b27b77070a4fb0882d336d737ff446977207c95ebf02d0d46c",
+      "size": 9418
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/execution_benchmark_common.py",
+      "sha256": "af47e58e179138ff8b49c597c6d6b9030fc67f7c54f72f58649fb090b65473ae",
+      "size": 3018
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/export_ec_execution_patch.py",
+      "sha256": "150cdeab593314f6ae238c5f416138d5f93b60b6a810dfb5e6b27ad39924b2a9",
+      "size": 1971
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/finalize_execution_experiments.py",
+      "sha256": "1f884be9590e0ca4f68a25117fe490eb0e4b2a10a8fcbe068c1311f042cdb4f8",
+      "size": 6735
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/monitor_execution_hardware.py",
+      "sha256": "fb497655f708906e3781dfaa43acd3a1defcec77e58cb6e6d7e6ed4057218d35",
+      "size": 2442
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/patch_validation/test_basic.py",
+      "sha256": "f5599abd4197e65b985542236fded617ec676769b03ce2e6947e5c7e3e22f1d1",
+      "size": 545
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/patch_validation/test_patch_sampling.py",
+      "sha256": "811a2d9290532a37b499fc0c845d325d9c4870e084a19d66edea9b69f280f68c",
+      "size": 13724
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/patch_validation/test_patch_sampling_coslam.py",
+      "sha256": "d578724e63c8e12ea22399da7591bfee84acf14174b5cdb22194489b8fbc5fca",
+      "size": 15034
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/prepare_ec_execution_workspace.py",
+      "sha256": "659f58fc4289a516b92f3eacb711b66a5381820ede12eeb8e30be1fe8a893aaa",
+      "size": 1812
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/rank_replica_ba_scenes.py",
+      "sha256": "7697a2459e07ebcb2617e1142c0094b548cb020cd07428a122f3fa7a4ab88a12",
+      "size": 6290
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/run_execution_gpu_checks.py",
+      "sha256": "b81d00c990cb8b7f6a0bb7d48e1733e01eca406761bc199d92a1e7bbe3b00713",
+      "size": 4463
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/run_final_execution_validation.py",
+      "sha256": "b4293026a67981320a2df5b57a7c360d2ae4598c5ad14849d4edabe090d1b176",
+      "size": 1523
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/run_replica_ba_suite.py",
+      "sha256": "138fe3abe01bfa96046a4f40da1742ce15e129c810700e492463441d08179643",
+      "size": 4122
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/run_replica_execution_suite.py",
+      "sha256": "54cc9741c34367d511da3ab7ece7bbd1f68b100884645999c3c82721223dcd3a",
+      "size": 3876
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/run_tracking_cache_checks.py",
+      "sha256": "c0bfbfcfb134d05e3ae0982b988fae6d17aa0e6644f3202fdbe5f3749945ab56",
+      "size": 2756
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_ba_breakdown.py",
+      "sha256": "0fc456a178e9ec60bd759966c4b33a66c57e196fd32ff715f69b40b2d646a372",
+      "size": 15493
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_ba_bucket.py",
+      "sha256": "e2a3e8335ce6a9c2c38913e1366f23799152d4f23490a4f6e0d81fce8292dac0",
+      "size": 3633
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_ba_mechanism_ablation.py",
+      "sha256": "673955d9b06fb519d7941bf037e272fe3d1574dfdf80631e8c7089362253ef5d",
+      "size": 16824
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_execution_diagnostics.py",
+      "sha256": "0684b3adafc77d762cc07fcd8496272551b9a8fcab6b9c853ea1b700afbe706b",
+      "size": 11239
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_execution_experiments.py",
+      "sha256": "521439b2e9cbf32fce431609eb811952b5126799bdcc884fbc4586bc597d1ef6",
+      "size": 9929
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_execution_traces.py",
+      "sha256": "a530dbaa2096c60861ee92abd505ef47ae4f0d38bf23f9d2c6fd70f615e8d6ed",
+      "size": 5909
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/summarize_replica_ba.py",
+      "sha256": "3f74afffb5eae6fd002e91ec0d3afcca2966397a4a46842cf0d66ac62fbefa78",
+      "size": 10045
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/test_smoothness.py",
+      "sha256": "19b93defd81bcc41e18b7ed9102b3ff4a5ac6f2ce1305e6406af125de0c8a3ad",
+      "size": 1386
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/trace_replica_execution.py",
+      "sha256": "d9918d8bb560cf3c91d2ac853380b94feb34754cce713ef82458ea13b3630eb9",
+      "size": 1692
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/Validation/watch_execution_reports.py",
+      "sha256": "ae55a315c2742b4f121e853119840b40265e7ac2ac3f3e79b9c93ea6ec3ff434",
+      "size": 1107
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_frame_total_modes.py",
+      "sha256": "4e404b07a488803048828c91002700ca6b38bea85883de9b22e75806bd9188b6",
+      "size": 17689
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_frame_total_three_modes.py",
+      "sha256": "aae6d81aacbea33ab304630acd9bcbce5736c271fa46b8e945aef1b71ae29381",
+      "size": 11973
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_morton.py",
+      "sha256": "1d93aa3da476f5711ad6d3379a61be8f14dc18a7774b7df079697094a8a4f33d",
+      "size": 7793
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica.py",
+      "sha256": "3b150f1aa581ec3cb38d98ee6f10fa6d91977f5f37e398c7bd5b3793cecbe6dd",
+      "size": 9643
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_4setups.py",
+      "sha256": "ce0b491f8380a7e10a728cfa691bf21efa04905e4be393b3c37a1ba0804ec8a3",
+      "size": 11707
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_ba_breakdown.py",
+      "sha256": "a7fc0d4c12be8e5a4b456fa463854879e4d169910ef70a7c3b43ec2c4283ac22",
+      "size": 6513
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_coslam.py",
+      "sha256": "e0bd0d15b86fa381b196a48f4fc1c9b8f39db2afe90d78d2768b412261749941",
+      "size": 7737
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_coslam_2D.py",
+      "sha256": "4a9f7db338563dfdca898a96bf6dc981f03ad3b857b1cf5ad96f017a05bbff6b",
+      "size": 7725
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_coslam_many_runs.py",
+      "sha256": "39db56c81336f0fe5b2df44e17110f83d50ccc342326ed13b4806a0b25104c56",
+      "size": 8053
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_coslam_many_runs_energy_v2.py",
+      "sha256": "2ba023a4162be635677bec75bac33bfaefd1059fb8cae26a6b79e8d09d2a3b1a",
+      "size": 13642
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_depth_spatial_hyperparameters.py",
+      "sha256": "adbb7bccdc82e386d44207e93ecfd98d5eeb21091daf21ec6e618ead6b6f11b7",
+      "size": 14548
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_depth_spatial_three_modes.py",
+      "sha256": "51bf5d81cad5b2a1e3b3d899bea7ed4eadc26fdb2119ec7d3ac7442bb217aed9",
+      "size": 25285
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_frame_total_modes.py",
+      "sha256": "8f7673a7af1c0c6768560cb529fb0f7d7c542813a78eca0493918fbc16e76485",
+      "size": 12008
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_iteration_timings.py",
+      "sha256": "251ebb3a4d998960a219b74722b3cef67298a3c4be3ac371ecf1035abe295b96",
+      "size": 20397
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_replica_set.py",
+      "sha256": "d0588e18f946906de1c69c2e525f5fbfa5e9f8599a3de5803d310d79487e5963",
+      "size": 8869
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/Co-SLAM/scripts/run/auto_run_three_setups.py",
+      "sha256": "3194179fac25019c4b956fc562b5e782765198b692b68d737c05b235bc6d8c49",
+      "size": 9082
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/EC_SLAM.yaml",
+      "sha256": "258c1d9ade3fc9643c885c2d987dc92205d8ef02028473d27aa829ef2bc12c1f",
+      "size": 4026
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/office0.yaml",
+      "sha256": "6d6b2ea33268b79e3748e8a746ae19df9c3f5aaafbfa8afdd1c456c793761159",
+      "size": 378
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/office1.yaml",
+      "sha256": "40faa5a3732eb4a0455c577286b9c36b2ad277a3df4f3be6d7edb6eb96090372",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/office2.yaml",
+      "sha256": "04144b6c9a8f0dce4810f2423dd11d1904e58ee631fe99ba9d6e653eafc5436b",
+      "size": 257
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/office3.yaml",
+      "sha256": "3f3fedb4f084fab4323a24ea8ad7bca29a7497516e76524eb2a4536ec1946a08",
+      "size": 257
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/office4.yaml",
+      "sha256": "69f1f2850d8c15f6aaaccc5130e3f7b8a2e169cfb660c1fe147c49e0a7bd9509",
+      "size": 257
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/replica.yaml",
+      "sha256": "ef7d7d072af381447ecfc488393044e725cfc1343a2186bf996a0c42a3c1560d",
+      "size": 1663
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/room0.yaml",
+      "sha256": "23a4eb6f63fc23d6b6b6e4605ef83a513890a41bd3c809aaaf77355652385f95",
+      "size": 269
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/room1.yaml",
+      "sha256": "00770b82ff2da72a3da3785e563a244c3155be100e2af4b1d439a745527cbc67",
+      "size": 253
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Replica/room2.yaml",
+      "sha256": "b7e2f98aa54732e5018f75c792db96d778a81747f42c1bfd8320196f12fc67bc",
+      "size": 253
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/scripts/auto_run_replica_iteration_timings_ec_slam.py",
+      "sha256": "92c1f9b6d8db01d4dccb6dd9af1f46f9ddfed2d443629af29323e510174894cc",
+      "size": 27926
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/scripts/auto_run_replica_scene_rep_timings_ec_slam.py",
+      "sha256": "5ff9b4cba6dcd806dbb71aaa0ab1b20b6505c78a9803196c6c9fb82306b9faaa",
+      "size": 16915
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/scripts/auto_run_universal_ec.py",
+      "sha256": "50f10106f3bb75c5737a9d7c8cfd7a7461c05f39ed8dfe21f254b5bbd71c014d",
+      "size": 6962
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/Datasets.py",
+      "sha256": "bafd3e9c4fb21417b51e793a0fd55545f54383fa688e0dbb66f5f8eb1d77743e",
+      "size": 4210
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/Mapper.py",
+      "sha256": "da2902fe1b37b4b76807630818f1dbce60032bb475967ec051cd60a4ba4b50be",
+      "size": 21410
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/Model.py",
+      "sha256": "ee5484db3b683bd01d429875b994efe3cbe5d49b80299c4ea7f928eaf1b851fb",
+      "size": 28392
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/Scene.py",
+      "sha256": "648ad7478efcc539d8e353881d28ee0fc6bd35e5c11bf4e85cb4493e8209dd5c",
+      "size": 6707
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/Tracker.py",
+      "sha256": "766ea6b4373e5d54ee85649c75188bb0d3936b31d6313fe493d19046c11ffd53",
+      "size": 12293
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/fast_morton/__init__.py",
+      "sha256": "fabbd57d0db7054838b14b8e6f24c675380b8c75f996d277311d12591975175d",
+      "size": 76
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/fast_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/fast_morton/morton_ext.py",
+      "sha256": "55c55f502b64c1e632ccbc7d0da1efb2fffb2302d8afae308938f68e2b564a79",
+      "size": 877
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/profiling.py",
+      "sha256": "ce07ad9d892ce89efbeda94d49984a29dcfa58d2d185cbe0a4b30574ce5e7075",
+      "size": 9835
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/system.py",
+      "sha256": "cac3a1f35b9ba07e9e7272a920a6a92825a16938bc1ac162dc7d1781e2dd1b98",
+      "size": 4365
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-SLAM/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/EC_SLAM.yaml",
+      "sha256": "258c1d9ade3fc9643c885c2d987dc92205d8ef02028473d27aa829ef2bc12c1f",
+      "size": 4026
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/office0.yaml",
+      "sha256": "6d6b2ea33268b79e3748e8a746ae19df9c3f5aaafbfa8afdd1c456c793761159",
+      "size": 378
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/office1.yaml",
+      "sha256": "40faa5a3732eb4a0455c577286b9c36b2ad277a3df4f3be6d7edb6eb96090372",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/office2.yaml",
+      "sha256": "04144b6c9a8f0dce4810f2423dd11d1904e58ee631fe99ba9d6e653eafc5436b",
+      "size": 257
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/office3.yaml",
+      "sha256": "3f3fedb4f084fab4323a24ea8ad7bca29a7497516e76524eb2a4536ec1946a08",
+      "size": 257
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/office4.yaml",
+      "sha256": "69f1f2850d8c15f6aaaccc5130e3f7b8a2e169cfb660c1fe147c49e0a7bd9509",
+      "size": 257
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/replica.yaml",
+      "sha256": "34302baaf0653214e98906eb1b051c014043d33b476b19af52b29ad405b5cb41",
+      "size": 1950
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/room0.yaml",
+      "sha256": "23a4eb6f63fc23d6b6b6e4605ef83a513890a41bd3c809aaaf77355652385f95",
+      "size": 269
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/room1.yaml",
+      "sha256": "00770b82ff2da72a3da3785e563a244c3155be100e2af4b1d439a745527cbc67",
+      "size": 253
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Replica/room2.yaml",
+      "sha256": "b7e2f98aa54732e5018f75c792db96d778a81747f42c1bfd8320196f12fc67bc",
+      "size": 253
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/Datasets.py",
+      "sha256": "bafd3e9c4fb21417b51e793a0fd55545f54383fa688e0dbb66f5f8eb1d77743e",
+      "size": 4210
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/Mapper.py",
+      "sha256": "e5f3b5fde9af80934ffbb1f07188f3d2fecae527db638f44d91bc83fd5ef190e",
+      "size": 23020
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/Model.py",
+      "sha256": "ee5484db3b683bd01d429875b994efe3cbe5d49b80299c4ea7f928eaf1b851fb",
+      "size": 28392
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/Scene.py",
+      "sha256": "648ad7478efcc539d8e353881d28ee0fc6bd35e5c11bf4e85cb4493e8209dd5c",
+      "size": 6707
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/Tracker.py",
+      "sha256": "f7d698adaae23cca1a1eb661c1414f44a75f7ed18f660b62e221cbf64f6fb6cc",
+      "size": 14164
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/execution_experiments.py",
+      "sha256": "2966f042fef7906a56196ca91780e3afe3baefe6cf6133f2d0946f521dfc26b4",
+      "size": 3855
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/fast_morton/__init__.py",
+      "sha256": "fabbd57d0db7054838b14b8e6f24c675380b8c75f996d277311d12591975175d",
+      "size": 76
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/fast_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/fast_morton/morton_ext.py",
+      "sha256": "55c55f502b64c1e632ccbc7d0da1efb2fffb2302d8afae308938f68e2b564a79",
+      "size": 877
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/profiling.py",
+      "sha256": "ce07ad9d892ce89efbeda94d49984a29dcfa58d2d185cbe0a4b30574ce5e7075",
+      "size": 9835
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/system.py",
+      "sha256": "cac3a1f35b9ba07e9e7272a920a6a92825a16938bc1ac162dc7d1781e2dd1b98",
+      "size": 4365
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/EC-execution-workspace/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/orin_sources/SOURCE_MANIFEST.json",
+      "sha256": "3e1ffcbdff4f05d43163de131c1c5456e8743acc63ae070a5bf01a2271e5979b",
+      "size": 19652
+    },
+    {
+      "path": "DASIP_round2/experiments/paper_orin_results.py",
+      "sha256": "6e174a3929d984e632f151aa8b417cb86af6561919e08a48b499e502f321252c",
+      "size": 11083
+    },
+    {
+      "path": "DASIP_round2/experiments/preflight_ec_between_jobs.py",
+      "sha256": "9162a5844b347041659c841b793c97f9dc1970b77f1a5b9c689823ea062636b4",
+      "size": 3123
+    },
+    {
+      "path": "DASIP_round2/experiments/preflight_ec_timing_between_jobs.py",
+      "sha256": "dc44bac639ccb307f2743a547a514b8cc5fa1dea768470bf76be2388874a97ef",
+      "size": 2892
+    },
+    {
+      "path": "DASIP_round2/experiments/preflight_engineering_between_jobs.py",
+      "sha256": "0bdaa065f3c6569e88fa85d7383c757b5a8f8661937b97f9c245ea3ce0c8c155",
+      "size": 3567
+    },
+    {
+      "path": "DASIP_round2/experiments/preflight_reconstruction_between_jobs.py",
+      "sha256": "e40c88df85f0d1fdd697e2d07f74997756cccdbcb7879ffce4634bfaa7052d26",
+      "size": 1905
+    },
+    {
+      "path": "DASIP_round2/experiments/prepare_round2_placeholder.py",
+      "sha256": "fbe424546d3db8c741ba34d707366e963ca2849f43daed24816713949f34dd89",
+      "size": 28371
+    },
+    {
+      "path": "DASIP_round2/experiments/reaudit_orin_maxn_results.py",
+      "sha256": "47ae3a735d8ebf7288c862d1595ab5c1e7816e71b216c40602780a65f82cada9",
+      "size": 789
+    },
+    {
+      "path": "DASIP_round2/experiments/reconstruction_runtime_v1/RUNTIME_MANIFEST.json",
+      "sha256": "929ee626fcdb64eed8f5686ca1e95f64d8085eb43ab2d13ea777a64597948b00",
+      "size": 5773
+    },
+    {
+      "path": "DASIP_round2/experiments/reconstruction_runtime_v1/checked_reconstruction.py",
+      "sha256": "9ff5bec1bb9e1e24df714264245cbcb3b03a086222b7e82461ea3db97a606a62",
+      "size": 11516
+    },
+    {
+      "path": "DASIP_round2/experiments/reconstruction_runtime_v2/RUNTIME_MANIFEST.json",
+      "sha256": "c981621d988464dbd29bc69df8e25a65e96cb2a9c4b3fec347996431ca88b920",
+      "size": 5906
+    },
+    {
+      "path": "DASIP_round2/experiments/reconstruction_runtime_v2/checked_reconstruction.py",
+      "sha256": "abaa001849be13989bed91f384f5afc743ac07d6823d0aac9a0fefb2ffb4c862",
+      "size": 11867
+    },
+    {
+      "path": "DASIP_round2/experiments/refresh_paper_results.py",
+      "sha256": "7c03aec5a977aff2e76efcb30949388faab274eb097c2838fcdb5601c116cf66",
+      "size": 40927
+    },
+    {
+      "path": "DASIP_round2/experiments/report_component_profiles.py",
+      "sha256": "830a9530f4f0a4fdeaf38408dc39bb5bde173dfe9f0f1c460531c9f08b18f146",
+      "size": 13744
+    },
+    {
+      "path": "DASIP_round2/experiments/report_composition_results.py",
+      "sha256": "faa7d45c7f9e5fd2afd1ef2c0bd02e24f9427a9a4f527fabd03e803298758231",
+      "size": 11335
+    },
+    {
+      "path": "DASIP_round2/experiments/report_dp_all_scenes.py",
+      "sha256": "a17ef0164b7284e901ba3e1b991bc13a1746446f7c465f9f35cbb1eff3594884",
+      "size": 5341
+    },
+    {
+      "path": "DASIP_round2/experiments/report_ec_component_profiles.py",
+      "sha256": "6e39d46a8daec6213b8feba4dddedf9b13f0dee8b66a267a46a3c3aef4e4b591",
+      "size": 9970
+    },
+    {
+      "path": "DASIP_round2/experiments/report_morton_reference.py",
+      "sha256": "928ad0c617485c32307fe205f2819fe8aafba02e63188a9450c2530222853541",
+      "size": 6342
+    },
+    {
+      "path": "DASIP_round2/experiments/report_remaining_results.py",
+      "sha256": "b32936e6b77216ef00472e719f506802a88d47085b0d0a22f6ab5201370227df",
+      "size": 18887
+    },
+    {
+      "path": "DASIP_round2/experiments/report_support_reference.py",
+      "sha256": "298565f96db0a29a59dfb184b6873bb34d54e885bc990c0460df35a4cb175463",
+      "size": 12734
+    },
+    {
+      "path": "DASIP_round2/experiments/round2_ec_timing.py",
+      "sha256": "5e3adbb4c46a98b6d79e00cf6f7de0666dabda24be8e7191dfe5ecb6734fc657",
+      "size": 3868
+    },
+    {
+      "path": "DASIP_round2/experiments/round2_engineering.py",
+      "sha256": "fcd46a239408f7ab6b31535fccc6790db999cf0be51796ffaf27cf7a6e20a412",
+      "size": 5052
+    },
+    {
+      "path": "DASIP_round2/experiments/round2_paths.py",
+      "sha256": "cbb38f8a7a0aea93040642ce180bbfb92810ec4239b41eee5395e8a272e34025",
+      "size": 694
+    },
+    {
+      "path": "DASIP_round2/experiments/round2_sampling.py",
+      "sha256": "9118e0f80cb8122ee21193bce9169c12948654c13184eec265f2de2737a00484",
+      "size": 5874
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/capture_queue.py",
+      "sha256": "0d17f93b67956e6110d657e1035cf1296bbcc917ff2a91025bfc79ba983d4b6a",
+      "size": 26297
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/prepare_extensions.py",
+      "sha256": "db67ee45a565dcd957700631415e84bb617fc20bea3a0109601d5dcd25f1b327",
+      "size": 1943
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/run_target.sh",
+      "sha256": "1a9998536b24c7e16cfc472733c20373e40a2b0d4f9a446e9dabe63c49affac5",
+      "size": 636
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/RUNTIME_MANIFEST.json",
+      "sha256": "5448aa1d3f4fc7d2fef9390faeef7c6a195b76895c8f0b4ff3ccc430274575f2",
+      "size": 12645
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/config.py",
+      "sha256": "d1cf867cb0cd5c8e54770a920f8c5c6f50f546c66c2108eab288e4b2dd4453b7",
+      "size": 1329
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Azure/apartment.yaml",
+      "sha256": "ae3a73af14137a3aeeceea1e176e96715cc3f32547c09595e0b80bc9cc6f49b3",
+      "size": 240
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Azure/azure.yaml",
+      "sha256": "6b6a0b50cd1e645a55df9e319aa6ba9efc382873cc5e468ae7c9f574f198f0ab",
+      "size": 1586
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/office0.yaml",
+      "sha256": "540554ff07b754ca48a706da3a700b4cff6e09ed07f56a474308dbae6df37715",
+      "size": 254
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/office1.yaml",
+      "sha256": "ee3230d3bf98026dd67cccb32eb0484b4894f7e41c6b198b75ce35cc1dd5dfea",
+      "size": 260
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/office2.yaml",
+      "sha256": "acf7b62a6a02b0d2671c8c51aa5ce8e1441a36da34c8ed704757a6a0fc73d24b",
+      "size": 261
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/office3.yaml",
+      "sha256": "02d5f0570fa51dd063af25270015c40c36a20c72aeace85a5e4d66bf157d9bda",
+      "size": 262
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/office4.yaml",
+      "sha256": "4a53e037a3de473445df020f85ffd22841abe4502c6a6bd3fb26162d3134837b",
+      "size": 259
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/replica.yaml",
+      "sha256": "39fcff70d16472ffb2cf206bb8a3344949d1d40dd276535f3fea484c2206d373",
+      "size": 1536
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/room0.yaml",
+      "sha256": "82fd84c673557ccc3f1ef237d13a4527279ab51fba7f6cda28ed9a1fc2ce1eda",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/room1.yaml",
+      "sha256": "0e7029353e7a167816135a869c6cc69ca80eb3bfb39ddb584c4926297b911d24",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Replica/room2.yaml",
+      "sha256": "c0a8dd0014f18e5a63a600d63357eb681e5d3939409f523abd0693a05c9c713f",
+      "size": 255
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scannet.yaml",
+      "sha256": "16aab31b95a7c35ce0f81e5fb5d8704ea830565d51e79a53af1461853d403c37",
+      "size": 1523
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scene0000.yaml",
+      "sha256": "bf60a9274aa24a0c958961134bcaa202aca08dfe4d79aad005365e8681692281",
+      "size": 330
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scene0059.yaml",
+      "sha256": "47167f5cb4e5c19eb6db2d4bb200daea58b6ed5cfabc035a3ce456679d7ca7ad",
+      "size": 297
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scene0106.yaml",
+      "sha256": "c706e8303c798b3299492cde75b6764bfa7f6cbf751d9dc1175ab6ca2e6f71a5",
+      "size": 456
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scene0169.yaml",
+      "sha256": "a748efdc0b9cf8120eee69efd5b0a27eb3480edca83915379ea44c98e8f668fc",
+      "size": 459
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scene0181.yaml",
+      "sha256": "8aef2cbf2ca6bb2bae4b302b29f9260b1c925f873a7e32bd7422f4fb4509bed7",
+      "size": 460
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/ScanNet/scene0207.yaml",
+      "sha256": "dc24da9ebfa16cd96659af9b854afd75abed797ebb7a142f86f39d36a95b26bf",
+      "size": 454
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/br.yaml",
+      "sha256": "745c0155f1b32fb7da30b678c78189c9ac949c2fb3bccdfa0982c19c7e3ae643",
+      "size": 307
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/ck.yaml",
+      "sha256": "258ba75ea705ee8bc2dd3e116902043f0859749de7d3fb06c08aefed062ecc86",
+      "size": 311
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/gr.yaml",
+      "sha256": "c357aad01888e57205b871b49066b273346509101f55d37d68747f89b7bbf3d0",
+      "size": 303
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/gwr.yaml",
+      "sha256": "33f354580fbcf36268de2d809d78ff23362b25117926cd303c51087367ef8972",
+      "size": 366
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/ma.yaml",
+      "sha256": "1de33928530c4415df868ca4f607fc4b7b85e13a45362c444484c49045314268",
+      "size": 391
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/synthetic.yaml",
+      "sha256": "6b2c455b2998d78cd06fcbe61363e217ebbb6381bc9df81bd73feed15d8d1303",
+      "size": 1556
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/tg.yaml",
+      "sha256": "e0a0837edabe508e5537fc7a13aae42eb2a0430917e58977fbddd317176760de",
+      "size": 306
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Synthetic/wr.yaml",
+      "sha256": "9a582a51d72450ccd7e41cdd54c7c2498a4db69260a9141cfea3ab0ec233f90a",
+      "size": 302
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum/fr1_desk.yaml",
+      "sha256": "365f768dee16e1d31860438c53a929355f48192e37032a1490e58731a75ff370",
+      "size": 452
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum/fr2_xyz.yaml",
+      "sha256": "392b22eb6866e07fde2261b20480eeee7b1a35d3ed9603a2e96c69455ad68a51",
+      "size": 567
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum/fr3_office.yaml",
+      "sha256": "4ffb5eaf945e07721f8b481307ef5ad717517916ace68d7120311d474a2977aa",
+      "size": 538
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum/tum.yaml",
+      "sha256": "e7b9f36fd732fd3134f0494c3a012e5bb60f1e4abc03296c63c7627b138958bb",
+      "size": 1623
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum_dagger/fr1_desk.yaml",
+      "sha256": "5072c49e8bcfd9c48e2ca06711cf0c2f493d80e57e34cbe1d45a51adae749228",
+      "size": 466
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum_dagger/fr2_xyz.yaml",
+      "sha256": "36df033127b4e9da0320e03afb600e79c966236f02f555d408cfd060608601e3",
+      "size": 581
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum_dagger/fr3_office.yaml",
+      "sha256": "1ece16393a2223469ffd1706d9da8c6faf5b50681114f9688014a7afb291dc86",
+      "size": 552
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/configs/Tum_dagger/tum.yaml",
+      "sha256": "f272c843d58aaef01731d0201b8b9eda4a427372133ac57203b6cdd3f527b71d",
+      "size": 1622
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/coslam.py",
+      "sha256": "c3d29e98551cab1d05db358cfb4d613458f858ee0a840be9dc17fae413a16d5e",
+      "size": 27426
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/coslam_mp.py",
+      "sha256": "99e6da3b579a26629d2460aee6cc081aab5c3b687e1ea21533c88593984e76ce",
+      "size": 12989
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/datasets/dataset.py",
+      "sha256": "8bf3b55b9cabf06f1cc5570c526c874bd1cdcbaf402ca568cf25871764a1f1b2",
+      "size": 33897
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/datasets/utils.py",
+      "sha256": "b95055d4d64421070709ba9959e82f998bf878db7ed0c90143a07a9ca08347e4",
+      "size": 1436
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/external/NumpyMarchingCubes/marching_cubes/__init__.py",
+      "sha256": "3c415f36883cfc4b8ba5fa65fffda2367e8e29961209b4b86b57e65cd6efbcd4",
+      "size": 36
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/external/NumpyMarchingCubes/setup.py",
+      "sha256": "6722ad3f1dd57a1ebf592969478e9a943b8178bf0965847a7e08cd9f22429100",
+      "size": 2446
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/model/decoder.py",
+      "sha256": "746bda420736820016df257621de082c49cfd3022471abdfba404b195982f809",
+      "size": 6454
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/model/encodings.py",
+      "sha256": "b8ebc8c8db2a7140c58fea615fc2f7a64500ef4d247bbfcff28894be9c0b5e3b",
+      "size": 3241
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/model/keyframe.py",
+      "sha256": "51ac9858f660d524a8cfc1fea765a6aad43d3c8e228539f1aaa177fd828a4a3b",
+      "size": 6804
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/model/round2_morton/morton_cuda.cu",
+      "sha256": "068159a7e8370c5095923b586183fb23a33019958ec1f1e61fa90d62e638b358",
+      "size": 1743
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/model/scene_rep.py",
+      "sha256": "a8b800d25cd0c35668f754c5ea059a5ac31e8accfca51fb65505eb4f476bf1cd",
+      "size": 12564
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/model/utils.py",
+      "sha256": "11da087c301d43b88144833287451e2957ae3a587ea1846a270fcec7b30a9576",
+      "size": 5499
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/mp_slam/mapper.py",
+      "sha256": "ba673b3cfef3a15199828c846dfd1bfe7ab178ca8d9e8bcda8fda8f78cf8602a",
+      "size": 10965
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/mp_slam/tracker.py",
+      "sha256": "e8221a4d77ab34f813fc28ca871ecf201b083d6dbdd2987c8b3ceab821966308",
+      "size": 7069
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/optimization/frame_align.py",
+      "sha256": "2872358561edab7ae38bb4b9895cc90fd7c4932ea982cf1a664fe523ec55a5d4",
+      "size": 520
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/optimization/pose_array.py",
+      "sha256": "60cd262669815c6541328d9941c9eef7bfb4a9f79051766c027310b48fa3675b",
+      "size": 3169
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/optimization/utils.py",
+      "sha256": "af848fcdb8847f4bf0a8f0d08c311b396c16c532ec2f028131945f756591b467",
+      "size": 2067
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/round2_sampling.py",
+      "sha256": "9118e0f80cb8122ee21193bce9169c12948654c13184eec265f2de2737a00484",
+      "size": 5874
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/round2_timing.py",
+      "sha256": "3a47ce2f1dfe221fbd7c47592f918e417f31a3fdcb674893eb8406c6961144ea",
+      "size": 15232
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/run_coslam_round2.py",
+      "sha256": "7454cc66ca14169d04f20ff28e07690318aa4e27747a393d966b3bbfb164de5e",
+      "size": 11882
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/tools/eval_ate.py",
+      "sha256": "43c679b64ecadba71223142a11bd501b9c4b6a0a5a02b506de87f38edc7271bd",
+      "size": 11245
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/co/utils.py",
+      "sha256": "a652d59cd1062aa0c70dd9b09bf941fef39c0ec4914544714fadf00718a7fa23",
+      "size": 6696
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/EC_SLAM.yaml",
+      "sha256": "53f916549173a55b37c540cb735bcb24d01a86b3a228a8e51881ede4e5771cbb",
+      "size": 3727
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/office0.yaml",
+      "sha256": "9f569c31c5df2aab8cdb2af72e44ae74a4d6caddb9a9069eb3fde118a6ea064a",
+      "size": 395
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/office1.yaml",
+      "sha256": "e38aab6b8185d53080a365ed8762f823f69db382232a3e30b4a7f1b63e794fc9",
+      "size": 272
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/office2.yaml",
+      "sha256": "fe91fdc3dd698a0214d0fa491a460a05a1af8ec2a0b0f550f7a70abc0c136668",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/office3.yaml",
+      "sha256": "4a220e94cf7762e0c141efe6ee5eebe29a915439d40ccadd6f5d83696ff39aa3",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/office4.yaml",
+      "sha256": "bce35f309e69762cfb8eea4bf60b2f6a2f7a5447fc3dc84e3c3c51a007516ade",
+      "size": 274
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/replica.yaml",
+      "sha256": "8cfd94a8bccb979f79f26ca8791c9e46693e4970735f5138ebc99b7a8aa717c2",
+      "size": 1485
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/room0.yaml",
+      "sha256": "c488360b80f2e8b9f503f9d2f18ce2d2997a036f61c166b4ad056fc910e0da00",
+      "size": 286
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/room1.yaml",
+      "sha256": "5ec3a32e6549331cc0ba8397c67e9cfe4da75991766bd4ffa791f17411f99f34",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Replica/room2.yaml",
+      "sha256": "925db0067263782ebabcd7eb950796ff58102fa575ffe506fe6e166261da8eb6",
+      "size": 270
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/Scannet/scene0000.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/configs/TUM/fr2_xyz.yaml",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/run.py",
+      "sha256": "b2c8e28da6ed34381b6b4c2210c65a4a427d42751f79506d739ca9af8c66e4bb",
+      "size": 1181
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/Datasets.py",
+      "sha256": "a6f556abd934d2b7715cd6b9b318d69a5ac09fe72e5855986235760529b29e63",
+      "size": 3877
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/Logger.py",
+      "sha256": "1dce25b9b55678afdb47269f1b5f2f8ec365422f73cb552793435d1e0c7004ac",
+      "size": 764
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/Mapper.py",
+      "sha256": "2ab95d9259c743132279cdb9beaa0b33d045f76971a0f94424bdcfe803173df7",
+      "size": 14017
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/Model.py",
+      "sha256": "5b98b912931eeb5c06347c4c8ddd97c24f5ada09f294a2d71d9fad22f8880e60",
+      "size": 20576
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/Scene.py",
+      "sha256": "8fa9b10d2e133fcfd7af904928609272920c92d3d73736cb8393e11e14f5a82d",
+      "size": 5500
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/Tracker.py",
+      "sha256": "47af7f6e901929d669e556dc70b21289f44ebab4572483351a7b4cc68d7a184e",
+      "size": 8183
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/system.py",
+      "sha256": "57d64627be1f283f6434cfdc112ff71eea8953aa3902a8c8bc9abc2c4f88bc6f",
+      "size": 3744
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/tools/eval_ate.py",
+      "sha256": "5f7b9a6f9ff9f57260f9f35c2b485e932d38d3144f25ad97e374b86d905e02f2",
+      "size": 12043
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_runtime/src/utils.py",
+      "sha256": "9cc55887878a73e170b97ffe90083d5cb5091ff14c3477118f0bde3f3177dba3",
+      "size": 3395
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/ec_timing.py",
+      "sha256": "a0c009e8f66cf14bb68101277808169d14698b3dae15fe469ba24947058ab70c",
+      "size": 2691
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/runtime/ec/run_ec_round2.py",
+      "sha256": "45c172f13e5a7361f9d6f6f91c2fc2eb18cac45d44fe27a1a1e9e1637de6defd",
+      "size": 9112
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/start_orin_15w.sh",
+      "sha256": "c73bf822a046ddd3d61f897c25f2401c3280dc272afb5685195eedffd0743446",
+      "size": 439
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/start_rtx.sh",
+      "sha256": "27725b35104c821da7ed739cdf797822cac7f9a06d42e47033c8721668a1b466",
+      "size": 254
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/support/validated_orin_idle_checker.py",
+      "sha256": "3b35c6c4bc7bf974f95796f6710573d82ead43253af98231c7331c38d1b0b474",
+      "size": 10395
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/test_capture_kit.py",
+      "sha256": "1c5affb8bc20f7ea6526eb1feb5da06a6cae63beebd917ceac2c6ac45a5d0836",
+      "size": 4998
+    },
+    {
+      "path": "DASIP_round2/experiments/rtx_ncu_abcd_v4/verify_kit.py",
+      "sha256": "99f7137ec1a4dbe40cb5c162187c90c00223396d4e4fcacef6dada2fcb38dd6e",
+      "size": 310
+    },
+    {
+      "path": "DASIP_round2/experiments/run_component_profile.py",
+      "sha256": "95c0c2dd9a40e4ac84f805f02dce743c2a081d825314e2a8f947fc3dacfcd4b5",
+      "size": 9429
+    },
+    {
+      "path": "DASIP_round2/experiments/run_component_profile_campaign.py",
+      "sha256": "d11577127e0d46ffbd32a125bb57850542fb4664702f8ff9aa047679ddb256b3",
+      "size": 8150
+    },
+    {
+      "path": "DASIP_round2/experiments/run_coslam_round2.py",
+      "sha256": "77957004066675b73428b89e761f7f91dede771c840c0a4d5a7b882821c3b8a9",
+      "size": 11355
+    },
+    {
+      "path": "DASIP_round2/experiments/run_dp_completion_priority.py",
+      "sha256": "30bbb5a7087e0c3f71d6ceea41ab0cb2a262721927a88a54966e938220bbc90c",
+      "size": 7384
+    },
+    {
+      "path": "DASIP_round2/experiments/run_ec_component_profile.py",
+      "sha256": "5d1459f1014660f9527871a02d84808413288e07a400e37481886865976b900e",
+      "size": 7605
+    },
+    {
+      "path": "DASIP_round2/experiments/run_ec_component_profile_campaign.py",
+      "sha256": "b470563a3179f3b7b08ea4319a56d9d155a03deac226542e5551557e7255d8a7",
+      "size": 8161
+    },
+    {
+      "path": "DASIP_round2/experiments/run_ec_quality_campaign.py",
+      "sha256": "5592f22051abc22143b440f5267107396e4a85d0b6f19875160352488b077c5a",
+      "size": 7326
+    },
+    {
+      "path": "DASIP_round2/experiments/run_ec_quality_round2.py",
+      "sha256": "8ddd69923e5373871c1d2358befe199cc44c9b4b40389f38d2284db759125a71",
+      "size": 9843
+    },
+    {
+      "path": "DASIP_round2/experiments/run_ec_timing_campaign.py",
+      "sha256": "f630957e2fadef987cc457b222e882b1b89b68784641daed5786c528d12bef22",
+      "size": 7721
+    },
+    {
+      "path": "DASIP_round2/experiments/run_manifest_queue.py",
+      "sha256": "d2e20e9116f0402b71ab239be9d578564b188c2642357783aec6dd67d65f62d8",
+      "size": 5274
+    },
+    {
+      "path": "DASIP_round2/experiments/run_night_campaign.py",
+      "sha256": "7ce0cddb452182dec16cf63524825977f13254bf94811cb318a8810b7a155b20",
+      "size": 8054
+    },
+    {
+      "path": "DASIP_round2/experiments/run_reconstruction_campaign.py",
+      "sha256": "ba58fdb32e94196f75cdf24b762e867413cba257d14c687156a042547e59b13e",
+      "size": 8712
+    },
+    {
+      "path": "DASIP_round2/experiments/run_rtx_composition_campaign.py",
+      "sha256": "2de061366b3f67da51c8b0729db766d15b9a54324a32812a132919eaac385a71",
+      "size": 5034
+    },
+    {
+      "path": "DASIP_round2/experiments/run_rtx_remaining_night.py",
+      "sha256": "0424b11485f7cbadb39be5f7d8606e30ed1668222ffb9402559433e5fff07726",
+      "size": 4916
+    },
+    {
+      "path": "DASIP_round2/experiments/test_paper_aggregation.py",
+      "sha256": "0280798264a8182cf913c8471969c3045656bb6ca1f42131bad787b899f40e59",
+      "size": 1529
+    },
+    {
+      "path": "DASIP_round2/experiments/test_reference_support.py",
+      "sha256": "a18a526b932ab162f19cab930c59bb5cb9aec7d4fbbff19d05b6ee1278e15527",
+      "size": 5163
+    },
+    {
+      "path": "DASIP_round2/experiments/validate_component_profile.py",
+      "sha256": "e5ce3f1c8179caf5817d219397a024475c27de6c2d6af81458c21b64ed309c30",
+      "size": 6434
+    },
+    {
+      "path": "DASIP_round2/experiments/validate_ec_component_profile.py",
+      "sha256": "bad88a968af933b6f9d5c35cf7875eb350befcf67f25ae4362103c450b452e6f",
+      "size": 6432
+    },
+    {
+      "path": "DASIP_round2/experiments/validation_ec_quality_v1/office0_BASE_H16_50frames/config.yaml",
+      "sha256": "b63341287f11bb61400127bd3531e0ef5b27f7603c76da8b0c8e1c7454d15b83",
+      "size": 2521
+    },
+    {
+      "path": "DASIP_round2/experiments/validation_ec_quality_v1/office0_MC_H16_50frames/config.yaml",
+      "sha256": "ccd34c5b82e8bd46f0e80f7c35c33761507adffb095f6dbf5ffb51bdb52ef8e5",
+      "size": 2519
+    },
+    {
+      "path": "DASIP_round2/experiments/validation_ec_quality_v2/office0_BASE_H16_50frames/config.yaml",
+      "sha256": "aec3da4b43c519e7a501b5fdbbfa34495bc0135a92535df822b5d4125c728da4",
+      "size": 2521
+    },
+    {
+      "path": "DASIP_round2/experiments/validation_ec_quality_v2/office0_BASE_H19_50frames/config.yaml",
+      "sha256": "1d110789c6c52e99c891d1d1bd90f84cb040ef9629c9a10161e11f2794ce28ad",
+      "size": 2521
+    },
+    {
+      "path": "DASIP_round2/experiments/validation_ec_quality_v2/office0_MC_H16_50frames/config.yaml",
+      "sha256": "b4071fed731bbb7b818f42e7fc4b1548fd89b19249e29b8f34f5caa21c9a9f03",
+      "size": 2519
+    },
+    {
+      "path": "DASIP_round2/experiments/validation_ec_quality_v2/office0_MC_H19_50frames/config.yaml",
+      "sha256": "730a218b3ca09b8166386907b691585329658e422cedfd9e81b0fd6de32fcedc",
+      "size": 2519
+    },
+    {
+      "path": "DASIP_round2/experiments/verify_component_profile_handoff.py",
+      "sha256": "ab9ad96a777f097c72c47ea484806606c17c3ef27f4e1297d6a81413e16d6c7e",
+      "size": 1509
+    },
+    {
+      "path": "DASIP_round2/experiments/verify_ec_component_profile_handoff.py",
+      "sha256": "bd9f65e5c2a9fb60223e651ac65c82fae26fdf80ce830649171e0d483eca80bc",
+      "size": 1808
+    },
+    {
+      "path": "DASIP_round2/experiments/verify_orin_runtime_handoff.py",
+      "sha256": "6cd45a2b3377fcdc69578c14b5ea354086f55f38436db90798e348627488ca16",
+      "size": 2131
+    },
+    {
+      "path": "DASIP_round2/experiments/watch_round2_queue.py",
+      "sha256": "4190eb2c18beedd73706515f572c820be5a30253b96dc7bea806cfbbc048c6c4",
+      "size": 5858
+    },
+    {
+      "path": "Neuslam paper/optimization/extract_section6_results.py",
+      "sha256": "7698cf9d1dc4a7cd937235d86becc45a2c6696d567eb97bded88cea337a10eb1",
+      "size": 31175
+    },
+    {
+      "path": "DASIP_suite/ba_bucket_for_all_datasets/generate_tables.py",
+      "sha256": "77eaec86a27557528d08808d6d4dbca24732451bf09efb573809c87968f803f5",
+      "size": 19256
+    },
+    {
+      "path": "DASIP_suite/tracking_depth_spatial/generate_tables.py",
+      "sha256": "5c0e39aacdd6cdbacc308d43db4f6af570a34d156761cc025224e6d18e5dd187",
+      "size": 13607
+    },
+    {
+      "path": "DASIP_suite/tracking_depth_spatial/hyperparameters/analyze_hyperparameters.py",
+      "sha256": "a10b7fe5f39d9bffa59c550cd50a74b740c798e6d903b9d47174bf5e7f101572",
+      "size": 22687
+    },
+    {
+      "path": "DASIP_round2/metadata/FILE_LOCATIONS.json",
+      "sha256": "6af4c6b3abb4c2489a2729f69976bfdee5e4f4083eaa27602e612d3a1bee873e",
+      "size": 17946
+    }
+  ]
+}

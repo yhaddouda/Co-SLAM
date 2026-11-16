@@ -1,0 +1,142 @@
+HashGrid:
+  decoder_lr: 0.01
+  embed2color: false
+  geo_feat_dim: 15
+  grid_lr: 0.01
+  hash_size: 16
+  hidden_dim: 32
+  hidden_dim_color: 32
+  n_bins: 16
+  num_layers: 2
+  num_layers_color: 2
+  oneGrid: true
+  posEnc: OneBlob
+  sigmoid: true
+  tcnn_network: false
+  voxel_color: 0.08
+  voxel_sdf: 0.02
+cam:
+  H: 680
+  W: 1200
+  crop_edge: 0
+  cx: 599.5
+  cy: 339.5
+  fx: 600.0
+  fy: 600.0
+  png_depth_scale: 1000.0
+data:
+  input_folder: /home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00
+  output: /home/yh279050/work/Co-SLAM/DASIP_round2/experiments/validation_ec_quality_v1/office0_MC_H16_50frames
+  translation: 0
+dataset: replica
+debug:
+  c2wSave: 2000
+  checkpoint: false
+  flag: false
+  showMapperLoss: true
+  showTrackerLoss: false
+device: cuda:0
+do_obj: false
+inherit_from: configs/Replica/replica.yaml
+keyframe:
+  depth_range:
+  - 0.0
+  - 8.0
+  keyframe_size: 20
+  keyframe_step: 25
+  keyframe_step_bg: 5
+  kf_number_bg: 0.05
+mapping:
+  BA: true
+  bound:
+  - - -3
+    - 3
+  - - -4
+    - 2.5
+  - - -2
+    - 2.5
+  center_weight: 200
+  color_weight: 5
+  depth_weight: 0.1
+  do_bg: true
+  every_frame: 5
+  fs_weight: 5
+  iters: 10
+  iters_first: 200
+  keyframe_every: 5
+  lr_factor: 1
+  marching_cubes_bound:
+  - - -2.2
+    - 2.6
+  - - -3.4
+    - 2.1
+  - - -1.4
+    - 2.0
+  max_n_models: 100
+  optim_cur: true
+  optimize_window_size: 5
+  optimize_window_size_bg: 30
+  pixels: 120
+  pixels_bg: 2000
+  tail_weight: 10
+  weight_decay: 0.013
+mesh:
+  final_voxel_size: 0.02
+  optimize_times: 400
+  voxel_size: 0.05
+objNetwork:
+  hidden_feature_size: 32
+  n_bins: 9
+  n_bins_cam2surface: 1
+  n_unidir_funcs: 5
+  obj_scale: 2
+  optimize_lr: 0.001
+  other_eps: 0.05
+  pos_embedding_method: fourier
+  surface_eps: 0.1
+sampleAndLoss:
+  c_dim: 32
+  decoder_lr: 0.001
+  depth_trunc: 100.0
+  depth_weight: 0.1
+  far: 5
+  fs_weight: 10
+  grid_lr: 0.005
+  learnable_beta: true
+  n_importance: 8
+  n_range_d: 11
+  n_samples_d: 32
+  n_stratified: 32
+  near: 0
+  perturb: true
+  range_d: 0.1
+  rgb_missing: 0.05
+  rgb_weight: 5.0
+  sdf_weight: 1000
+  smooth_margin: 0.05
+  smooth_pts: 32
+  smooth_vox: 0.1
+  smooth_weight: 1.0e-06
+  trunc: 0.1
+  trunc_factor: 0.4
+  truncation: 0.06
+  white_bkgd: false
+scale: 1
+sleepTime: 0.001
+tracking:
+  center_weight: 200
+  color_weight: 5
+  const_speed_assumption: true
+  depth_weight: 1
+  fs_weight: 10
+  gt_camera: false
+  ignore_edge_H: 20
+  ignore_edge_W: 20
+  iters: 8
+  last_best: false
+  lr_R: 0.001
+  lr_T: 0.001
+  pixels: 64
+  pixels_bg: 1000
+  tail_weight: 50
+verbose: false

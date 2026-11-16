@@ -10,7 +10,7 @@ import torch.nn as nn
 # Local imports
 from .encodings import get_encoder
 from .decoder import ColorSDFNet, ColorSDFNet_v2
-from .utils import sample_pdf, batchify, get_sdf_loss, mse2psnr, compute_loss
+from .utils import sample_pdf, batchify, get_sdf_loss, mse2psnr, compute_loss, masked_mse_loss
 
 #nvtx 
 import nvtx
@@ -163,6 +163,9 @@ class JointEncoding(nn.Module):
         
 
     def set_timing_context(self, frame_id: int, outer_stage: str):
+        self._pruning_frame = int(frame_id)
+        self._pruning_stage = str(outer_stage)
+        self._pruning_iteration = 0
         self.layer_timing.set_context(frame_id, outer_stage)
         if self.collect_uniform_sampling_stats:
             self.uniform_sampling_stats.set_context(frame_id, outer_stage)
@@ -224,7 +227,7 @@ class JointEncoding(nn.Module):
         with torch.cuda.nvtx.range("SDF_Net"):
             self.sdf_net = batchify(self.decoder.sdf_net, None)
 
-    def sdf2weights(self, sdf, z_vals, args=None):
+    def sdf2weights(self, sdf, z_vals, args=None, sample_mask=None):
         '''
         Convert signed distance function to weights.
 
@@ -238,15 +241,19 @@ class JointEncoding(nn.Module):
 
         signs = sdf[:, 1:] * sdf[:, :-1]
         mask = torch.where(signs < 0.0, torch.ones_like(signs), torch.zeros_like(signs))
+        if sample_mask is not None:
+            mask = mask * (sample_mask[:, 1:] & sample_mask[:, :-1])
         inds = torch.argmax(mask, axis=1)
         inds = inds[..., None]
         z_min = torch.gather(z_vals, 1, inds) # The first surface
         mask = torch.where(z_vals < z_min + args['data']['sc_factor'] * args['training']['trunc'], torch.ones_like(z_vals), torch.zeros_like(z_vals))
 
         weights = weights * mask
+        if sample_mask is not None:
+            weights = weights * sample_mask
         return weights / (torch.sum(weights, axis=-1, keepdims=True) + 1e-8)
     
-    def raw2outputs(self, raw, z_vals, white_bkgd=False):
+    def raw2outputs(self, raw, z_vals, white_bkgd=False, sample_mask=None):
         '''
         Perform volume rendering using weights computed from sdf.
 
@@ -260,7 +267,7 @@ class JointEncoding(nn.Module):
             weights: [N_rays, N_samples]
         '''
         rgb = torch.sigmoid(raw[...,:3])  # [N_rays, N_samples, 3]
-        weights = self.sdf2weights(raw[..., 3], z_vals, args=self.config)
+        weights = self.sdf2weights(raw[..., 3], z_vals, args=self.config, sample_mask=sample_mask)
         rgb_map = torch.sum(weights[...,None] * rgb, -2)  # [N_rays, 3]
 
         depth_map = torch.sum(weights * z_vals, -1)
@@ -432,6 +439,7 @@ class JointEncoding(nn.Module):
         uniform_samples_until_depth=None,
         uniform_sample_count=None,
         morton_sort_override=None,
+        depth_sampling_cache=None,
     ):
         '''
         Params:
@@ -445,7 +453,11 @@ class JointEncoding(nn.Module):
         # Sample depth
         with self.layer_timing.stage('depth_sampling'):
             with torch.cuda.nvtx.range("depth_sampling"):
-                if target_d is not None:
+                if depth_sampling_cache is not None:
+                    if uniform_samples_until_depth:
+                        raise ValueError('Depth caching requires dense baseline sampling')
+                    z_vals = depth_sampling_cache.prepare(rays_o, target_d)
+                elif target_d is not None:
                     z_samples = torch.linspace(-self.config['training']['range_d'], self.config['training']['range_d'], steps=self.config['training']['n_range_d']).to(target_d) 
                     z_samples = z_samples[None, :].repeat(n_rays, 1) + target_d
                     z_samples[target_d.squeeze()<=0] = torch.linspace(self.config['cam']['near'], self.config['cam']['far'], steps=self.config['training']['n_range_d']).to(target_d) 
@@ -509,9 +521,12 @@ class JointEncoding(nn.Module):
 
             # Perturb sampling depths
                 if self.config['training']['perturb'] > 0.:
-                    mids = .5 * (z_vals[...,1:] + z_vals[...,:-1])
-                    upper = torch.cat([mids, z_vals[...,-1:]], -1)
-                    lower = torch.cat([z_vals[...,:1], mids], -1)
+                    if depth_sampling_cache is not None:
+                        upper, lower = depth_sampling_cache.upper, depth_sampling_cache.lower
+                    else:
+                        mids = .5 * (z_vals[...,1:] + z_vals[...,:-1])
+                        upper = torch.cat([mids, z_vals[...,-1:]], -1)
+                        lower = torch.cat([z_vals[...,:1], mids], -1)
                     z_vals = lower + (upper - lower) * torch.rand(z_vals.shape).to(rays_o)
 
         # Run rendering pipeline
@@ -580,6 +595,7 @@ class JointEncoding(nn.Module):
         uniform_samples_until_depth=None,
         uniform_sample_count=None,
         morton_sort_override=None,
+        depth_sampling_cache=None,
     ):
         '''
         Params:
@@ -594,6 +610,10 @@ class JointEncoding(nn.Module):
              r r r tz
         '''
 
+        from optimization.sample_pruning import pruning_policy, forward_pruned
+        if pruning_policy(self) is not None:
+            return forward_pruned(self, rays_o, rays_d, target_rgb, target_d)
+
         # Get render results
         with self.layer_timing.stage('render_rays'):
             with torch.cuda.nvtx.range("render_rays"):
@@ -604,6 +624,7 @@ class JointEncoding(nn.Module):
                     uniform_samples_until_depth=uniform_samples_until_depth,
                     uniform_sample_count=uniform_sample_count,
                     morton_sort_override=morton_sort_override,
+                    depth_sampling_cache=depth_sampling_cache,
                 )
 
         if not self.training:
@@ -611,8 +632,8 @@ class JointEncoding(nn.Module):
         
         # Get depth and rgb weights for loss
         with torch.cuda.nvtx.range("prepare_weights"):
-            valid_depth_mask = (target_d.squeeze() > 0.) * (target_d.squeeze() < self.config['cam']['depth_trunc'])
-            rgb_weight = valid_depth_mask.clone().unsqueeze(-1)
+            valid_depth_mask = (target_d.squeeze(-1) > 0.) & (target_d.squeeze(-1) < self.config['cam']['depth_trunc'])
+            rgb_weight = valid_depth_mask.to(target_rgb.dtype).unsqueeze(-1)
             rgb_weight[rgb_weight==0] = self.config['training']['rgb_missing']
 
         # Get render loss
@@ -620,11 +641,11 @@ class JointEncoding(nn.Module):
             with torch.cuda.nvtx.range("compute_render_losses"):
                 rgb_loss = compute_loss(rend_dict["rgb"]*rgb_weight, target_rgb*rgb_weight)
                 psnr = mse2psnr(rgb_loss)
-                depth_loss = compute_loss(rend_dict["depth"].squeeze()[valid_depth_mask], target_d.squeeze()[valid_depth_mask])
+                depth_loss = masked_mse_loss(rend_dict["depth"].reshape(-1), target_d.squeeze(-1), valid_depth_mask)
 
                 if 'rgb0' in rend_dict:
                     rgb_loss += compute_loss(rend_dict["rgb0"]*rgb_weight, target_rgb*rgb_weight)
-                    depth_loss += compute_loss(rend_dict["depth0"][valid_depth_mask], target_d.squeeze()[valid_depth_mask])
+                    depth_loss += masked_mse_loss(rend_dict["depth0"].reshape(-1), target_d.squeeze(-1), valid_depth_mask)
         
         # Get sdf loss
         with self.layer_timing.stage('compute_sdf_losses'):

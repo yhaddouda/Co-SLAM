@@ -1,0 +1,1302 @@
+{
+  "purpose": "Close the agreed RTX MC+DP composition gap: all 24 native-capacity scenes, three paired seeds, quality/full-call and iteration timings; reuse existing BASE/MC/DP controls",
+  "runtime_manifest_sha256": "9786e843d6856dcc443fb08ebb9646a5d759384e19ab3456552b51e2281e616d",
+  "jobs": [
+    {
+      "id": "Replica_office0_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_office0_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Replica_office0_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_office0_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_office0_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_office0_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Replica_office0_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_office0_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_office0_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_office0_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Replica_office0_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_office0_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_office1_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office1",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office1_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office1_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office1_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_office1_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office1",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office1_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office1_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office1_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_office1_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "office1",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office1_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office1_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office1_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_office2_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office2",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office2_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office2_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office2_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_office2_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office2",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office2_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office2_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office2_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_office2_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "office2",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office2_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office2_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office2_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_office3_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office3",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office3_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office3_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office3_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_office3_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office3",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office3_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office3_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office3_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_office3_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "office3",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office3_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office3_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office3_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_office4_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office4",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office4_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office4_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office4_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_office4_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office4",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office4_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office4_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office4_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_office4_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "office4",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office4_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_office4_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_office4_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_room0_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "room0",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_room0_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Replica_room0_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_room0_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_room0_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "room0",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_room0_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Replica_room0_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_room0_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_room0_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "room0",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_room0_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Replica_room0_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Replica_room0_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_room1_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "room1",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room1_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room1_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_room1_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_room1_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "room1",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room1_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room1_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_room1_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_room1_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "room1",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room1_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room1_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_room1_DP_seed2"
+      }
+    },
+    {
+      "id": "Replica_room2_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "room2",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room2_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room2_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_room2_DP_seed0"
+      }
+    },
+    {
+      "id": "Replica_room2_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "room2",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room2_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room2_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_room2_DP_seed1"
+      }
+    },
+    {
+      "id": "Replica_room2_MC_DP_seed2",
+      "dataset": "Replica",
+      "scene": "room2",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 2000,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room2_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/replica_native_extension_v1/Replica_room2_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Replica_room2_DP_seed2"
+      }
+    },
+    {
+      "id": "ScanNet_scene0000_MC_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 5578,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0000_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/ScanNet_scene0000_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0000_DP_seed0"
+      }
+    },
+    {
+      "id": "ScanNet_scene0000_MC_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 5578,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0000_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/ScanNet_scene0000_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0000_DP_seed1"
+      }
+    },
+    {
+      "id": "ScanNet_scene0000_MC_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 5578,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0000_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/ScanNet_scene0000_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0000_DP_seed2"
+      }
+    },
+    {
+      "id": "ScanNet_scene0059_MC_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 12,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 1807,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0059_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0059_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0059_DP_seed0"
+      }
+    },
+    {
+      "id": "ScanNet_scene0059_MC_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 12,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 1807,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0059_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0059_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0059_DP_seed1"
+      }
+    },
+    {
+      "id": "ScanNet_scene0059_MC_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0059",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 12,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0059_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 1807,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0059_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0059_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0059_DP_seed2"
+      }
+    },
+    {
+      "id": "ScanNet_scene0106_MC_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2324,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0106_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/ScanNet_scene0106_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0106_DP_seed0"
+      }
+    },
+    {
+      "id": "ScanNet_scene0106_MC_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2324,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0106_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/ScanNet_scene0106_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0106_DP_seed1"
+      }
+    },
+    {
+      "id": "ScanNet_scene0106_MC_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2324,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0106_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/ScanNet_scene0106_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/ScanNet_scene0106_DP_seed2"
+      }
+    },
+    {
+      "id": "ScanNet_scene0169_MC_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2034,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0169_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0169_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0169_DP_seed0"
+      }
+    },
+    {
+      "id": "ScanNet_scene0169_MC_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2034,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0169_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0169_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0169_DP_seed1"
+      }
+    },
+    {
+      "id": "ScanNet_scene0169_MC_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0169",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0169_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2034,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0169_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0169_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0169_DP_seed2"
+      }
+    },
+    {
+      "id": "ScanNet_scene0181_MC_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2349,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0181_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0181_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0181_DP_seed0"
+      }
+    },
+    {
+      "id": "ScanNet_scene0181_MC_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2349,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0181_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0181_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0181_DP_seed1"
+      }
+    },
+    {
+      "id": "ScanNet_scene0181_MC_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0181",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0181_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2349,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0181_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0181_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0181_DP_seed2"
+      }
+    },
+    {
+      "id": "ScanNet_scene0207_MC_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 1988,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0207_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0207_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0207_DP_seed0"
+      }
+    },
+    {
+      "id": "ScanNet_scene0207_MC_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 1988,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0207_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0207_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0207_DP_seed1"
+      }
+    },
+    {
+      "id": "ScanNet_scene0207_MC_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0207",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 14,
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0207_00",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 1988,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0207_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/ScanNet_scene0207_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/ScanNet_scene0207_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_br_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1167,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_br_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_br_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_br_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_br_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1167,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_br_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_br_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_br_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_br_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "br",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/breakfast_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1167,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_br_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_br_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_br_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_ck_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1211,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_ck_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Synthetic_ck_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_ck_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_ck_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1211,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_ck_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Synthetic_ck_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_ck_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_ck_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1211,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_ck_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Synthetic_ck_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_ck_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_gr_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1442,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gr_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gr_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_gr_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_gr_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1442,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gr_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gr_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_gr_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_gr_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "gr",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/green_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1442,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gr_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gr_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_gr_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_gwr_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1493,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gwr_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gwr_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_gwr_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_gwr_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1493,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gwr_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gwr_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_gwr_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_gwr_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "gwr",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/grey_white_room",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1493,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gwr_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_gwr_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_gwr_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_ma_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 920,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_ma_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_ma_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_ma_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_ma_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 920,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_ma_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_ma_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_ma_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_ma_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "ma",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/morning_apartment",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 920,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_ma_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_ma_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_ma_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_tg_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 395,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_tg_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Synthetic_tg_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_tg_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_tg_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 395,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_tg_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Synthetic_tg_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_tg_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_tg_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 395,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_tg_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Synthetic_tg_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Synthetic_tg_DP_seed2"
+      }
+    },
+    {
+      "id": "Synthetic_wr_MC_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1676,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_wr_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_wr_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_wr_DP_seed0"
+      }
+    },
+    {
+      "id": "Synthetic_wr_MC_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1676,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_wr_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_wr_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_wr_DP_seed1"
+      }
+    },
+    {
+      "id": "Synthetic_wr_MC_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "wr",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/whiteroom",
+      "quality": true,
+      "export_mesh": true,
+      "frames": 0,
+      "expected_native_frames": 1676,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_wr_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Synthetic_wr_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Synthetic_wr_DP_seed2"
+      }
+    },
+    {
+      "id": "Tum_fr1_desk_MC_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 592,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr1_desk_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Tum_fr1_desk_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr1_desk_DP_seed0"
+      }
+    },
+    {
+      "id": "Tum_fr1_desk_MC_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 592,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr1_desk_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Tum_fr1_desk_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr1_desk_DP_seed1"
+      }
+    },
+    {
+      "id": "Tum_fr1_desk_MC_DP_seed2",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 592,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr1_desk_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Tum_fr1_desk_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr1_desk_DP_seed2"
+      }
+    },
+    {
+      "id": "Tum_fr2_xyz_MC_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 3397,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Tum_fr2_xyz_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Tum_fr2_xyz_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Tum_fr2_xyz_DP_seed0"
+      }
+    },
+    {
+      "id": "Tum_fr2_xyz_MC_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 3397,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Tum_fr2_xyz_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Tum_fr2_xyz_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Tum_fr2_xyz_DP_seed1"
+      }
+    },
+    {
+      "id": "Tum_fr2_xyz_MC_DP_seed2",
+      "dataset": "Tum",
+      "scene": "fr2_xyz",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg2_xyz",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 3397,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Tum_fr2_xyz_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/all_nonreplica_extension_v1/Tum_fr2_xyz_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/dp_completion_priority_v1/Tum_fr2_xyz_DP_seed2"
+      }
+    },
+    {
+      "id": "Tum_fr3_office_MC_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "condition": "MC_DP",
+      "seed": 0,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2515,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr3_office_BASE_seed0",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Tum_fr3_office_MC_seed0",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr3_office_DP_seed0"
+      }
+    },
+    {
+      "id": "Tum_fr3_office_MC_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "condition": "MC_DP",
+      "seed": 1,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2515,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr3_office_BASE_seed1",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Tum_fr3_office_MC_seed1",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr3_office_DP_seed1"
+      }
+    },
+    {
+      "id": "Tum_fr3_office_MC_DP_seed2",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "condition": "MC_DP",
+      "seed": 2,
+      "hash_size": 16,
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "quality": true,
+      "export_mesh": false,
+      "frames": 0,
+      "expected_native_frames": 2515,
+      "controls": {
+        "BASE": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr3_office_BASE_seed2",
+        "MC": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/morton_core_v1/Tum_fr3_office_MC_seed2",
+        "DP": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/support_reference_v1/Tum_fr3_office_DP_seed2"
+      }
+    }
+  ]
+}

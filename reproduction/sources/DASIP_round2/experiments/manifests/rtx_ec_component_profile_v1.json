@@ -1,0 +1,52 @@
+{
+  "platform": "RTX_4070",
+  "system": "EC-SLAM",
+  "power_mode": null,
+  "idle_check_command": null,
+  "jobs": [
+    {
+      "id": "EC_Replica_office0_H16_BASE_profile_seed0",
+      "workload": "Replica_office0_H16",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00"
+    },
+    {
+      "id": "EC_Replica_office0_H16_BASE_profile_seed1",
+      "workload": "Replica_office0_H16",
+      "condition": "BASE",
+      "seed": 1,
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00"
+    },
+    {
+      "id": "EC_Replica_office0_H16_BASE_profile_seed2",
+      "workload": "Replica_office0_H16",
+      "condition": "BASE",
+      "seed": 2,
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00"
+    },
+    {
+      "id": "EC_Replica_office0_H19_BASE_profile_seed0",
+      "workload": "Replica_office0_H19",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00"
+    },
+    {
+      "id": "EC_Replica_office0_H19_BASE_profile_seed1",
+      "workload": "Replica_office0_H19",
+      "condition": "BASE",
+      "seed": 1,
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00"
+    },
+    {
+      "id": "EC_Replica_office0_H19_BASE_profile_seed2",
+      "workload": "Replica_office0_H19",
+      "condition": "BASE",
+      "seed": 2,
+      "datadir": "/home/yh279050/work/EC-SLAM/datasets/vmap/office_0/imap/00"
+    }
+  ],
+  "clock_policy_record": "Preserve current local policy; no automatic changes",
+  "local_live_status": "/home/yh279050/work/Co-SLAM/DASIP_round2/results/LIVE_STATUS.md"
+}

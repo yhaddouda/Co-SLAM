@@ -9,7 +9,7 @@ grid:
   
 
 data:
-  datadir: ./data/scannet/scene0000_00
+  datadir: ../datasets/data/scans/scene0000_00
   trainskip: 1
   output: output/scannet/scene0000_00
   exp_name: demo_mp_v2

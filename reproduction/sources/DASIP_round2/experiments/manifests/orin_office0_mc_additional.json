@@ -1,0 +1,41 @@
+{
+  "purpose": "Full-sequence timing-only paper candidate measurements; seed-paired, native public settings except explicit condition/capacity; manual mode selection",
+  "jobs": [
+    {
+      "id": "Replica_office0_MC_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/data/Replica/office0",
+      "condition": "MC",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_MC_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/data/Replica/office0",
+      "condition": "MC_DP",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_MC_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/data/Replica/office0",
+      "condition": "MC_DP",
+      "seed": 1,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_MC_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/data/Replica/office0",
+      "condition": "MC",
+      "seed": 1,
+      "quality": false
+    }
+  ]
+}

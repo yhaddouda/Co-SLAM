@@ -1,0 +1,52 @@
+{
+  "platform": "ORIN_15W",
+  "power_mode": null,
+  "idle_check_command": null,
+  "jobs": [
+    {
+      "id": "Replica_office0_H16_BASE_profile_seed0",
+      "workload": "Replica_office0_H16",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "/home/yh279050/work/data/Replica/office0"
+    },
+    {
+      "id": "Replica_office0_H16_BASE_profile_seed1",
+      "workload": "Replica_office0_H16",
+      "condition": "BASE",
+      "seed": 1,
+      "datadir": "/home/yh279050/work/data/Replica/office0"
+    },
+    {
+      "id": "Replica_office0_H19_BASE_profile_seed0",
+      "workload": "Replica_office0_H19",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "/home/yh279050/work/data/Replica/office0"
+    },
+    {
+      "id": "Replica_office0_H19_BASE_profile_seed1",
+      "workload": "Replica_office0_H19",
+      "condition": "BASE",
+      "seed": 1,
+      "datadir": "/home/yh279050/work/data/Replica/office0"
+    },
+    {
+      "id": "Tum_fr1_desk_H16_BASE_profile_seed0",
+      "workload": "Tum_fr1_desk_H16",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk"
+    },
+    {
+      "id": "Tum_fr1_desk_H16_BASE_profile_seed1",
+      "workload": "Tum_fr1_desk_H16",
+      "condition": "BASE",
+      "seed": 1,
+      "datadir": "/home/yh279050/work/data/TUM/rgbd_dataset_freiburg1_desk"
+    }
+  ],
+  "clock_policy_record": "Preserve existing local policy; record measured/current known state; no automatic clock changes",
+  "path_status": "Resolve against local completed controls before freezing a new local manifest",
+  "benchmark_queue_modified": false
+}

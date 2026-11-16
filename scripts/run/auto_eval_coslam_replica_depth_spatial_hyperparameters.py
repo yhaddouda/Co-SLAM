@@ -8,9 +8,9 @@ import sys
 from pathlib import Path
 
 if __package__:
-    from . import auto_eval_coslam_replica_many_runs_bucket as common
+    from . import auto_eval_coslam_all_datasets_bucket as common
 else:
-    import auto_eval_coslam_replica_many_runs_bucket as common
+    import auto_eval_coslam_all_datasets_bucket as common
 
 
 DEFAULT_SCENES = ["office0"]

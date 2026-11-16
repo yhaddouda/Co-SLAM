@@ -176,3 +176,21 @@ DASIP paper/
 Neuslam paper/
 CSI_2A/
 DASIP_suite/
+
+# Local paper revision, experiment outputs and transfer bundles
+/DASIP_round2/
+
+# Local preservation archives; publish verified packages separately from code.
+/_preservation/
+
+# Keep measurements and machine-local staging out of new code commits.
+/results/
+/Quality/
+/temp_configs/
+/transfer/
+/home/
+/.agents/
+/.aws/
+
+# Audited source copies from ignored paper folders contain code/configs only.
+!/reproduction/sources/**

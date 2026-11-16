@@ -1,0 +1,485 @@
+{
+  "purpose": "Frozen public-reference BASE versus conservative DP; full-scene ATE and final Replica/Synthetic meshes; reconstruction scoring follows separately",
+  "jobs": [
+    {
+      "id": "Replica_office0_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office0_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_tg_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_tg_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr1_desk_BASE_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr1_desk_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0106_BASE_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0106_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Replica_office0_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office0_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_tg_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_tg_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr1_desk_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr1_desk_BASE_seed1",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0106_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0106_BASE_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Replica_office0_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office0_DP_seed2",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office0",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_tg_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_tg_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "tg",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/thin_geometry",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr1_desk_BASE_seed2",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr1_desk_DP_seed2",
+      "dataset": "Tum",
+      "scene": "fr1_desk",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg1_desk",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0106_BASE_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0106_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0106",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0106_00",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Replica_room0_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room0_DP_seed0",
+      "dataset": "Replica",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ck_BASE_seed0",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ck_DP_seed0",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr3_office_BASE_seed0",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr3_office_DP_seed0",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0000_BASE_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0000_DP_seed0",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "condition": "DP",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Replica_room0_DP_seed1",
+      "dataset": "Replica",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room0_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ck_DP_seed1",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ck_BASE_seed1",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr3_office_DP_seed1",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr3_office_BASE_seed1",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0000_DP_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "condition": "DP",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0000_BASE_seed1",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Replica_room0_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room0_DP_seed2",
+      "dataset": "Replica",
+      "scene": "room0",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room0",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ck_BASE_seed2",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Synthetic_ck_DP_seed2",
+      "dataset": "Synthetic",
+      "scene": "ck",
+      "datadir": "/home/yh279050/work/datasets/data/neural_rgbd_data/complete_kitchen",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Tum_fr3_office_BASE_seed2",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "Tum_fr3_office_DP_seed2",
+      "dataset": "Tum",
+      "scene": "fr3_office",
+      "datadir": "/home/yh279050/work/datasets/data/TUM/rgbd_dataset_freiburg3_long_office_household",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0000_BASE_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    },
+    {
+      "id": "ScanNet_scene0000_DP_seed2",
+      "dataset": "ScanNet",
+      "scene": "scene0000",
+      "datadir": "/home/yh279050/work/datasets/data/scans/scene0000_00",
+      "condition": "DP",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": false
+    }
+  ]
+}

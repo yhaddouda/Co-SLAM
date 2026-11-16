@@ -1,0 +1,365 @@
+{
+  "purpose": "Native BASE/MC on six additional Replica scenes, including office4",
+  "jobs": [
+    {
+      "id": "Replica_office1_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office1_MC_seed0",
+      "dataset": "Replica",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office2_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office2_MC_seed0",
+      "dataset": "Replica",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office3_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office3_MC_seed0",
+      "dataset": "Replica",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office4_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office4_MC_seed0",
+      "dataset": "Replica",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room1_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room1_MC_seed0",
+      "dataset": "Replica",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room2_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room2_MC_seed0",
+      "dataset": "Replica",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "condition": "MC",
+      "seed": 0,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office1_MC_seed1",
+      "dataset": "Replica",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office1_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office2_MC_seed1",
+      "dataset": "Replica",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office2_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office3_MC_seed1",
+      "dataset": "Replica",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office3_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office4_MC_seed1",
+      "dataset": "Replica",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office4_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room1_MC_seed1",
+      "dataset": "Replica",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room1_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room2_MC_seed1",
+      "dataset": "Replica",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "condition": "MC",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room2_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office1_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office1_MC_seed2",
+      "dataset": "Replica",
+      "scene": "office1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office1",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office2_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office2_MC_seed2",
+      "dataset": "Replica",
+      "scene": "office2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office2",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office3_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office3_MC_seed2",
+      "dataset": "Replica",
+      "scene": "office3",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office3",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office4_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_office4_MC_seed2",
+      "dataset": "Replica",
+      "scene": "office4",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/office4",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room1_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room1_MC_seed2",
+      "dataset": "Replica",
+      "scene": "room1",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room1",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room2_BASE_seed2",
+      "dataset": "Replica",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "condition": "BASE",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    },
+    {
+      "id": "Replica_room2_MC_seed2",
+      "dataset": "Replica",
+      "scene": "room2",
+      "datadir": "/home/yh279050/work/datasets/data/Replica/room2",
+      "condition": "MC",
+      "seed": 2,
+      "quality": true,
+      "export_mesh": true
+    }
+  ]
+}

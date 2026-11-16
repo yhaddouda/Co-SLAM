@@ -1,0 +1,48 @@
+Organization handoff for the Orin checkout
+
+The user wants all three stages of the same paper preserved: Neuslam, DASIP,
+and DASIP round 2. Publish only implementation/configs/reproduction scripts
+to GitHub. Keep manuscript files and experiment data locally, ignored by Git.
+Do not overwrite independent Orin code or results with RTX copies.
+
+1. Inspect local instructions, Git status and existing experiment processes.
+   Record the exact runtime commits, local changes, environment and power-mode
+   settings. Do not stop running jobs or launch new experiments for cleanup.
+
+2. Bring in the maintenance scripts and reproduction/README.md from the code
+   backup branch. Read docs/research_preservation.md. Preserve the working-tree
+   changes, untracked runtime code and Git history before reorganizing.
+
+3. Run preserve_research.py plan with a new _preservation/<date>/inventory.json.
+   Inspect every review_large/review_other entry. The tool's automatic code
+   and evidence roots are based on the RTX layout; add Orin-specific source,
+   raw measurements and plans explicitly before building the archives. Never
+   infer that an unselected file is disposable.
+
+4. Preserve and verify all paper versions, raw timings, trajectories, configs,
+   per-run source snapshots, hardware/power/thermal records, profiling reports,
+   controller records, export manifests and failure/exclusion evidence. Keep
+   original MAXN and 15 W observations separate. Preserve both systems' source
+   and native-environment metadata. Do not execute imported result code.
+
+5. Build and verify local code/evidence archives. Match result-ledger hashes,
+   exported ZIP hashes and the archive manifests. Verify received archive
+   coverage before treating an RTX export as an additional backup. Preserve
+   original local Orin evidence if it is absent from received exports.
+
+6. Only remove demonstrably generated caches after their exact meshes, saved
+   camera poses and GT inputs are preserved and verified locally. The legacy
+   cleanup helper recognizes one RTX-era cache naming convention; do not use
+   it on arbitrary Orin arrays, training outputs or trajectory files. Never
+   remove checkpoints, meshes, datasets or unique evidence by filename suffix.
+
+7. Freeze the paper source snapshot and use a separate branch/output root for
+   future experiments. Commit/push source code only to the user's repository.
+   Check the staged file list for paper text, PDFs, result CSVs, arrays, logs,
+   exports, credentials and machine-local directories before pushing. Preserve
+   local papers/data even if they were previously tracked; use --cached when
+   removing tracked data from the Git index. Do not rewrite existing history.
+
+Finish with exact archive paths, hashes, verification results, cleanup byte
+counts, preserved limitations and the pushed branch/commit. Do not report
+this Orin cleanup as completed merely because the RTX handoff was prepared.

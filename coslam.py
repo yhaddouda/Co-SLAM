@@ -11,6 +11,7 @@ import torch.nn.functional as F
 import argparse
 import shutil
 import json
+import csv
 import cv2
 
 from torch.utils.data import DataLoader
@@ -29,6 +30,15 @@ from datasets.dataset import get_dataset
 from utils import coordinates, extract_mesh, colormap_image
 from tools.eval_ate import pose_evaluation
 from optimization.utils import at_to_transform_matrix, qt_to_transform_matrix, matrix_to_axis_angle, matrix_to_quaternion
+from optimization.ba_experiments import (
+    VARIANTS as BA_EXPERIMENT_VARIANTS, forward_ba_lattice,
+    prepare_mixed_ba_batches, commit_ba_poses_fast,
+    ba_bucket_mode,
+    configure_ba_embed_eps,
+)
+from optimization.tracking_experiments import (
+    DevicePoseTransform, DeferredBestPose, DenseDepthLattice, tracking_execution_flags,
+)
 
 # Pytorch profiler imports
 import torch.profiler
@@ -136,12 +146,37 @@ class CoSLAM():
         self.validate_tracking_bucket_config()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.dataset = get_dataset(config)
-        
-        self.create_bounds()
-        self.create_pose_data()
-        self.get_pose_representation()
-        self.keyframeDatabase = self.create_kf_database(config)
-        self.model = JointEncoding(config, self.bounding_box).to(self.device)
+        if len(self.dataset) == 0:
+            raise ValueError(
+                f"Dataset is empty: {config['data']['datadir']}. "
+                "Check data.datadir and export the color, depth, and pose files."
+            )
+        if (
+            ba_bucket_mode(config) == 'legacy'
+            and not config.get('tracking_depth_spatial', {}).get('stats_only', False)
+        ):
+            required_rays = int(config['ba_bucket'].get(
+                'pool_factor', config['mapping']['iters']
+            )) * config['mapping']['sample']
+            if self.dataset.num_rays_to_save < required_rays:
+                raise ValueError(
+                    f"Config error: ba_bucket requires {required_rays} rays in "
+                    f"the first keyframe, but mapping.n_pixels saves only "
+                    f"{self.dataset.num_rays_to_save} after cropping. "
+                    "Increase mapping.n_pixels or reduce the BA pool/sample size."
+                )
+        self.tracking_depth_spatial_stats_only = bool(
+            config.get('tracking_depth_spatial', {}).get('stats_only', False)
+        )
+
+        if not self.tracking_depth_spatial_stats_only:
+            self.create_bounds()
+            self.create_pose_data()
+            self.get_pose_representation()
+            self.keyframeDatabase = self.create_kf_database(config)
+            self.model = JointEncoding(config, self.bounding_box).to(self.device)
+        else:
+            self.model = None
 
         timing_cfg = config.get('timing', {})
         mode = timing_cfg.get('mode', 'none')
@@ -177,6 +212,47 @@ class CoSLAM():
                 warmup_frames=timing_cfg.get('warmup_frames', 0),
             )
 
+        spatial_cfg = config.get('tracking_depth_spatial', {})
+        self.tracking_depth_spatial_fallback_stats_enabled = bool(
+            spatial_cfg.get('enabled', False)
+            and spatial_cfg.get('collect_fallback_stats', False)
+        )
+        self.tracking_depth_spatial_sample_count_stats_enabled = bool(
+            spatial_cfg.get('enabled', False)
+            and spatial_cfg.get('collect_sample_count_stats', False)
+        )
+        self.tracking_depth_spatial_stats_enabled = bool(
+            self.tracking_depth_spatial_fallback_stats_enabled
+            or self.tracking_depth_spatial_sample_count_stats_enabled
+        )
+        self.tracking_depth_spatial_stats_warmup_frames = int(
+            spatial_cfg.get('stats_warmup_frames', 0)
+        )
+        self.tracking_depth_spatial_frames = 0
+        self.tracking_depth_spatial_fallback_frames = 0
+        self.tracking_depth_spatial_full_uniform_fallback_frames = 0
+        self.tracking_depth_spatial_uniform_count_histogram = [
+            0
+        ] * (int(config['training']['n_samples_d']) + 1)
+        default_fallback_stats_csv = os.path.join(
+            config['data']['output'],
+            config['data']['exp_name'],
+            'tracking_depth_spatial_fallback_summary.csv',
+        )
+        self.tracking_depth_spatial_fallback_stats_csv = spatial_cfg.get(
+            'fallback_stats_csv',
+            default_fallback_stats_csv,
+        )
+        default_sample_count_stats_csv = os.path.join(
+            config['data']['output'],
+            config['data']['exp_name'],
+            'tracking_depth_spatial_sample_count_summary.csv',
+        )
+        self.tracking_depth_spatial_sample_count_stats_csv = spatial_cfg.get(
+            'sample_count_stats_csv',
+            default_sample_count_stats_csv,
+        )
+
         # Profiling configuration
         self.enable_profiling = False #config.get('profiling', {}).get('enabled', False)
         self.profiler_config = create_profiler_config(
@@ -187,6 +263,24 @@ class CoSLAM():
         print("3D Morton sample sort is :", self.config['grid'].get('morton_sort', False))
 
     def validate_tracking_bucket_config(self):
+        from optimization.sample_pruning import validate_pruning
+        validate_pruning(self.config)
+        tracking_execution_flags(self.config)
+        ba_mode = ba_bucket_mode(self.config)
+        experiment = self.config.get('ba_experiment', {})
+        variant = experiment.get('variant', 'baseline')
+        if variant not in BA_EXPERIMENT_VARIANTS:
+            raise ValueError(f'Unknown ba_experiment.variant: {variant}')
+        margin = float(experiment.get('margin', 0.))
+        if not math.isfinite(margin) or margin < 0:
+            raise ValueError('ba_experiment.margin must be finite and nonnegative')
+        if variant.startswith('lattice') or variant == 'baseline_fast':
+            if self.config.get('ba_bucket', {}).get('enabled', False):
+                raise ValueError('BA mixed-batch variants require ba_bucket.enabled=false')
+            if variant.startswith('lattice') and self.config['training'].get('n_importance', 0):
+                raise ValueError('BA lattice variants require training.n_importance=0')
+        if variant in {'bucket', 'bucket_dense', 'bucket_reference'} and not self.config.get('ba_bucket', {}).get('enabled', False):
+            raise ValueError(f'{variant} requires ba_bucket.enabled=true')
         bucket_enabled = self.config.get('tracking_bucket', {}).get('enabled', False)
         spatial_cfg = self.config.get('tracking_depth_spatial', {})
         spatial_enabled = spatial_cfg.get('enabled', False)
@@ -214,6 +308,8 @@ class CoSLAM():
                 "training.n_samples_d > 0."
             )
         if spatial_enabled:
+            if spatial_cfg.get('mode', 'pruned') not in {'pruned', 'balanced_dense'}:
+                raise ValueError('tracking_depth_spatial.mode must be pruned or balanced_dense')
             pool_factor = spatial_cfg.get('pool_factor', 4)
             if isinstance(pool_factor, bool) or int(pool_factor) != pool_factor or pool_factor < 1:
                 raise ValueError(
@@ -254,7 +350,7 @@ class CoSLAM():
                 "training.n_samples_d > 0."
             )
         ba_pool_factor = self.config.get('ba_bucket', {}).get('pool_factor', self.config['mapping']['iters'])
-        if ba_bucket_enabled and ba_pool_factor < self.config['mapping']['iters']:
+        if ba_mode == 'legacy' and ba_pool_factor < self.config['mapping']['iters']:
             raise ValueError(
                 "Config error: ba_bucket.pool_factor must be >= mapping.iters "
                 "so enough buckets exist for bundle adjustment."
@@ -302,6 +398,153 @@ class CoSLAM():
             self._tracking_depth_spatial_rng = np.random.default_rng(seed)
         return self._tracking_depth_spatial_rng
 
+    def record_tracking_depth_spatial_frame(
+        self, fell_back, uniform_count, frame_id=None
+    ):
+        """Record one integer-only result after the per-frame batch is fixed."""
+        if not self.tracking_depth_spatial_stats_enabled:
+            return
+        if (
+            frame_id is not None
+            and int(frame_id) < self.tracking_depth_spatial_stats_warmup_frames
+        ):
+            return
+        uniform_count = int(uniform_count)
+        self.tracking_depth_spatial_frames += 1
+        self.tracking_depth_spatial_uniform_count_histogram[uniform_count] += 1
+        if not fell_back:
+            return
+        self.tracking_depth_spatial_fallback_frames += 1
+        if int(uniform_count) == int(self.config['training']['n_samples_d']):
+            self.tracking_depth_spatial_full_uniform_fallback_frames += 1
+
+    def write_tracking_depth_spatial_fallback_summary(self):
+        """Write one compact CSV row for the completed scene."""
+        if not self.tracking_depth_spatial_fallback_stats_enabled:
+            return
+
+        total = self.tracking_depth_spatial_frames
+        fallback = self.tracking_depth_spatial_fallback_frames
+        full_uniform = self.tracking_depth_spatial_full_uniform_fallback_frames
+        fallback_percent = 100.0 * fallback / total if total else 0.0
+        full_uniform_percent = 100.0 * full_uniform / total if total else 0.0
+        output_csv = os.fspath(self.tracking_depth_spatial_fallback_stats_csv)
+        output_dir = os.path.dirname(output_csv)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+        scene = os.path.basename(os.path.normpath(self.config['data']['datadir']))
+        with open(output_csv, 'w', encoding='utf-8', newline='') as handle:
+            writer = csv.writer(handle)
+            writer.writerow([
+                'scene',
+                'spatial_frames',
+                'fallback_frames',
+                'fallback_percent',
+                'full_uniform_fallback_frames',
+                'full_uniform_fallback_percent',
+                'uniform_samples',
+            ])
+            writer.writerow([
+                scene,
+                total,
+                fallback,
+                f'{fallback_percent:.6f}',
+                full_uniform,
+                f'{full_uniform_percent:.6f}',
+                int(self.config['training']['n_samples_d']),
+            ])
+        print(
+            '[tracking-depth-spatial] '
+            f'fallbacks={fallback}/{total} ({fallback_percent:.2f}%), '
+            f'full-{int(self.config["training"]["n_samples_d"])}='
+            f'{full_uniform}/{total} ({full_uniform_percent:.2f}%)'
+        )
+
+    @staticmethod
+    def histogram_quantile(histogram, quantile):
+        """Return a linearly interpolated quantile from a count histogram."""
+        total = sum(histogram)
+        if total == 0:
+            return 0.0
+
+        def value_at_rank(rank):
+            cumulative = 0
+            for value, frequency in enumerate(histogram):
+                cumulative += frequency
+                if rank < cumulative:
+                    return float(value)
+            return float(len(histogram) - 1)
+
+        position = (total - 1) * quantile
+        lower_rank = math.floor(position)
+        upper_rank = math.ceil(position)
+        lower_value = value_at_rank(lower_rank)
+        upper_value = value_at_rank(upper_rank)
+        return lower_value + (upper_value - lower_value) * (position - lower_rank)
+
+    def write_tracking_depth_spatial_sample_count_summary(self):
+        """Write compact distribution statistics for tracking batch ceilings."""
+        if not self.tracking_depth_spatial_sample_count_stats_enabled:
+            return
+
+        histogram = self.tracking_depth_spatial_uniform_count_histogram
+        total = self.tracking_depth_spatial_frames
+        weighted_sum = sum(
+            count * frequency for count, frequency in enumerate(histogram)
+        )
+        mean = weighted_sum / total if total else 0.0
+        variance = (
+            sum(
+                frequency * ((count - mean) ** 2)
+                for count, frequency in enumerate(histogram)
+            ) / total
+            if total
+            else 0.0
+        )
+        nonzero_counts = [
+            count for count, frequency in enumerate(histogram) if frequency
+        ]
+        minimum = nonzero_counts[0] if nonzero_counts else 0
+        maximum = nonzero_counts[-1] if nonzero_counts else 0
+        median = self.histogram_quantile(histogram, 0.5)
+        p95 = self.histogram_quantile(histogram, 0.95)
+
+        output_csv = os.fspath(
+            self.tracking_depth_spatial_sample_count_stats_csv
+        )
+        output_dir = os.path.dirname(output_csv)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+        scene = os.path.basename(os.path.normpath(self.config['data']['datadir']))
+        with open(output_csv, 'w', encoding='utf-8', newline='') as handle:
+            writer = csv.writer(handle)
+            writer.writerow([
+                'scene',
+                'spatial_frames',
+                'mean_uniform_samples',
+                'stddev_uniform_samples',
+                'median_uniform_samples',
+                'p95_uniform_samples',
+                'min_uniform_samples',
+                'max_uniform_samples',
+            ])
+            writer.writerow([
+                scene,
+                total,
+                f'{mean:.6f}',
+                f'{math.sqrt(variance):.6f}',
+                f'{median:.6f}',
+                f'{p95:.6f}',
+                minimum,
+                maximum,
+            ])
+        print(
+            '[tracking-depth-spatial] uniform-count '
+            f'mean={mean:.2f}, std={math.sqrt(variance):.2f}, '
+            f'median={median:.2f}, p95={p95:.2f}, '
+            f'range=[{minimum}, {maximum}], frames={total}'
+        )
+
     def prepare_naive_tracking_pruning(self, target_d, frame_id):
         n_samples_d = self.config['training']['n_samples_d']
         if n_samples_d <= 0:
@@ -322,7 +565,10 @@ class CoSLAM():
         else:
             n_uniform = n_samples_d
 
-        if getattr(self.model, 'collect_uniform_sampling_stats', False):
+        if (
+            self.model is not None
+            and getattr(self.model, 'collect_uniform_sampling_stats', False)
+        ):
             self.model.uniform_sampling_stats.record_batch(
                 ray_counts_before_depth=counts,
                 valid_depth=valid_depth,
@@ -450,8 +696,14 @@ class CoSLAM():
             'uniform_counts': uniform_counts,
         }
 
-    def prepare_tracking_depth_spatial_batch(self, batch, iH, iW, frame_id):
-        """Select one fixed, spatially distributed depth-pruned tracking batch.
+    def prepare_tracking_depth_spatial_batch(
+        self, batch, iH, iW, frame_id, counts_only=False
+    ):
+        """Select one fixed, spatially distributed tracking batch.
+
+        ``balanced_dense`` applies spatial quotas to the full candidate pool
+        and retains the original sampling lattice. ``pruned`` selects the
+        smallest depth ceiling that meets the sample/coverage requirements.
 
         Candidate screening deliberately stays on the input tensor's device
         (normally CPU). Directions and RGB values are gathered only after the
@@ -459,9 +711,10 @@ class CoSLAM():
 
         Returns ``None`` when the candidate pool cannot provide both a complete
         batch and the requested grid coverage. The caller then uses the existing
-        fixed random-batch depth-pruning path.
+        fixed random-batch path, with dense sampling in balanced mode.
         """
         spatial_cfg = self.config.get('tracking_depth_spatial', {})
+        balanced_dense = spatial_cfg.get('mode', 'pruned') == 'balanced_dense'
         tracking_sample = int(self.config['tracking']['sample'])
         pool_factor = int(spatial_cfg.get('pool_factor', 4))
         grid_h = int(spatial_cfg.get('grid_h', 8))
@@ -504,13 +757,19 @@ class CoSLAM():
             depth = batch['depth'].squeeze(0)[h_slice, w_slice]
             candidate_depth = depth[candidate_h, candidate_w]
             valid_depth = torch.isfinite(candidate_depth) & (candidate_depth > 0)
-            if int(valid_depth.sum()) < tracking_sample:
+            if not balanced_dense and int(valid_depth.sum()) < tracking_sample:
                 return None
 
-            counts = self.compute_uniform_until_depth_counts(
-                candidate_depth.unsqueeze(-1),
-                valid_depth=valid_depth,
-            )
+            if balanced_dense:
+                # Spatial quotas apply to the full candidate pool. Selecting a
+                # low depth ceiling otherwise removes farther pose constraints.
+                eligible_depth = torch.ones_like(valid_depth)
+                counts = torch.full_like(candidate_depth, int(self.config['training']['n_samples_d']), dtype=torch.long)
+            else:
+                eligible_depth = valid_depth
+                counts = self.compute_uniform_until_depth_counts(
+                    candidate_depth.unsqueeze(-1), valid_depth=valid_depth,
+                )
             cell_h = candidate_h * grid_h // H
             cell_w = candidate_w * grid_w // W
             cells = cell_h * grid_w + cell_w
@@ -521,8 +780,8 @@ class CoSLAM():
 
             # A small count-by-cell histogram gives every possible ceiling in
             # one pass, avoiding a candidate-depth sort.
-            valid_counts = counts[valid_depth]
-            valid_cells = cells[valid_depth]
+            valid_counts = counts[eligible_depth]
+            valid_cells = cells[eligible_depth]
             n_samples_d = int(self.config['training']['n_samples_d'])
             histogram_indices = (valid_counts - 1) * num_cells + valid_cells
             histogram = torch.bincount(
@@ -540,7 +799,7 @@ class CoSLAM():
             ceiling = int(feasible_ceilings[0]) + 1
 
             eligible_positions = torch.nonzero(
-                valid_depth & (counts <= ceiling),
+                eligible_depth & (counts <= ceiling),
                 as_tuple=False,
             ).flatten()
             eligible_cells = cells[eligible_positions]
@@ -611,10 +870,16 @@ class CoSLAM():
 
             # Reuse screened coordinates, depths, and counts; do not recompute
             # them from flattened pixel indices after selection.
-            selected_h = candidate_h[selected_positions]
-            selected_w = candidate_w[selected_positions]
-            selected_depth = candidate_depth[selected_positions].unsqueeze(-1)
             uniform_count = int(counts[selected_positions].max())
+
+        if counts_only:
+            return {'uniform_count': uniform_count}
+
+        selected_h = candidate_h[selected_positions]
+        selected_w = candidate_w[selected_positions]
+        selected_depth = candidate_depth[selected_positions].unsqueeze(-1)
+        if balanced_dense:
+            selected_depth = torch.where(torch.isfinite(selected_depth), selected_depth, 0.)
 
         with nvtx_range("tracking_depth_spatial_gather_transfer"):
             direction = batch['direction'].squeeze(0)[h_slice, w_slice, :]
@@ -1127,6 +1392,14 @@ class CoSLAM():
         '''
         Smoothness loss of feature grid
         '''
+        sampling=self.config.get('sample_pruning',{})
+        if (sampling.get('enabled',False) and sampling.get('policy') in ('support_tv','ray_cohort')
+                and getattr(self.model,'_pruning_stage','')=='Bundle_Adjustment'
+                and sampling.get('tv_fraction',.125)<1):
+            from optimization.sample_pruning import sampled_tv_loss
+            count=max(1,int((sample_points-1)**3*sampling.get('tv_fraction',.125)/6))
+            return sampled_tv_loss(self,sample_points,voxel_size,margin,count)
+
         volume = self.bounding_box[:, 1] - self.bounding_box[:, 0]
 
         grid_size = (sample_points-1) * voxel_size
@@ -1141,9 +1414,12 @@ class CoSLAM():
         
 
         sdf = self.model.query_sdf(pts_tcnn, embed=True)
-        tv_x = torch.pow(sdf[1:,...]-sdf[:-1,...], 2).sum()
-        tv_y = torch.pow(sdf[:,1:,...]-sdf[:,:-1,...], 2).sum()
-        tv_z = torch.pow(sdf[:,:,1:,...]-sdf[:,:,:-1,...], 2).sum()
+        # TCNN features are FP16: these large reductions (and their sum) can
+        # overflow before normalization. Accumulate in FP32 without copying
+        # the full feature grid or changing the sampling/regularization.
+        tv_x = torch.pow(sdf[1:,...]-sdf[:-1,...], 2).sum(dtype=torch.float32)
+        tv_y = torch.pow(sdf[:,1:,...]-sdf[:,:-1,...], 2).sum(dtype=torch.float32)
+        tv_z = torch.pow(sdf[:,:,1:,...]-sdf[:,:,:-1,...], 2).sum(dtype=torch.float32)
 
         loss = (tv_x + tv_y + tv_z)/ (sample_points**3)
 
@@ -1151,8 +1427,10 @@ class CoSLAM():
     
     def get_pose_param_optim(self, poses, mapping=True):
         task = 'mapping' if mapping else 'tracking'
-        cur_trans = torch.nn.parameter.Parameter(poses[:, :3, 3])
-        cur_rot = torch.nn.parameter.Parameter(self.matrix_to_tensor(poses[:, :3, :3]))
+        # Optimizer parameters must own their storage: tracking predictions
+        # can reference a previously saved pose, including the fixed anchor.
+        cur_trans = torch.nn.parameter.Parameter(poses[:, :3, 3].detach().clone())
+        cur_rot = torch.nn.parameter.Parameter(self.matrix_to_tensor(poses[:, :3, :3]).detach().clone())
         pose_optimizer = torch.optim.Adam([{"params": cur_rot, "lr": self.config[task]['lr_rot']},
                                                {"params": cur_trans, "lr": self.config[task]['lr_trans']}])
         
@@ -1169,6 +1447,9 @@ class CoSLAM():
             batch['direction']: view direction [1, H, W, 3]
             cur_frame_id: current frame id
         '''
+        sampling=self.config.get('sample_pruning',{})
+        if sampling.get('enabled',False) and sampling.get('policy')=='ray_cohort' and 'Bundle_Adjustment' in sampling.get('stages',('Tracking','Bundle_Adjustment')):
+            return self.global_BA_cohort(batch,cur_frame_id)
         self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
         self.model.set_timing_context(cur_frame_id, 'Bundle_Adjustment')
         self.coslam_timing.set_context(cur_frame_id, 'Bundle_Adjustment')
@@ -1213,17 +1494,33 @@ class CoSLAM():
                 current_rays = current_rays.reshape(-1, current_rays.shape[-1])
 
             ba_bucket_cfg = self.config.get('ba_bucket', {})
-            bucketed_ba = ba_bucket_cfg.get('enabled', False)
+            ba_mode = ba_bucket_mode(self.config)
+            configure_ba_embed_eps(self.map_optimizer, self.config)
+            bucketed_ba = ba_mode == 'legacy'
+            ba_experiment = self.config.get('ba_experiment', {})
+            ba_variant = ba_experiment.get('variant', 'baseline')
+            if ba_mode == 'guarded':
+                # Keep mixed-depth optimizer batches and the dense objective.
+                # Prune only network queries outside supervised/rendered support.
+                ba_variant = 'lattice_guarded'
+            elif ba_mode == 'stable':
+                # Preserve dense sample positions, losses, and mixed ray draws;
+                # recover speed from preloading and the existing batched commit.
+                ba_variant = 'baseline_fast'
             ba_morton_sort = ba_bucket_cfg.get(
                 'morton_inside_bucket',
                 self.config['grid'].get('morton_sort', True),
             )
             ba_buckets = None
             ba_buckets_prepared = False
+            mixed_ba_batches = None
 
             for i in range(self.config['mapping']['iters']):
                 with self.coslam_timing.stage('BA_ITER_PROFILE_TOTAL'):
                     with nvtx_range(f"BA_ITER_PROFILE_TOTAL"):
+                        if ba_variant in {'lattice_guarded_preload', 'baseline_fast', 'lattice_guarded_fast'} and mixed_ba_batches is None:
+                            with nvtx_range('prepare_mixed_ba_batches'):
+                                mixed_ba_batches = prepare_mixed_ba_batches(self, current_rays)
                         if bucketed_ba and not ba_buckets_prepared:
                             # Include one-time bucket preprocessing in the first
                             # complete BA-iteration and derived frame totals.
@@ -1245,6 +1542,12 @@ class CoSLAM():
                                     target_d = ba_buckets['target_d'][i]
                                     ids_all = ba_buckets['ids_all'][i]
                                     uniform_count = ba_buckets['uniform_counts'][i]
+                                elif mixed_ba_batches is not None:
+                                    rays_d_cam = mixed_ba_batches['rays_d_cam'][i]
+                                    target_s = mixed_ba_batches['target_s'][i]
+                                    target_d = mixed_ba_batches['target_d'][i]
+                                    ids_all = mixed_ba_batches['ids_all'][i]
+                                    uniform_count = None
                                 else:
                                     rays, ids = self.keyframeDatabase.sample_global_rays(self.config['mapping']['sample'])
 
@@ -1255,7 +1558,7 @@ class CoSLAM():
                                     rays = torch.cat([rays, current_rays_batch], dim=0) # N, 7
                                     ids_all = torch.cat([ids//self.config['mapping']['keyframe_every'], -torch.ones((len(idx_cur)))]).to(torch.int64)
                                     uniform_count = None
-                        if not bucketed_ba:
+                        if not bucketed_ba and mixed_ba_batches is None:
                             with self.coslam_timing.stage('cpu_to_gpu_BA'):
                                 with nvtx_range("cpu_to_gpu_gt_BA"):
                                     rays_d_cam = rays[..., :3].to(self.device)
@@ -1271,15 +1574,31 @@ class CoSLAM():
 
                         with self.coslam_timing.stage('Forward_BA'):
                             with nvtx_range("Forward_BA"):
-                                ret = self.model.forward(
-                                    rays_o,
-                                    rays_d,
-                                    target_s,
-                                    target_d,
-                                    uniform_samples_until_depth=bool(bucketed_ba),
-                                    uniform_sample_count=uniform_count,
-                                    morton_sort_override=bool(ba_morton_sort) if bucketed_ba else None,
-                                )
+                                if ba_variant.startswith('lattice'):
+                                    ret = forward_ba_lattice(
+                                        self.model, rays_o, rays_d, target_s, target_d,
+                                        guarded=ba_variant != 'lattice',
+                                        margin=float(ba_bucket_cfg.get('depth_margin', 0.)
+                                                     if ba_mode == 'guarded' else ba_experiment.get('margin', 0.)),
+                                        morton_sort_override=bool(ba_morton_sort) if ba_mode == 'guarded' else None,
+                                    )
+                                else:
+                                    ret = self.model.forward(
+                                        rays_o,
+                                        rays_d,
+                                        target_s,
+                                        target_d,
+                                        uniform_samples_until_depth=bool(bucketed_ba and ba_variant != 'bucket_dense'),
+                                        uniform_sample_count=uniform_count,
+                                        morton_sort_override=bool(ba_morton_sort) if bucketed_ba else None,
+                                    )
+                                    if ba_variant == 'bucket_reference':
+                                        # Isolate the all-samples denominator change;
+                                        # this does not correct changed mask balancing.
+                                        training = self.config['training']
+                                        ratio = (uniform_count + training['n_range_d']) / (training['n_samples_d'] + training['n_range_d'])
+                                        ret['sdf_loss'] = ret['sdf_loss'] * ratio
+                                        ret['fs_loss'] = ret['fs_loss'] * ratio
 
                         with self.coslam_timing.stage('Loss_calculation_BA'):
                             with nvtx_range("Loss_calculation_BA"):
@@ -1291,14 +1610,14 @@ class CoSLAM():
 
                         with self.coslam_timing.stage('Optimize_map_pose_BA'):
                             with nvtx_range("Optimize_map_pose_BA"):
-                                if (i + 1) % cfg["mapping"]["map_accum_step"] == 0:
-                                    if (i + 1) > cfg["mapping"]["map_wait_step"]:
+                                if (i + 1) % self.config["mapping"]["map_accum_step"] == 0:
+                                    if (i + 1) > self.config["mapping"]["map_wait_step"]:
                                         self.map_optimizer.step()
                                     else:
                                         print('Wait update')
                                     self.map_optimizer.zero_grad()
 
-                                if pose_optimizer is not None and (i + 1) % cfg["mapping"]["pose_accum_step"] == 0:
+                                if pose_optimizer is not None and (i + 1) % self.config["mapping"]["pose_accum_step"] == 0:
                                     pose_optimizer.step()
                                     # get SE3 poses to do forward pass
                                     pose_optim = self.matrix_from_tensor(cur_rot, cur_trans)
@@ -1320,22 +1639,153 @@ class CoSLAM():
 
             with nvtx_range("update_pose_BA"):
                 if pose_optimizer is not None and len(frame_ids_all) > 1:
-                    for i in range(len(frame_ids_all[1:])):
-                        self.est_c2w_data[int(frame_ids_all[i+1].item())] = self.matrix_from_tensor(cur_rot[i:i+1], cur_trans[i:i+1]).detach().clone()[0]
-                
-                    if self.config['mapping']['optim_cur']:
-                        print('Update current pose')
-                        self.est_c2w_data[cur_frame_id] = self.matrix_from_tensor(cur_rot[-1:], cur_trans[-1:]).detach().clone()[0]
+                    if ba_variant in {'baseline_fast', 'lattice_guarded_fast'}:
+                        commit_ba_poses_fast(self, pose_optim, frame_ids_all, cur_frame_id)
+                        if self.config['mapping']['optim_cur']:
+                            print('Update current pose')
+                    else:
+                        for i in range(len(frame_ids_all[1:])):
+                            self.est_c2w_data[int(frame_ids_all[i+1].item())] = self.matrix_from_tensor(cur_rot[i:i+1], cur_trans[i:i+1]).detach().clone()[0]
+
+                        if self.config['mapping']['optim_cur']:
+                            print('Update current pose')
+                            self.est_c2w_data[cur_frame_id] = self.matrix_from_tensor(cur_rot[-1:], cur_trans[-1:]).detach().clone()[0]
         self.model.flush_scene_timing()
         self.coslam_timing.flush()
         self.step_profiler()
  
+    def global_BA_cohort(self, batch, cur_frame_id):
+        """Structured ray pruning with rotating historical keyframe coverage.
+
+        Native mixed ray draws and iteration schedules are retained. Removing
+        a historical group's rays also removes its pose gradient. With fresh
+        Adam state per BA call, omitting those empty pose blocks is a consequence
+        of constraint selection, not a separate pose optimization algorithm.
+        The attribution control ``cohort_keep_empty_pose_blocks`` includes and
+        commits every historical pose block while keeping ray selection fixed.
+        """
+        from optimization.cohort_selection import choose_pose_cohort
+        self.start_profiling(wait=0, warmup=0, active=1, repeat=1)
+        self.model.set_timing_context(cur_frame_id, 'Bundle_Adjustment')
+        self.coslam_timing.set_context(cur_frame_id, 'Bundle_Adjustment')
+        with record_function("Bundle_Adjustment"):
+            mapping=self.config['mapping'];sampling=self.config['sample_pruning']
+            with nvtx_range("stack_KF_poses_BA"):
+                poses=torch.stack([self.est_c2w_data[i] for i in
+                    range(0,cur_frame_id,mapping['keyframe_every'])]).detach()
+            with nvtx_range("which_poses_to_opt_BA"):
+                frame_ids_all=torch.tensor(list(range(0,cur_frame_id,mapping['keyframe_every'])))
+                active,probability,phase=choose_pose_cohort(len(poses),cur_frame_id,
+                    mapping['map_every'],sampling.get('cohort_count',4),
+                    sampling.get('recent_keyframes',4),sampling.get('seed',0),
+                    transition_keyframes=sampling.get('cohort_transition_keyframes',0),
+                    transition_period=sampling.get('cohort_transition_period',2))
+                self.model._cohort_active_ids=active
+                self.model._cohort_probabilities=probability
+                current_pose=self.est_c2w_data[cur_frame_id][None,...].detach()
+                fixed_poses=torch.cat([poses,current_pose],dim=0).detach().to(self.device)
+                keep_empty_pose_blocks=bool(sampling.get('cohort_keep_empty_pose_blocks',False))
+                optimized_history=(np.arange(1,len(poses),dtype=np.int64)
+                    if keep_empty_pose_blocks else active[active!=0])
+                # Match native early BA: it does not optimize any poses until
+                # at least two historical keyframes have been accumulated.
+                can_optimize=len(self.keyframeDatabase.frame_ids)>=2
+                if not can_optimize:
+                    optimized_history=np.empty(0,dtype=np.int64)
+                optimize_current=bool(can_optimize and mapping['optim_cur'])
+                parameter_indices=np.concatenate([optimized_history,
+                    np.array([len(poses)],dtype=np.int64) if optimize_current else np.empty(0,dtype=np.int64)])
+                pose_optimizer=None
+                poses_all=fixed_poses
+                if len(parameter_indices):
+                    parameter_ids=torch.from_numpy(parameter_indices).to(self.device)
+                    cur_rot,cur_trans,pose_optimizer=self.get_pose_param_optim(fixed_poses[parameter_ids])
+                    pose_optim=self.matrix_from_tensor(cur_rot,cur_trans).to(self.device)
+                    poses_all=fixed_poses.index_copy(0,parameter_ids,pose_optim)
+                if not hasattr(self,'_cohort_pose_diagnostics'):
+                    self._cohort_pose_diagnostics=[]
+                self._cohort_pose_diagnostics.append(dict(frame=int(cur_frame_id),
+                    numhistory=len(poses),active_history_indices=active.tolist(),phase=int(phase),
+                    optimized_history_indices=optimized_history.tolist(),optim_cur=optimize_current,
+                    cohort_count=int(sampling.get('cohort_count',4)),
+                    recent_keyframes=int(sampling.get('recent_keyframes',4)),
+                    cohort_transition_keyframes=int(sampling.get('cohort_transition_keyframes',0)),
+                    cohort_transition_period=int(sampling.get('cohort_transition_period',2)),
+                    cohort_keep_empty_pose_blocks=keep_empty_pose_blocks,
+                    optimized_pose_count=len(parameter_indices)))
+            with nvtx_range("setup_optimizer_BA"):
+                self.map_optimizer.zero_grad()
+                if pose_optimizer is not None:pose_optimizer.zero_grad()
+            with nvtx_range("cat&reshape_BA"):
+                current_rays=torch.cat([batch['direction'],batch['rgb'],batch['depth'][...,None]],dim=-1)
+                current_rays=current_rays.reshape(-1,current_rays.shape[-1])
+            configure_ba_embed_eps(self.map_optimizer,self.config)
+            for i in range(mapping['iters']):
+                with self.coslam_timing.stage('BA_ITER_PROFILE_TOTAL'):
+                    with nvtx_range("BA_ITER_PROFILE_TOTAL"):
+                        with self.coslam_timing.stage('sample_global_rays_BA'):
+                            with nvtx_range("sample_global_rays_BA"):
+                                rays,ids=self.keyframeDatabase.sample_global_rays(mapping['sample'])
+                                idx_cur=random.sample(range(0,self.dataset.H*self.dataset.W),
+                                    max(mapping['sample']//len(self.keyframeDatabase.frame_ids),mapping['min_pixels_cur']))
+                                rays=torch.cat([rays,current_rays[idx_cur,:]],dim=0)
+                                ids_all=torch.cat([ids//mapping['keyframe_every'],
+                                    -torch.ones((len(idx_cur)))]).to(torch.int64)
+                        self.model._ray_sampling_metadata=rays
+                        self.model._ray_group_ids=ids_all
+                        with self.coslam_timing.stage('cpu_to_gpu_BA'):
+                            with nvtx_range("cpu_to_gpu_gt_BA"):
+                                rays_d_cam=rays[...,:3].to(self.device)
+                                target_s=rays[...,3:6].to(self.device)
+                                target_d=rays[...,6:7].to(self.device)
+                        with self.coslam_timing.stage('resize_tensors_BA'):
+                            rays_d=torch.sum(rays_d_cam[...,None,None,:]*poses_all[ids_all,None,:3,:3],-1)
+                            rays_o=poses_all[ids_all,None,:3,-1].repeat(1,rays_d.shape[1],1).reshape(-1,3)
+                            rays_d=rays_d.reshape(-1,3)
+                        with self.coslam_timing.stage('Forward_BA'):
+                            with nvtx_range("Forward_BA"):
+                                ret=self.model.forward(rays_o,rays_d,target_s,target_d)
+                        with self.coslam_timing.stage('Loss_calculation_BA'):
+                            with nvtx_range("Loss_calculation_BA"):
+                                loss=self.get_loss_from_ret(ret,smooth=True)
+                        with self.coslam_timing.stage('Backward_BA'):
+                            with nvtx_range("Backward_BA"):
+                                loss.backward(retain_graph=True)
+                        with self.coslam_timing.stage('Optimize_map_pose_BA'):
+                            with nvtx_range("Optimize_map_pose_BA"):
+                                if (i+1)%mapping['map_accum_step']==0:
+                                    if (i+1)>mapping['map_wait_step']:
+                                        self.map_optimizer.step()
+                                    else:
+                                        print('Wait update')
+                                    self.map_optimizer.zero_grad()
+                                if pose_optimizer is not None and (i+1)%mapping['pose_accum_step']==0:
+                                    pose_optimizer.step()
+                                    pose_optim=self.matrix_from_tensor(cur_rot,cur_trans).to(self.device)
+                                    poses_all=fixed_poses.index_copy(0,parameter_ids,pose_optim)
+                                    pose_optimizer.zero_grad()
+                        if self.config.get('sync_for_ncu',False):torch.cuda.synchronize()
+            with nvtx_range("update_pose_BA"):
+                if pose_optimizer is not None:
+                    # Keep the native individual matrix reconstruction/commit;
+                    # empty blocks are omitted unless running the attribution control.
+                    for local_index,history_index in enumerate(optimized_history):
+                        frame_id=int(frame_ids_all[int(history_index)].item())
+                        self.est_c2w_data[frame_id]=self.matrix_from_tensor(
+                            cur_rot[local_index:local_index+1],cur_trans[local_index:local_index+1]).detach().clone()[0]
+                    if optimize_current:
+                        print('Update current pose')
+                        self.est_c2w_data[cur_frame_id]=self.matrix_from_tensor(cur_rot[-1:],cur_trans[-1:]).detach().clone()[0]
+        self.model.flush_scene_timing()
+        self.coslam_timing.flush()
+        self.step_profiler()
+
     def predict_current_pose(self, frame_id, constant_speed=True):
         '''
         Predict current pose from previous pose using camera motion model
         '''
         if frame_id == 1 or (not constant_speed):
-            c2w_est_prev = self.est_c2w_data[frame_id-1].to(self.device)
+            c2w_est_prev = self.est_c2w_data[frame_id-1].to(self.device).detach().clone()
             self.est_c2w_data[frame_id] = c2w_est_prev
             
         else:
@@ -1468,6 +1918,8 @@ class CoSLAM():
             depth_spatial_tracking = self.config.get(
                 'tracking_depth_spatial', {}
             ).get('enabled', False)
+            depth_spatial_pruning = depth_spatial_tracking and self.config.get(
+                'tracking_depth_spatial', {}).get('mode', 'pruned') == 'pruned'
             naive_tracking_pruning = self.tracking_naive_pruning_enabled()
             bucket_morton_sort = tracking_bucket_cfg.get(
                 'morton_inside_bucket',
@@ -1488,14 +1940,26 @@ class CoSLAM():
 
             cur_rot, cur_trans, pose_optimizer = self.get_pose_param_optim(cur_c2w[None,...], mapping=False)
 
+            execution = tracking_execution_flags(self.config)
+            tracking_transform = (
+                DevicePoseTransform(cur_rot, self.config['training']['rot_rep'])
+                if execution['device_pose'] else self.matrix_from_tensor
+            )
+            deferred_best = None
+            depth_sampling_cache = DenseDepthLattice(self.config) if execution['cache_depth'] else None
+            pose_selection = self.config.get('sample_pruning', {}).get('tracking_pose_selection', 'native')
+            pose_anchor_every = int(self.config.get('sample_pruning', {}).get('tracking_anchor_every', 0))
+
             # Start tracking
             for i in range(self.config['tracking']['iter']):
+                eligible_pose = (pose_selection != 'dense_anchors' or i == 0
+                    or i == self.config['tracking']['iter'] - 1 or i % pose_anchor_every == 0)
                 with self.coslam_timing.stage('TR_ITER_PROFILE_TOTAL'):
                     with nvtx_range("TR_ITER_PROFILE_TOTAL"):
                         with nvtx_range("initialize_pose_optimizer_tr"):
                             pose_optimizer.zero_grad()
                         with nvtx_range("pos_matrix_from_tensor_tr"):    
-                            c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
+                            c2w_est = tracking_transform(cur_rot, cur_trans)
 
                         # Note here we fix the sampled points for optimisation
                         with nvtx_range("select_samples_tr"):
@@ -1519,6 +1983,12 @@ class CoSLAM():
                                     target_s = tracking_depth_spatial_batch['target_s']
                                     target_d = tracking_depth_spatial_batch['target_d']
                                     uniform_count = tracking_depth_spatial_batch['uniform_count']
+                                    if i == 0:
+                                        self.record_tracking_depth_spatial_frame(
+                                            fell_back=False,
+                                            uniform_count=uniform_count,
+                                            frame_id=frame_id,
+                                        )
                                 elif indice is None:
                                     # Fall back to the existing fixed random-batch
                                     # depth-pruning method for this frame.
@@ -1533,16 +2003,29 @@ class CoSLAM():
                                     target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
                                     target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
                                     with nvtx_range("prepare_naive_tracking_pruning"):
-                                        naive_uniform_count = self.prepare_naive_tracking_pruning(target_d, frame_id)
+                                        naive_uniform_count = (self.prepare_naive_tracking_pruning(target_d, frame_id)
+                                                               if depth_spatial_pruning else self.config['training']['n_samples_d'])
                                     uniform_count = naive_uniform_count
+                                    self.record_tracking_depth_spatial_frame(
+                                        fell_back=True,
+                                        uniform_count=uniform_count,
+                                        frame_id=frame_id,
+                                    )
                             elif indice is None:
                                 indice = self.select_samples(self.dataset.H-iH*2, self.dataset.W-iW*2, self.config['tracking']['sample'])
+                                if self.config.get('sample_pruning', {}).get('pixel_strategy') == 'features':
+                                    from optimization.sample_pruning import feature_uniform_pixels
+                                    indice = feature_uniform_pixels(batch, iH, iW, self.config['tracking']['sample'])
                             
                                 # Slicing
                                 indice_h, indice_w = indice % (self.dataset.H - iH * 2), indice // (self.dataset.H - iH * 2)
                                 rays_d_cam = batch['direction'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
                                 target_s = batch['rgb'].squeeze(0)[iH:-iH, iW:-iW, :][indice_h, indice_w, :].to(self.device)
                                 target_d = batch['depth'].squeeze(0)[iH:-iH, iW:-iW][indice_h, indice_w].to(self.device).unsqueeze(-1)
+                                if self.config.get('sample_pruning',{}).get('policy') == 'ray_cohort':
+                                    dirs_cpu=batch['direction'].squeeze(0)[iH:-iH,iW:-iW,:][indice_h,indice_w,:]
+                                    depths_cpu=batch['depth'].squeeze(0)[iH:-iH,iW:-iW][indice_h,indice_w,None]
+                                    self.model._ray_sampling_metadata=torch.cat((dirs_cpu,depths_cpu),dim=-1)
                                 if naive_tracking_pruning:
                                     with nvtx_range("prepare_naive_tracking_pruning"):
                                         naive_uniform_count = self.prepare_naive_tracking_pruning(target_d, frame_id)
@@ -1561,9 +2044,10 @@ class CoSLAM():
                                     rays_d,
                                     target_s,
                                     target_d,
+                                    depth_sampling_cache=depth_sampling_cache,
                                     uniform_samples_until_depth=bool(
                                         bucketed_tracking
-                                        or depth_spatial_tracking
+                                        or depth_spatial_pruning
                                         or naive_tracking_pruning
                                     ),
                                     uniform_sample_count=uniform_count,
@@ -1579,25 +2063,41 @@ class CoSLAM():
                         with self.coslam_timing.stage('loss_calculation_tr'):
                             with nvtx_range("loss_calculation_tr"):
                                 loss = self.get_loss_from_ret(ret)
-                        
+
                         with nvtx_range("sdf_loss_tr"):
-                            if best_sdf_loss is None:
+                            if execution['defer_best']:
+                                if deferred_best is None:
+                                    deferred_best = DeferredBestPose(self.config['tracking']['iter'], c2w_est)
+                                if eligible_pose:
+                                    deferred_best.add(loss, c2w_est)
+                            elif best_sdf_loss is None:
                                 best_sdf_loss = loss.cpu().item()
                                 best_c2w_est = c2w_est.detach()
 
                         with nvtx_range("c2w_from_matrix_tr"):
-                            with torch.no_grad():
-                                c2w_est = self.matrix_from_tensor(cur_rot, cur_trans)
+                            if not execution['defer_best']:
+                                with torch.no_grad():
+                                    if execution['reuse_pose']:
+                                        c2w_est = c2w_est.detach()
+                                    else:
+                                        c2w_est = tracking_transform(cur_rot, cur_trans)
 
-                                if loss.cpu().item() < best_sdf_loss:
-                                    best_sdf_loss = loss.cpu().item()
-                                    best_c2w_est = c2w_est.detach()
-                                    thresh = 0
-                                else:
-                                    thresh +=1
-                            
-                            if thresh >self.config['tracking']['wait_iters']:
-                                break
+                                    # Keep the native host loss read on every
+                                    # update, but compare poses only on the
+                                    # requested full-observation checkpoints.
+                                    if loss.cpu().item() < best_sdf_loss and eligible_pose:
+                                        best_sdf_loss = loss.cpu().item()
+                                        best_c2w_est = c2w_est.detach()
+                                        thresh = 0
+                                    elif eligible_pose:
+                                        thresh +=1
+
+                                if eligible_pose and thresh > self.config['tracking']['wait_iters']:
+                                    break
+                            elif not execution['reuse_pose']:
+                                # Isolate deferred loss selection from pose reuse.
+                                with torch.no_grad():
+                                    c2w_est = tracking_transform(cur_rot, cur_trans)
 
                         with self.coslam_timing.stage('backward_tr'):
                             with nvtx_range("backward_tr"):
@@ -1610,6 +2110,8 @@ class CoSLAM():
                         if self.config.get('sync_for_ncu', False):
                                 torch.cuda.synchronize()
 
+            if deferred_best is not None:
+                best_c2w_est = deferred_best.best()
             if self.config['tracking']['best']:
                 # Use the pose with smallest loss
                 self.est_c2w_data[frame_id] = best_c2w_est.detach().clone()[0]
@@ -1684,6 +2186,13 @@ class CoSLAM():
     @nvtx.annotate()    
     def run(self):
 
+        if self.tracking_depth_spatial_stats_only:
+            self.run_tracking_depth_spatial_stats_only()
+            return
+
+        if self.max_timing_frames is not None and int(self.max_timing_frames) < 1:
+            raise ValueError("timing.max_frames must be at least 1.")
+
         self.create_optimizer() 
         data_loader = DataLoader(self.dataset, num_workers=self.config['data']['num_workers'])
 
@@ -1735,7 +2244,7 @@ class CoSLAM():
                     pose_evaluation(self.pose_gt, self.est_c2w_data, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i)
                     pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
 
-                    if cfg['mesh']['visualisation']:
+                    if self.config['mesh']['visualisation']:
                         cv2.namedWindow('Traj:'.format(i), cv2.WINDOW_AUTOSIZE)
                         traj_image = cv2.imread(os.path.join(self.config['data']['output'], self.config['data']['exp_name'], "pose_r_{}.png".format(i)))
                         # best_traj_image = cv2.imread(os.path.join(best_logdir_scene, "pose_r_{}.png".format(i)))
@@ -1748,6 +2257,8 @@ class CoSLAM():
 
         self.model.flush_scene_timing()
         self.coslam_timing.flush()
+        self.write_tracking_depth_spatial_fallback_summary()
+        self.write_tracking_depth_spatial_sample_count_summary()
         model_savepath = os.path.join(self.config['data']['output'], self.config['data']['exp_name'], 'checkpoint{}.pt'.format(i)) 
         
         self.save_ckpt(model_savepath)
@@ -1759,6 +2270,82 @@ class CoSLAM():
             pose_evaluation(self.pose_gt, pose_relative, 1, os.path.join(self.config['data']['output'], self.config['data']['exp_name']), i, img='pose_r', name='output_relative.txt')
 
         #TODO: Evaluation of reconstruction
+
+    def run_tracking_depth_spatial_stats_only(self):
+        """Scan Replica depths once without optimization, BA, or ray transfers."""
+        spatial_cfg = self.config.get('tracking_depth_spatial', {})
+        if not spatial_cfg.get('enabled', False):
+            raise ValueError(
+                "tracking_depth_spatial.stats_only requires the sampler to be enabled"
+            )
+        if not self.tracking_depth_spatial_sample_count_stats_enabled:
+            raise ValueError(
+                "tracking_depth_spatial.stats_only requires "
+                "collect_sample_count_stats"
+            )
+
+        if 'stats_seed' in spatial_cfg:
+            stats_seed = int(spatial_cfg['stats_seed'])
+            random.seed(stats_seed)
+            np.random.seed(stats_seed)
+            torch.manual_seed(stats_seed)
+            self._tracking_depth_spatial_rng = np.random.default_rng(stats_seed)
+
+        data_loader = DataLoader(
+            self.dataset,
+            num_workers=self.config['data']['num_workers'],
+        )
+        iH = self.config['tracking']['ignore_edge_H']
+        iW = self.config['tracking']['ignore_edge_W']
+        for frame_id, batch in tqdm(enumerate(data_loader)):
+            if self.max_timing_frames is not None and frame_id >= int(
+                self.max_timing_frames
+            ):
+                break
+            # Frame zero is mapped directly in a normal Co-SLAM run and never
+            # enters tracking, so exclude it from the tracking distribution.
+            if frame_id == 0:
+                continue
+
+            selected = self.prepare_tracking_depth_spatial_batch(
+                batch,
+                iH,
+                iW,
+                frame_id,
+                counts_only=True,
+            )
+            if selected is not None:
+                self.record_tracking_depth_spatial_frame(
+                    fell_back=False,
+                    uniform_count=selected['uniform_count'],
+                    frame_id=frame_id,
+                )
+                continue
+
+            indice = self.select_samples(
+                self.dataset.H - iH * 2,
+                self.dataset.W - iW * 2,
+                self.config['tracking']['sample'],
+            )
+            indice_h = indice % (self.dataset.H - iH * 2)
+            indice_w = indice // (self.dataset.H - iH * 2)
+            h_slice = slice(iH, -iH if iH else None)
+            w_slice = slice(iW, -iW if iW else None)
+            target_d = batch['depth'].squeeze(0)[h_slice, w_slice][
+                indice_h, indice_w
+            ].unsqueeze(-1)
+            uniform_count = self.prepare_naive_tracking_pruning(
+                target_d,
+                frame_id,
+            )
+            self.record_tracking_depth_spatial_frame(
+                fell_back=True,
+                uniform_count=uniform_count,
+                frame_id=frame_id,
+            )
+
+        self.write_tracking_depth_spatial_fallback_summary()
+        self.write_tracking_depth_spatial_sample_count_summary()
 
 
 if __name__ == '__main__':
@@ -1778,15 +2365,21 @@ if __name__ == '__main__':
     cfg = config.load_config(args.config)
     if args.output is not None:
         cfg['data']['output'] = args.output
+    if args.input_folder is not None:
+        cfg['data']['datadir'] = args.input_folder
 
-    print("Saving config and script...")
-    save_path = os.path.join(cfg["data"]["output"], cfg['data']['exp_name'])
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-    shutil.copy("coslam.py", os.path.join(save_path, 'coslam.py'))
+    stats_only = bool(
+        cfg.get('tracking_depth_spatial', {}).get('stats_only', False)
+    )
+    if not stats_only:
+        print("Saving config and script...")
+        save_path = os.path.join(cfg["data"]["output"], cfg['data']['exp_name'])
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+        shutil.copy("coslam.py", os.path.join(save_path, 'coslam.py'))
 
-    with open(os.path.join(save_path, 'config.json'),"w", encoding='utf-8') as f:
-        f.write(json.dumps(cfg, indent=4))
+        with open(os.path.join(save_path, 'config.json'),"w", encoding='utf-8') as f:
+            f.write(json.dumps(cfg, indent=4))
 
     slam = CoSLAM(cfg)
 

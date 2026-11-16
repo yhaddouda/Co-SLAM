@@ -1,0 +1,26 @@
+{
+  "platform": "ORIN_15W",
+  "system": "EC-SLAM",
+  "power_mode": null,
+  "idle_check_command": null,
+  "jobs": [
+    {
+      "id": "EC_Replica_office0_H16_BASE_profile_seed0",
+      "workload": "Replica_office0_H16",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "RESOLVE_FROM_NATIVE_EC_OFFICE0_BASE_CONTROL"
+    },
+    {
+      "id": "EC_Replica_office0_H19_BASE_profile_seed0",
+      "workload": "Replica_office0_H19",
+      "condition": "BASE",
+      "seed": 0,
+      "datadir": "RESOLVE_FROM_NATIVE_EC_OFFICE0_BASE_CONTROL"
+    }
+  ],
+  "clock_policy_record": "Resolve unchanged actual local policy",
+  "path_status": "Resolve locally using native BASE controls",
+  "benchmark_queue_modified": false,
+  "repetitions": "Author 21 October: one run per workload on Orin; no across-seed SD. Overrides older protocol planning metadata only."
+}

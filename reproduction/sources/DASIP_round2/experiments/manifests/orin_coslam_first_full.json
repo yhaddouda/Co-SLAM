@@ -1,0 +1,41 @@
+{
+  "purpose": "First two-seed timing-only comparison; only after successful Orin diagnostics and clock-policy recording",
+  "jobs": [
+    {
+      "id": "Replica_office0_BASE_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "BASE",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_DP_seed0",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "DP",
+      "seed": 0,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_DP_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "DP",
+      "seed": 1,
+      "quality": false
+    },
+    {
+      "id": "Replica_office0_BASE_seed1",
+      "dataset": "Replica",
+      "scene": "office0",
+      "datadir": "/home/yh279050/work/Co-SLAM/../data/Replica/office0",
+      "condition": "BASE",
+      "seed": 1,
+      "quality": false
+    }
+  ]
+}
